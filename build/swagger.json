@@ -1,0 +1,124 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Greeting": {
+				"properties": {
+					"route": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"route",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "restapi-noexcuses-gymmanagement",
+		"version": "1.0.0",
+		"description": "RestAPI for the management of an exercise center, with reservation logic, schedules and administrative actors.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/api/hi/{route}": {
+			"get": {
+				"operationId": "SayHi",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Greeting"
+								}
+							}
+						}
+					}
+				},
+				"description": "(example) sayHi (get example)",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "route",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/savehi/{route}": {
+			"post": {
+				"operationId": "SaveHi",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Greeting"
+								}
+							}
+						}
+					}
+				},
+				"description": "(example) Save hi representing any other function using a service (post example)",
+				"security": [],
+				"parameters": [
+					{
+						"description": "whatever thing but in the route <dir>/api/{route}",
+						"in": "path",
+						"name": "route",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "your name as param <dir>/api/{route}?name={name}",
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
