@@ -1,21 +1,24 @@
+import { MongoDbConnection } from './../db/MongoDbConnection';
 import { IBaseRepository, ObjectId } from "./IBaseRepository";
 
 export class EntityRepository implements IBaseRepository {
 
-    public create(collectionName : string, entity : object) : any {
+    public EntityRepository() {}
+
+    public async create(collectionName : string, entity : object) : Promise<any> {
 
     }
 
-    public modify(collectionName : string, oldEntity : object, newEntity : object) : any {
+    public async modify(collectionName : string, oldEntity : object, newEntity : object) : Promise<any> {
 
     }
 
-    public delete(collectionName : string, idEntity : ObjectId) : any {
+    public async delete(collectionName : string, idEntity : ObjectId) : Promise<any> {
 
     }
 
-    public get(collectionName : string, filter : object) : any[] {
-        return [];
+    public async get(collectionName : string, filter : object) : Promise<any[]> {
+        return new Promise<any>((r : any) => r);
     }
 }
 
