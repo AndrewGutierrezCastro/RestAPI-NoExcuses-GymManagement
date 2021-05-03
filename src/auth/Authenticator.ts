@@ -1,29 +1,56 @@
 
 import express from 'express';
 import jwt from "jsonwebtoken";
-import { MongoDbConnection } from '../db/MongoDbConnection';
+import API from '../API';
 import { User } from '../model/User';
-import { EntityRepository } from './../repository/EntityRepository';
 
 export class Authenticator {
 
-    private entityRepository : EntityRepository = new EntityRepository();
-    
-    public async login (request: express.Request, response: express.Response, next : express.NextFunction) : Promise<void> {
-        const { username, password } = request.body;
+    public static async login (username : string, password : string) : Promise<any> {
+        
+        // check missing properties
+        if (!username || !password)
+            return {message: 'Username or password are required', auth : false};
 
-        const [user] = <User[]> await this.entityRepository.get('users', {username, password});
+        // query user from mongo db
+        const [user] = <User[]> await API.entityRepository.get('users', {username, password});
 
+        // request handling
         if (user) {
             const jwtSecret : jwt.Secret = <string> process.env.JWT_SECRET
-            const accessToken = jwt.sign({ username: user.username,  role: user.role }, jwtSecret);
+            const jwtToken = 
+                jwt.sign(
+                    {   
+                        username: user.username,  
+                        role: user.role 
+                    }, 
+                    jwtSecret, 
+                    {  
+                        expiresIn : process.env.JWT_TOKEN_EXPIRE_TIME || 300,
+                        algorithm: 'HS256' 
+                    }
+                );
 
-            response.json({
-                accessToken
-            });
+            const {password, ...userInfo} = user;
+
+            return {
+                user : userInfo,
+                token : jwtToken,
+                creationDate : new Date(),
+                auth : true
+            };
+            
         } else {
-            response.send('Username or password incorrect');
+            return {
+                auth : false,
+                message: 'Username or password incorrect',
+            };
         }
     }
 
+    public static async isAuthenticated(request: express.Request, response: express.Response, next : express.NextFunction)
+    {
+
+
+    }
 }

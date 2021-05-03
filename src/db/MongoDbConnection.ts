@@ -16,12 +16,8 @@ export class MongoDbConnection {
 
   private connect() {
     mongoose.connect(this.connectionString, {useNewUrlParser: true, useUnifiedTopology: true}).then();
-    mongoose.connection.once('open', async () => {
+    mongoose.connection.once('open', () => {
       console.log('MongoDB connected!')
-
-      const data = await mongoose.model('users').find();
-      console.log('Here', data);
-
     });
     MongoDbConnection.db = mongoose.connection;
   }

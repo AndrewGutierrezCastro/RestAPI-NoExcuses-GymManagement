@@ -1,3 +1,4 @@
+import { Authenticator } from './../auth/Authenticator';
 import { Greeting } from './../model/Greeting';
 import { GreetingService } from './../services/GreetingService';
 import {
@@ -15,6 +16,20 @@ export class RequestController extends Controller {
     private gService : GreetingService = new GreetingService();
 
     public RequestController() {}
+
+    /**
+     * Login
+     * @param username 
+     * @param password 
+     * @returns 
+     */
+     @Get("user/login")
+     public async login(
+         @Query() username: string,
+         @Query() password: string
+     ) : Promise<any> {
+        return Authenticator.login(username, password);
+     }
 
     /**
      * (example) sayHi (get example)

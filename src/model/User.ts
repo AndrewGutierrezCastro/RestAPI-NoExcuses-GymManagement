@@ -12,9 +12,8 @@ export const UserSchema : Schema = new Schema({
         type: Schema.Types.String,
         required : true
     },
-    sessionTokens: {
-        type: Schema.Types.String,
-        required : true
+    role : {
+        type : Schema.Types.String
     }
 });
 
