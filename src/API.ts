@@ -1,21 +1,20 @@
-import { Authenticator } from './auth/Authenticator';
-
 import express, { Response as ExResponse, Request as ExRequest } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import { ValidateError } from 'tsoa';
-
 import morgan from "morgan";
+
 import { RegisterRoutes } from "../build/routes";
 import { EntityRepository } from './repository/EntityRepository';
 import { MongoDbConnection } from './db/MongoDbConnection';
-
+import { Authenticator } from './auth/Authenticator';
 
 dotenv.config();
 
 export const app = express();
+const DEFAULT_PORT = 7000;
 
 export default class API {
 
@@ -33,7 +32,9 @@ export default class API {
     }
 
     private static setGlobals() {
-        app.set("port", process.env.PORT || 7000);
+        
+        app.set("port", process.env.PORT || DEFAULT_PORT);
+        process.on('SIGINT', this.closeApi);
     }
 
     private static setMiddlewares() {
@@ -74,7 +75,13 @@ export default class API {
             message: "Internal Server Error",
             });
         }
-        
         next();
+    }
+
+    static closeApi() 
+    {
+        MongoDbConnection.db.close();
+        console.log("API instance was closes properly");
+        process.exit(0);
     }
 }

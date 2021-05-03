@@ -2,8 +2,17 @@ import { UserSchema } from '../db/schemas/UserSchema';
 
 import express from 'express';
 import jwt from "jsonwebtoken";
+import randtoken from "rand-token";
+
 import API from '../API';
 import { User } from '../model/User';
+
+const allowableApiCallsWithoutAuth = [
+    "/api/user/login",
+    "/api/user/refreshToken"
+];
+
+let refreshTokens : Map<string, string> = new Map(); // to avoid mongodb calls
 
 export class Authenticator {
 
@@ -28,11 +37,16 @@ export class Authenticator {
                 );
 
             const {password, ...userInfo} = user;
+            const refreshToken = randtoken.uid(256);
+        
+            refreshTokens.set(refreshToken, userInfo._id);
+            console.log(refreshTokens);
 
             return {
                 user : userInfo,
                 token : jwtToken,
-                creationDate : new Date(),
+                refreshToken,
+                expireTimeInSeconds : process.env.TOKEN_EXPIRE_TIME, // seconds to refresh to frontend use to refresh session
                 auth : true
             };
             
@@ -44,9 +58,39 @@ export class Authenticator {
         }
     }
 
+    public static async refreshToken(userId : string, refreshToken : string) 
+    {
+        console.log('-----------------------------');
+        console.log(userId);
+        console.log(refreshTokens);
+        console.log(refreshTokens.get(refreshToken) === userId)
+
+        refreshTokens.has
+
+        if ( !refreshTokens.has(refreshToken) )
+            return {
+                auth : false,
+                message: 'Invalid refresh token, you need to login first',
+            };
+
+        const newJwtToken = 
+            jwt.sign(
+                {  id : userId }, 
+                <string> process.env.JWT_SECRET, 
+                {  
+                    expiresIn : process.env.JWT_TOKEN_EXPIRE_TIME
+                }
+            );
+
+        return {
+            token : newJwtToken,
+            expireTimeInSeconds : process.env.TOKEN_EXPIRE_TIME
+        };        
+    }
+
     public static async isAuthenticated(request: express.Request, response: express.Response, next : express.NextFunction)
     {
-        if (request.path == "/api/user/login") {
+        if (!(request.path in allowableApiCallsWithoutAuth)) {
             next();
             return;
         }
