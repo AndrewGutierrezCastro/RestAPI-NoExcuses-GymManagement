@@ -1,3 +1,4 @@
+import { Authenticator } from './auth/Authenticator';
 
 import express, { Response as ExResponse, Request as ExRequest } from "express";
 import bodyParser from "body-parser";
@@ -36,13 +37,16 @@ export default class API {
     }
 
     private static setMiddlewares() {
+        
         // dependencies middlewares
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cors());
         app.use(bodyParser.json());
         app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => res.send(swaggerUi.generateHTML(await import("../build/swagger.json"))));
         app.use(morgan('dev'));
+        
         // app middlewares
+        app.use(Authenticator.isAuthenticated);
         // app.use(Authorizator.checkAccess);
     }
 

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { UserSchema } from '../model/User';
+import { UserSchema } from '../db/schemas/UserSchema';
 
 export class MongoDbConnection {
   public static db: mongoose.Connection;

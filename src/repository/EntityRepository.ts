@@ -17,8 +17,8 @@ export class EntityRepository implements IBaseRepository {
 
     }
 
-    public async get(collectionName : string, filter : object) : Promise<any[]> {
-        return MongoDbConnection.db.collection(collectionName).find(filter).toArray();
+    public async get(collectionName : string, filter : object, projection : object) : Promise<any[]> {
+        return MongoDbConnection.db.collection(collectionName).find(filter, projection).toArray();
     }
 }
 
