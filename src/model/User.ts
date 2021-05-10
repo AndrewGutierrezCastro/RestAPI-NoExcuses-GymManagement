@@ -1,9 +1,12 @@
 
 export interface User 
 {
-    _id      : string,
+    _id?      : string,
     username : string,
     password : string,
     role     : string,
-    sessionTokens : string[]
+    firstName : string,
+    lastName : string,
+    identification : string,
+    email : string
 }

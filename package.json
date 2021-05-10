@@ -20,11 +20,13 @@
   },
   "homepage": "https://github.com/AndrewGutierrezCastro/RestAPI-NoExcuses-GymManagement#readme",
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/dotenv": "^8.2.0",
     "@types/inversify": "^2.0.33",
     "@types/inversify-binding-decorators": "^2.0.0",
     "@types/mongoose-unique-validator": "^1.0.4",
     "@types/morgan": "^1.9.2",
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

@@ -13,6 +13,23 @@ export const UserSchema : Schema = new Schema({
         required : true
     },
     role : {
-        type : Schema.Types.String
+        type : Schema.Types.String,
+        required : true
+    },
+    firstName: {
+        type: Schema.Types.String,
+        required : true
+    }, 
+    lastName: {
+        type: Schema.Types.String,
+        required : true
+    },
+    identification: {
+        type: Schema.Types.String,
+        required : true
+    },
+    email: {
+        type: Schema.Types.String,
+        required : true
     }
 });
