@@ -50,6 +50,9 @@
 					},
 					"email": {
 						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -59,7 +62,8 @@
 					"firstName",
 					"lastName",
 					"identification",
-					"email"
+					"email",
+					"phoneNumber"
 				],
 				"type": "object",
 				"additionalProperties": false

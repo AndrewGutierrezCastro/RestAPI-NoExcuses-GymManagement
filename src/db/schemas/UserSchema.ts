@@ -31,5 +31,9 @@ export const UserSchema : Schema = new Schema({
     email: {
         type: Schema.Types.String,
         required : true
+    },
+    phoneNumber :  {
+        type: Schema.Types.String,
+        required : true
     }
 });

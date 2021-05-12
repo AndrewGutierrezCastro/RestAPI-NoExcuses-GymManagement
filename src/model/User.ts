@@ -8,5 +8,6 @@ export interface User
     firstName : string,
     lastName : string,
     identification : string,
-    email : string
+    email : string,
+    phoneNumber : string
 }
