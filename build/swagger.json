@@ -6,30 +6,8 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Greeting": {
-				"properties": {
-					"route": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"route",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"User": {
 				"properties": {
-					"_id": {
-						"type": "string"
-					},
 					"username": {
 						"type": "string"
 					},
@@ -53,6 +31,9 @@
 					},
 					"phoneNumber": {
 						"type": "string"
+					},
+					"_id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -64,6 +45,18 @@
 					"identification",
 					"email",
 					"phoneNumber"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SessionGetParams": {
+				"properties": {
+					"filter": {},
+					"projection": {}
+				},
+				"required": [
+					"filter",
+					"projection"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -82,82 +75,6 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/api/hi/{route}": {
-			"get": {
-				"operationId": "SayHi",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Greeting"
-								}
-							}
-						}
-					}
-				},
-				"description": "(example) sayHi (get example)",
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "route",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "name",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/savehi/{route}": {
-			"post": {
-				"operationId": "SaveHi",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Greeting"
-								}
-							}
-						}
-					}
-				},
-				"description": "(example) Save hi representing any other function using a service (post example)",
-				"security": [],
-				"parameters": [
-					{
-						"description": "whatever thing but in the route <dir>/api/{route}",
-						"in": "path",
-						"name": "route",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"description": "your name as param <dir>/api/{route}?name={name}",
-						"in": "query",
-						"name": "name",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/user/login": {
 			"get": {
 				"operationId": "Login",
@@ -297,6 +214,33 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/sessions": {
+			"post": {
+				"operationId": "GetSessions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SessionGetParams"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

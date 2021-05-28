@@ -7,8 +7,8 @@ import API from '../API';
 import { User } from '../model/User';
 
 const allowableApiCallsWithoutAuth = [
-    "/api/user/login",
-    "/api/user/refreshToken"
+    "/user/login",
+    "/user/refreshToken"
 ];
 
 let refreshTokens : Map<string, string> = new Map(); // to avoid mongodb calls
@@ -137,21 +137,24 @@ export class Authenticator {
         };
     }
 
-    public static async isAuthenticated(request: express.Request, response: express.Response, next : express.NextFunction)
-    {
+    public static async isAuthenticated(
+        request: express.Request, 
+        response: express.Response, 
+        next : express.NextFunction
+    ) {
         // check if the request path can be reached without authentication
-        if (!(request.path in allowableApiCallsWithoutAuth)) {
+        if (allowableApiCallsWithoutAuth.includes(request.path)) {
             next();
             return;
         }
 
         // extract jwt token from header
-        const token = `${request.headers["x-access-token"]}`;
+        const token = request.headers["x-access-token"];
 
         // token handling
         if (!token || typeof token !== 'string' )
         {
-            response.send('You need a token, please add the token as an access token header');
+            response.send('You need a token, please add the token using "x-access-token" header');
         }
         else 
         {
@@ -162,7 +165,7 @@ export class Authenticator {
                 else 
                 {
                     request.headers.id = payload.id;
-                    response.json({auth : true, message: "Authentication successed!"});
+                    // response.json({auth : true, message: "Authentication successed!"});
                     next();
                 }
             })

@@ -1,13 +1,15 @@
 
-export interface User 
+export class User 
 {
-    _id?      : string,
-    username : string,
-    password : string,
-    role     : string,
-    firstName : string,
-    lastName : string,
-    identification : string,
-    email : string,
-    phoneNumber : string
+    constructor(
+        public username : string,
+        public password : string,
+        public role     : string,
+        public firstName : string,
+        public lastName : string,
+        public identification : string,
+        public email : string,
+        public phoneNumber : string,
+        public _id?      : string
+    ){}
 }

@@ -48,14 +48,9 @@ export default class API {
         
         // app middlewares
         app.use(Authenticator.isAuthenticated);
-        // app.use(Authorizator.checkAccess);
     }
 
-    static run() {
-        app.listen(app.get("port"), () =>
-            console.log(`Example app listening at http://localhost:${app.get("port")}`)
-        );
-    }
+    static run = () => app.listen(app.get("port"), () => console.log(`Listening at http://localhost:${app.get("port")}`));
 
     static errorHandler(
         err : unknown, 

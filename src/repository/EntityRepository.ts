@@ -10,11 +10,11 @@ export class EntityRepository implements IBaseRepository {
     }
 
     public async modify(collectionName : string, oldEntity : object, newEntity : object) : Promise<any> {
-
+        return MongoDbConnection.db.collection(collectionName).updateOne(oldEntity, newEntity);
     }
 
     public async delete(collectionName : string, idEntity : ObjectId) : Promise<any> {
-
+        return MongoDbConnection.db.collection(collectionName).deleteOne({_id : idEntity});
     }
 
     public async get(collectionName : string, filter : object, projection : object) : Promise<any[]> {

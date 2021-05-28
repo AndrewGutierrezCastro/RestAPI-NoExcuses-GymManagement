@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { UserSchema } from '../db/schemas/UserSchema';
+import { SessionSchema } from './schemas/SessionSchema';
 
 export class MongoDbConnection {
   public static db: mongoose.Connection;
@@ -12,6 +13,7 @@ export class MongoDbConnection {
 
   private registerModels() {
     mongoose.model('users', UserSchema);
+    mongoose.model('sessions', SessionSchema);
   }
 
   private connect() {
