@@ -5,6 +5,7 @@ export class Reservation {
     constructor(
         public creationDate : string,
         public session : Session,
-        public client : Client
+        public client : Client,
+        public _id? : string,
     ) {}
 }

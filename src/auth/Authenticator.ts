@@ -15,6 +15,8 @@ let refreshTokens : Map<string, string> = new Map(); // to avoid mongodb calls
 
 export class Authenticator {
 
+    private static developmentMode : boolean = true;
+
     public static async login (username : string, password : string) : Promise<any> {
         
         // check missing properties
@@ -142,6 +144,14 @@ export class Authenticator {
         response: express.Response, 
         next : express.NextFunction
     ) {
+
+        // DEVELOPMENT MODE: to avoid use token when the API is not in production
+        if (Authenticator.developmentMode)
+        {
+            next();
+            return;
+        }
+
         // check if the request path can be reached without authentication
         if (allowableApiCallsWithoutAuth.includes(request.path)) {
             next();

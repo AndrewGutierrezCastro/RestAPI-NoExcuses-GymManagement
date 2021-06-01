@@ -2,20 +2,15 @@ import API from "../API";
 import { ObjectId } from "../repository/IBaseRepository";
 import { IBaseService } from "./IBaseService";
 
-export interface SessionGetParams {
-  filter : any,
-  projection : any
-};
-
 export class SessionService implements IBaseService {
 
-  create(entity: object): Promise<boolean> {
-    return API.entityRepository.create('sessions', entity).then(() => true).catch(() => false);
+  create(entity: object): Promise<object> {
+    return API.entityRepository.create('sessions', entity);
   }
-  modify(oldEntity: object, newEntity: object): Promise<boolean> {
+  modify(oldEntity: object, newEntity: object): Promise<object> {
     return API.entityRepository.modify('sessions', oldEntity, newEntity);
   }
-  delete(entityId : ObjectId) : Promise<boolean> {
+  delete(entityId : string) : Promise<object> {
     return API.entityRepository.delete('sessions', entityId);
   }
   get(filter: object, projection: object): Promise<object[]> {

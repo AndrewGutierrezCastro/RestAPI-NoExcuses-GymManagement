@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsoa spec-and-routes && tsc",
     "start": "node build/src/app.js",
-    "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\""
+    "dev": "cls & concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\""
   },
   "repository": {
     "type": "git",

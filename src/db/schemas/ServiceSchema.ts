@@ -7,6 +7,7 @@ export const ServiceSchema : Schema = new Schema({
     },
     description : {
         type : Schema.Types.String,
-        required : true
+        required : false,
+        default: 'No description'
     }
 });

@@ -19,7 +19,7 @@ export const SessionSchema : Schema = new Schema({
             required : true
         }
     },
-    service : {
+    serviceId : {
         type : Schema.Types.ObjectId,
         required : true,
     },

@@ -4,6 +4,6 @@ export class Client {
     constructor(
         public pendingPayment : string[],
         public balance : Uint16Array,
-
+        public _id? : string,
     ) {}
 }

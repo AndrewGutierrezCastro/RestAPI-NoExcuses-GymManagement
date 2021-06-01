@@ -1,25 +1,43 @@
+import mongoose, { ObjectId } from 'mongoose';
 import { MongoDbConnection } from './../db/MongoDbConnection';
-import { IBaseRepository, ObjectId } from "./IBaseRepository";
+import { IBaseRepository } from "./IBaseRepository";
 
 export class EntityRepository implements IBaseRepository {
 
     public EntityRepository() {}
 
-    public async create(collectionName : string, entity : object) : Promise<any> {
-        return MongoDbConnection.db.collection(collectionName).insertOne(entity);
+    public async create(collectionName : string, entity : object) : Promise<object> {
+        
+        let { 
+            insertedId, 
+            insertedCount, 
+            ops 
+        } = await MongoDbConnection.db.collection(collectionName).insertOne(entity);
+        
+        return {
+            insertedCount, 
+            createdObject : ops[0],
+            insertedId 
+        };
     }
 
-    public async modify(collectionName : string, oldEntity : object, newEntity : object) : Promise<any> {
-        return MongoDbConnection.db.collection(collectionName).updateOne(oldEntity, newEntity);
+    public async modify(collectionName : string, oldEntity : object, newEntity : object) : Promise<object> {
+        return await MongoDbConnection.db.collection(collectionName).updateOne(oldEntity, newEntity);
     }
 
-    public async delete(collectionName : string, idEntity : ObjectId) : Promise<any> {
-        return MongoDbConnection.db.collection(collectionName).deleteOne({_id : idEntity});
+    public async delete(collectionName : string, entityId : string) : Promise<object> {
+
+        let objectId = new mongoose.mongo.ObjectID(entityId);
+        let { deletedCount } = await MongoDbConnection.db.collection(collectionName).deleteOne({_id:objectId});
+
+        return { 
+            deletedCount, 
+            deletedObjectId : (deletedCount || 0) > 0 ? objectId : null 
+        };
     }
 
-    public async get(collectionName : string, filter : object, projection : object) : Promise<any[]> {
-        return MongoDbConnection.db.collection(collectionName).find(filter, projection).toArray();
+    public async get(collectionName : string, filter : object, projection : object) : Promise<object[]> {   
+        return await MongoDbConnection.db.collection(collectionName).find(filter, {projection}).toArray();
     }
-
 }
 

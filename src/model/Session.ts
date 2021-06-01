@@ -1,13 +1,10 @@
 import { Date } from "./Date";
-import { Service } from "./Service";
 
-export class Session {
-    constructor(
-        public calendarId : string,
-        public dayHour : Date,
-        public instructors : string[],
-        public service : Service,
-        public available : boolean,
-        public _id : string = 'null',
-    ) {}
+export interface Session {
+    calendarId : string,
+    dayHour : Date,
+    instructors : string[],
+    serviceId : string,
+    available : boolean,
+    _id? : string,
 }
