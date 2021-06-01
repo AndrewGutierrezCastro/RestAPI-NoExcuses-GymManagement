@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+import { Ref } from "./utils";
 
 export interface User {
     username : string,
@@ -8,5 +10,5 @@ export interface User {
     identification : string,
     email : string,
     phoneNumber : string,
-    _id?      : string
+    _id : Ref<ObjectId>,
 }

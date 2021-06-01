@@ -1,5 +1,7 @@
+import { ArrRef, Ref } from './utils';
 import { Service } from './Service';
 import { User } from './User';
+import { ObjectId } from 'mongoose';
 
 export interface Instructor {
     username : string,
@@ -11,6 +13,6 @@ export interface Instructor {
     email : string,
         phoneNumber : string,
     category : string,
-    specialities : Service[],
-    _id?      : string,
+    specialities : ArrRef<Service>,
+    _id : Ref<ObjectId>,
 }

@@ -1,10 +1,13 @@
+import { ObjectId } from "mongoose";
 import { Date } from "./Date";
+import { Service } from "./Service";
+import { ArrRef, Ref } from "./utils";
 
 export interface Session {
-    calendarId : string,
+    calendarId : string | null,
     dayHour : Date,
     instructors : string[],
-    serviceId : string,
+    service : ArrRef<Service>,
     available : boolean,
-    _id? : string,
+    _id : Ref<ObjectId>,
 }

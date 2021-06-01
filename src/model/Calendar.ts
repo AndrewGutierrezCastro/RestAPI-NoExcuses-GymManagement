@@ -1,10 +1,12 @@
+import { ObjectId } from "mongoose";
 import { Session } from "./Session";
+import { ArrRef, Ref } from "./utils";
 
 export interface Calendar {
     roomId : string,
-    sessions : Session[],
+    sessions : ArrRef<Session>,
     month : string,
     year : string,
     published : boolean,
-    _id? : string,
+    _id : Ref<ObjectId>,
 }
