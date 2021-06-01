@@ -1,7 +1,5 @@
-export class Service {
-    constructor(
-        public name : string,
-        public description : string,
-        public _id? : string
-    ) {}
+export interface Service {
+    name : string,
+    description : string,
+    _id? : string
 }

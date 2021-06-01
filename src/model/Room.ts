@@ -1,13 +1,11 @@
 import { Calendar } from './Calendar';
 import { Date } from './Date';
 
-export class Room {
-    constructor(
-    public name : string,
-    public totalCapacity : number,
-    public allowedCapaocliaty : number,
-    public weeklySchedule : Date[],
-    public sessionsCalendar : Calendar,
-    public _id? : string,
-    ) {}
-}
+export interface Room {
+    name : string,
+    totalCapacity : number,
+    allowedCapaocliaty : number,
+    weeklySchedule : Date[],
+    sessionsCalendar : Calendar,
+    _id? : string,
+};

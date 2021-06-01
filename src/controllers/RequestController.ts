@@ -1,4 +1,3 @@
-import { Session } from './../model/Session';
 import { SessionService } from './../services/SessionService';
 import {
     Body,
