@@ -1,5 +1,4 @@
-export type Ref<T> = 
-    T | string | undefined;
+export type Ref<T> = T | string | '';
 
 export type ArrRef<T> = 
     T[] | string[] | undefined;
