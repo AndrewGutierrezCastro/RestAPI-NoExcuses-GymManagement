@@ -214,10 +214,10 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/api/services/update',
+        app.put('/api/services/update',
             function RequestController_updateService(request: any, response: any, next: any) {
             const args = {
-                    service: {"in":"body","name":"service","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"newService":{"ref":"Service","required":true},"oldService":{"ref":"Service","required":true}}},
+                    service: {"in":"body","name":"service","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"updatedService":{"ref":"Service","required":true},"serviceId":{"dataType":"string","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -27,6 +27,7 @@ export default class API {
         
         RegisterRoutes(app); // tsoa router linking...
         app.use(this.errorHandler);
+        app.use(this.notFoundHandler);
 
         new MongoDbConnection(); // connect to mongo db
     }
@@ -58,6 +59,10 @@ export default class API {
         response : express.Response, 
         next : express.NextFunction
     ): ExResponse | void {
+
+
+        console.log(err);
+
         if (err instanceof ValidateError) {
             console.warn(`Caught Validation Error for ${request.path}:`, err.fields);
             return response.status(422).json({
@@ -68,15 +73,22 @@ export default class API {
         if (err instanceof Error) {
             return response.status(500).json({
             message: "Internal Server Error",
-            });
+            err : JSON.stringify(err)
+        });
         }
         next();
     }
 
+    static notFoundHandler(_req : express.Request, res: ExResponse) {
+        res.status(404).send({
+          message: "Not Found",
+        });
+      }
+
     static closeApi() 
     {
         MongoDbConnection.db.close();
-        console.log("API instance was closes properly");
+        console.log("API instance closed properly");
         process.exit(0);
     }
 }

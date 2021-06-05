@@ -323,7 +323,7 @@
 			}
 		},
 		"/api/services/update": {
-			"post": {
+			"put": {
 				"operationId": "UpdateService",
 				"responses": {
 					"200": {
@@ -345,16 +345,16 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"newService": {
+									"updatedService": {
 										"$ref": "#/components/schemas/Service"
 									},
-									"oldService": {
-										"$ref": "#/components/schemas/Service"
+									"serviceId": {
+										"type": "string"
 									}
 								},
 								"required": [
-									"newService",
-									"oldService"
+									"updatedService",
+									"serviceId"
 								],
 								"type": "object"
 							}

@@ -8,7 +8,7 @@ export interface IBaseRepository {
     
     create(collectionName : string, entity : object) : object;
 
-    modify(collectionName : string, oldEntity : object, newEntity : object) : object;
+    modify(collectionName : string, oldEntityId : string, newEntity : object) : object;
 
     delete(collectionName : string, idEntity : string) : object;
 

@@ -7,8 +7,8 @@ export class ServiceService implements IBaseService {
     return API.entityRepository.create('services', entity);
   }
   
-  modify(oldEntity: object, newEntity: object): Promise<object> {
-    return API.entityRepository.modify('services', oldEntity, newEntity);
+  modify(oldEntityId: string = '', newEntity: object): Promise<object> {
+    return API.entityRepository.modify('services', oldEntityId, newEntity);
   }
 
   delete(entityId : string) : Promise<object> {

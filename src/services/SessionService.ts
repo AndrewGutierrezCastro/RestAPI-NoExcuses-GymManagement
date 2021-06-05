@@ -7,8 +7,8 @@ export class SessionService implements IBaseService {
   create(entity: object): Promise<object> {
     return API.entityRepository.create('sessions', entity);
   }
-  modify(oldEntity: object, newEntity: object): Promise<object> {
-    return API.entityRepository.modify('sessions', oldEntity, newEntity);
+  modify(oldEntityId: string, newEntity: object): Promise<object> {
+    return API.entityRepository.modify('sessions', oldEntityId, newEntity);
   }
   delete(entityId : string) : Promise<object> {
     return API.entityRepository.delete('sessions', entityId);

@@ -21,8 +21,20 @@ export class EntityRepository implements IBaseRepository {
         };
     }
 
-    public async modify(collectionName : string, oldEntity : object, newEntity : object) : Promise<object> {
-        return await MongoDbConnection.db.collection(collectionName).updateOne(oldEntity, newEntity);
+    public async modify(collectionName : string, oldEntityId : string, newEntity : object) : Promise<object> {
+
+        let objectId = new mongoose.mongo.ObjectID(oldEntityId);
+        let { modifiedCount } = await MongoDbConnection.db.collection(collectionName).updateOne(
+            { _id:objectId}, 
+            { $set: newEntity },
+        );
+
+        let updatedElement = await MongoDbConnection.db.collection(collectionName).findOne({_id: objectId});
+
+        return {
+            modifiedCount,
+            updatedElement
+        };
     }
 
     public async delete(collectionName : string, entityId : string) : Promise<object> {
@@ -36,7 +48,7 @@ export class EntityRepository implements IBaseRepository {
         };
     }
 
-    public async get(collectionName : string, filter : object, projection : object) : Promise<object[]> {   
+    public async get(collectionName : string, filter : object, projection : object) : Promise<object[]> {
         return await MongoDbConnection.db.collection(collectionName).find(filter, {projection}).toArray();
     }
 }

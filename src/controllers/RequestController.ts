@@ -5,7 +5,8 @@ import {
     Delete,
     Post,
     Route,
-    Query
+    Query,
+    Put
 } from "tsoa";
 import { ServiceService } from '../services/ServiceService';
 import { GetParamsBody } from './utils';
@@ -18,10 +19,10 @@ import { Service } from '../model/Service';
 @Route("api")
 export class RequestController extends Controller {
 
-    constructor( 
-        private sessionService : SessionService = new SessionService(),
-        private serviceService : ServiceService = new ServiceService(),
-        ) { super(); }
+    constructor(
+        private sessionService: SessionService = new SessionService(),
+        private serviceService: ServiceService = new ServiceService(),
+    ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
 
@@ -32,10 +33,10 @@ export class RequestController extends Controller {
      */
     @Post("sessions/get")
     public async getSessions(
-        @Body() params : GetParamsBody
-    ) :Promise<any> {
+        @Body() params: GetParamsBody
+    ): Promise<any> {
         return {
-            givenParams : params,
+            givenParams: params,
             data: await this.sessionService.get(params.filter, params.projection)
         };
     }
@@ -61,10 +62,10 @@ export class RequestController extends Controller {
      */
     @Post("services/get")
     public async getServices(
-        @Body() params : GetParamsBody
-    ) :Promise<any> {
+        @Body() params: GetParamsBody
+    ): Promise<any> {
         return {
-            givenParams : params,
+            givenParams: params,
             data: await this.serviceService.get(params.filter, params.projection)
         };
     }
@@ -76,8 +77,8 @@ export class RequestController extends Controller {
      */
     @Post("services/create")
     public async createService(
-        @Body() service : Service
-    ) :Promise<any> {
+        @Body() service: Service
+    ): Promise<any> {
         return await this.serviceService.create(service);
     }
 
@@ -86,11 +87,11 @@ export class RequestController extends Controller {
      * @param service with the oldService and newService objects
      * @returns update response with details from db
      */
-    @Post("services/update")
+    @Put("services/update")
     public async updateService(
-        @Body() service : { oldService: Service, newService : Service }
-    ) :Promise<any> {
-        return await this.serviceService.modify(service.oldService, service.newService);
+        @Body() service: { serviceId : string, updatedService: Service }
+    ): Promise<any> {
+        return await this.serviceService.modify(service.serviceId, service.updatedService);
     }
 
     /**
@@ -100,8 +101,8 @@ export class RequestController extends Controller {
      */
     @Delete("services/delete")
     public async deleteService(
-        @Query() serviceId : string
-    ) :Promise<any> {
+        @Query() serviceId: string
+    ): Promise<any> {
         return await this.serviceService.delete(serviceId);
     }
 }

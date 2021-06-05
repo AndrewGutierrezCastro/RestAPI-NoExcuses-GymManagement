@@ -8,6 +8,5 @@ export const ServiceSchema : Schema = new Schema({
     description : {
         type : Schema.Types.String,
         required : false,
-        default: 'No description'
     }
 });
