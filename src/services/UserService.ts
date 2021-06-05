@@ -1,4 +1,7 @@
 import API from "../API";
+import { Authenticator } from "../auth/Authenticator";
+import { userCollections } from "../auth/UserMapping";
+import { User } from "../model/User";
 import { IBaseService } from "./IBaseService";
 
 const DEFAULT_USER_PROJECTION = { 
@@ -14,8 +17,15 @@ const DEFAULT_USER_PROJECTION = {
 
 export class UserService implements IBaseService {
 
-  create(entity: object): Promise<object> {
-    return API.entityRepository.create('users', entity);
+  async create(entity: object): Promise<object> {
+
+    const user = <User> entity;
+    const result = await Authenticator.registerUser(user);
+    const { _id } = result.newUser;
+
+    const collectionName = userCollections[user.role];
+
+    return API.entityRepository.create(collectionName, entity);
   }
 
   modify(oldEntityId: string, newEntity: object): Promise<object> {

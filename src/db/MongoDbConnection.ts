@@ -1,7 +1,10 @@
+import { ClientSchema } from './schemas/ClientSchema';
 import mongoose from 'mongoose';
 import { UserSchema } from '../db/schemas/UserSchema';
+import { AdministratorSchema } from './schemas/AdministratorSchema';
 import { ServiceSchema } from './schemas/ServiceSchema';
 import { SessionSchema } from './schemas/SessionSchema';
+import { InstructorSchema } from './schemas/InstructorSchema';
 
 export class MongoDbConnection {
   
@@ -17,6 +20,9 @@ export class MongoDbConnection {
     mongoose.model('users', UserSchema);
     mongoose.model('sessions', SessionSchema);
     mongoose.model('services', ServiceSchema);
+    mongoose.model('administrator', AdministratorSchema);
+    mongoose.model('clients', ClientSchema);
+    mongoose.model('instructors', InstructorSchema);
   }
 
   private connect() {

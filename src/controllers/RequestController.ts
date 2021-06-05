@@ -15,8 +15,7 @@ import { UserService } from '../services/UserService';
 import { User } from '../model/User';
 
 /**
- * @description Request controller
- * 
+ * @description Request controller, request handler to invoke the respective service
  */
 @Route("api")
 export class RequestController extends Controller {
@@ -92,16 +91,14 @@ export class RequestController extends Controller {
     public async createUser(
         @Body() user: User
     ): Promise<any> {
-        return await this.serviceService.create(user);
+        return await this.userService.create(user);
     }
 
     @Delete("users/delete")
     public async deleteSUser(
         @Query() userId: string
     ): Promise<any> {
-        return await this.serviceService.delete(userId);
+        return await this.userService.delete(userId);
     }
-
-    // USERS ---------------------------------------------------------------------------------
 
 }

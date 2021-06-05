@@ -17,6 +17,7 @@ export class Authenticator {
 
     private static developmentMode : boolean = true;
 
+
     public static async login (username : string, password : string) : Promise<any> {
         
         // check missing properties
@@ -131,9 +132,10 @@ export class Authenticator {
         const hashedPassword = bcrypt.hashSync(user.password, salt);
         
         // register process
-        const result = await API.entityRepository.create('users', {...user, password : hashedPassword});
+        const result:any = await API.entityRepository.create('users', {...user, password : hashedPassword});
 
         return {
+            newUser: result.createdObject,
             signup : true,
             message : `Sign up correctly for ${user.firstName} ${user.lastName}, now you can login`
         };

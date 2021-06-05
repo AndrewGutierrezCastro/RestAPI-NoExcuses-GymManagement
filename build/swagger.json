@@ -32,15 +32,6 @@
 					"phoneNumber": {
 						"type": "string"
 					},
-					"category": {
-						"type": "string"
-					},
-					"specialities": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
 					"_id": {
 						"type": "string"
 					}
