@@ -8,5 +8,7 @@ export interface User {
     identification : string,
     email : string,
     phoneNumber : string,
+    category? : string,
+    specialities? : string[],
     _id?      : string
 }

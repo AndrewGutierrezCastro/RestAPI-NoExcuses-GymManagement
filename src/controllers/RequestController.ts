@@ -11,6 +11,8 @@ import {
 import { ServiceService } from '../services/ServiceService';
 import { GetParamsBody } from './utils';
 import { Service } from '../model/Service';
+import { UserService } from '../services/UserService';
+import { User } from '../model/User';
 
 /**
  * @description Request controller
@@ -22,15 +24,10 @@ export class RequestController extends Controller {
     constructor(
         private sessionService: SessionService = new SessionService(),
         private serviceService: ServiceService = new ServiceService(),
+        private userService   : UserService    = new UserService()
     ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
-
-    /**
-     * Get objects from the collection using the given params
-     * @param params filter & projection
-     * @returns JSON with the used params to retrieve the data from db and result set
-     */
     @Post("sessions/get")
     public async getSessions(
         @Body() params: GetParamsBody
@@ -41,25 +38,7 @@ export class RequestController extends Controller {
         };
     }
 
-    //  /**
-    //  * Create a new session
-    //  * @param session new object to add to the collection
-    //  * @returns a
-    //  */
-    //   @Post("sessions/create")
-    //   public async createSession(
-    //       @Body() session : Session
-    //   ) :Promise<any> {
-    //       return await this.sessionService.create(session);
-    //   }
-
     // SERVICES ---------------------------------------------------------------------------------
-
-    /**
-     * Get objects from the collection using the given params
-     * @param params filter & projection
-     * @returns JSON with the used params to retrieve the data from db and result set
-     */
     @Post("services/get")
     public async getServices(
         @Body() params: GetParamsBody
@@ -70,11 +49,6 @@ export class RequestController extends Controller {
         };
     }
 
-    /**
-     * Create a new service
-     * @param service new object to add to the collection
-     * @returns a
-     */
     @Post("services/create")
     public async createService(
         @Body() service: Service
@@ -82,11 +56,6 @@ export class RequestController extends Controller {
         return await this.serviceService.create(service);
     }
 
-    /**
-     * Update an existing service
-     * @param service with the oldService and newService objects
-     * @returns update response with details from db
-     */
     @Put("services/update")
     public async updateService(
         @Body() service: { serviceId : string, updatedService: Service }
@@ -94,15 +63,45 @@ export class RequestController extends Controller {
         return await this.serviceService.modify(service.serviceId, service.updatedService);
     }
 
-    /**
-     * Delete a service using the object id
-     * @param serviceId the object id of the service to find and delete
-     * @returns deleted response with details from db
-     */
     @Delete("services/delete")
     public async deleteService(
         @Query() serviceId: string
     ): Promise<any> {
         return await this.serviceService.delete(serviceId);
     }
+
+    // USERS ---------------------------------------------------------------------------------
+    @Post("users/get")
+    public async getUsers(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return {
+            givenParams: params,
+            data: await this.userService.get(params.filter, params.projection)
+        };
+    }
+
+    @Put("users/update")
+    public async updateUser(
+        @Body() service: { serviceId : string, updatedUser: User }
+    ): Promise<any> {
+        return await this.userService.modify(service.serviceId, service.updatedUser);
+    }
+
+    @Post("users/create")
+    public async createUser(
+        @Body() user: User
+    ): Promise<any> {
+        return await this.serviceService.create(user);
+    }
+
+    @Delete("users/delete")
+    public async deleteSUser(
+        @Query() userId: string
+    ): Promise<any> {
+        return await this.serviceService.delete(userId);
+    }
+
+    // USERS ---------------------------------------------------------------------------------
+
 }

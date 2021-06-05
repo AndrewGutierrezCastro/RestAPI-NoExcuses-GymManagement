@@ -35,5 +35,13 @@ export const UserSchema : Schema = new Schema({
     phoneNumber :  {
         type: Schema.Types.String,
         required : true
-    }
+    },
+    category : {
+        type: Schema.Types.String,
+        required : false
+    },
+    specialities : {
+        type: [Schema.Types.String],
+        required : false
+    },
 });
