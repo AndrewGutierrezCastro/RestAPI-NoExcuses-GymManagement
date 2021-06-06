@@ -24,10 +24,12 @@ export class EntityRepository implements IBaseRepository {
     public async modify(collectionName : string, oldEntityId : string, newEntity : object) : Promise<object> {
 
         let objectId = new mongoose.mongo.ObjectID(oldEntityId);
-        let { modifiedCount } = await MongoDbConnection.db.collection(collectionName).updateOne(
-            { _id:objectId}, 
-            { $set: newEntity },
-        );
+        let { modifiedCount } = 
+            await MongoDbConnection.db.collection(collectionName)
+                .updateOne(
+                    { _id:objectId}, 
+                    { $set: newEntity }
+                );
 
         let updatedElement = await MongoDbConnection.db.collection(collectionName).findOne({_id: objectId});
 

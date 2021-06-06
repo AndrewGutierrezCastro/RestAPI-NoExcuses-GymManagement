@@ -60,7 +60,6 @@ export default class API {
         next : express.NextFunction
     ): ExResponse | void {
 
-
         console.log(err);
 
         if (err instanceof ValidateError) {
@@ -72,9 +71,9 @@ export default class API {
         }
         if (err instanceof Error) {
             return response.status(500).json({
-            message: "Internal Server Error",
-            err : JSON.stringify(err)
-        });
+                message: "Internal Server Error",
+                err : JSON.stringify(err)
+            });
         }
         next();
     }
