@@ -1,9 +1,9 @@
 import { Client } from "./Client";
-import { Session } from "./Session";
+import { Session } from "./GymSession";
 
 export interface Reservation {
     creationDate : string,
-    session : Session,
-    client : Client,
+    sessionId : string,
+    clientId : string,
     _id? : string,
 }

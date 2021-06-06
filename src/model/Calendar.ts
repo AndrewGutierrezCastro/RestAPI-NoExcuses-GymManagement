@@ -1,8 +1,6 @@
-import { Session } from "./Session";
-
 export interface Calendar {
     roomId : string,
-    sessions : Session[],
+    sessions : string[],
     month : string,
     year : string,
     published : boolean,

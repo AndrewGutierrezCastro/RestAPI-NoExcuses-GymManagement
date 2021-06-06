@@ -14,4 +14,6 @@ export interface IBaseRepository {
 
     get(collectionName : string, filter : object, projection : object) : Promise<object[]>;
 
+    getOne(collectionName : string, id : string) : Promise<object>;
+
 }

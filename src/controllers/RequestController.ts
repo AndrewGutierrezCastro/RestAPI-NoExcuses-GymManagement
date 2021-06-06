@@ -13,6 +13,7 @@ import { GetParamsBody } from './utils';
 import { Service } from '../model/Service';
 import { UserService } from '../services/UserService';
 import { User } from '../model/User';
+import { GymSession } from '../model/GymSession';
 
 /**
  * @description Request controller, request handler to invoke the respective service
@@ -35,6 +36,13 @@ export class RequestController extends Controller {
             givenParams: params,
             data: await this.sessionService.get(params.filter, params.projection)
         };
+    }
+
+    @Post("sessions/create")
+    public async createSession(
+        @Body() service: GymSession
+    ): Promise<any> {
+        return await this.sessionService.create(service);
     }
 
     // SERVICES ---------------------------------------------------------------------------------
