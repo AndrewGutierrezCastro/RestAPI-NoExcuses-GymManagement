@@ -58,6 +58,42 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GymDate": {
+        "dataType": "refObject",
+        "properties": {
+            "dayOfTheWeek": {"dataType":"string","required":true},
+            "initialHour": {"dataType":"string","required":true},
+            "finalHour": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Calendar": {
+        "dataType": "refObject",
+        "properties": {
+            "roomId": {"dataType":"string","required":true},
+            "sessions": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "month": {"dataType":"string","required":true},
+            "year": {"dataType":"string","required":true},
+            "published": {"dataType":"boolean","required":true},
+            "_id": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Room": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "capacity": {"dataType":"double","required":true},
+            "allowedCapacity": {"dataType":"double","required":true},
+            "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "sessionsCalendarId": {"ref":"Calendar"},
+            "_id": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -201,6 +237,50 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.createSession.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/api/sessions/delete',
+            function RequestController_deleteSession(request: any, response: any, next: any) {
+            const args = {
+                    sessionId: {"in":"query","name":"sessionId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.deleteSession.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/sessions/update',
+            function RequestController_updateSession(request: any, response: any, next: any) {
+            const args = {
+                    session: {"in":"body","name":"session","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"updatedSession":{"ref":"GymSession","required":true},"sessionId":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.updateSession.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -377,6 +457,94 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.deleteSUser.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/rooms/get',
+            function RequestController_getRooms(request: any, response: any, next: any) {
+            const args = {
+                    params: {"in":"body","name":"params","required":true,"ref":"GetParamsBody"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getRooms.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/rooms/update',
+            function RequestController_updateRoom(request: any, response: any, next: any) {
+            const args = {
+                    room: {"in":"body","name":"room","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"updatedRoom":{"ref":"Room","required":true},"roomId":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.updateRoom.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/rooms/create',
+            function RequestController_createRoom(request: any, response: any, next: any) {
+            const args = {
+                    room: {"in":"body","name":"room","required":true,"ref":"Room"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.createRoom.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/api/rooms/delete',
+            function RequestController_deleteRoom(request: any, response: any, next: any) {
+            const args = {
+                    roomId: {"in":"query","name":"roomId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.deleteRoom.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

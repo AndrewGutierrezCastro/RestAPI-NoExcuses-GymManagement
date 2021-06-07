@@ -17,7 +17,6 @@ export class Authenticator {
 
     private static developmentMode : boolean = true;
 
-
     public static async login (username : string, password : string) : Promise<any> {
         
         // check missing properties

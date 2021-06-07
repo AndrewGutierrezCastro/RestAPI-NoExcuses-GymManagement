@@ -14,9 +14,12 @@ import { Service } from '../model/Service';
 import { UserService } from '../services/UserService';
 import { User } from '../model/User';
 import { GymSession } from '../model/GymSession';
+import { RoomService } from '../services/RoomService';
+import { Room } from '../model/Room';
 
 /**
- * @description Request controller, request handler to invoke the respective service
+ * @description Request controller
+ * The request handler to invoke the respective service
  */
 @Route("api")
 export class RequestController extends Controller {
@@ -24,7 +27,8 @@ export class RequestController extends Controller {
     constructor(
         private sessionService: SessionService = new SessionService(),
         private serviceService: ServiceService = new ServiceService(),
-        private userService   : UserService    = new UserService()
+        private userService   : UserService    = new UserService(),
+        private roomService   : RoomService    = new RoomService()
     ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
@@ -32,10 +36,7 @@ export class RequestController extends Controller {
     public async getSessions(
         @Body() params: GetParamsBody
     ): Promise<any> {
-        return {
-            givenParams: params,
-            data: await this.sessionService.get(params.filter, params.projection)
-        };
+        return await this.sessionService.get(params.filter, params.projection);
     }
 
     @Post("sessions/create")
@@ -45,15 +46,26 @@ export class RequestController extends Controller {
         return await this.sessionService.create(service);
     }
 
+    @Delete("sessions/delete")
+    public async deleteSession(
+        @Query() sessionId : string
+    ): Promise<any> {
+        return await this.sessionService.delete(sessionId);
+    }
+
+    @Put("sessions/update")
+    public async updateSession(
+        @Body() session: { sessionId : string, updatedSession: GymSession }
+    ): Promise<any> {
+        return await this.serviceService.modify(session.sessionId, session.updatedSession);
+    }
+
     // SERVICES ---------------------------------------------------------------------------------
     @Post("services/get")
     public async getServices(
         @Body() params: GetParamsBody
     ): Promise<any> {
-        return {
-            givenParams: params,
-            data: await this.serviceService.get(params.filter, params.projection)
-        };
+        return await this.serviceService.get(params.filter, params.projection);
     }
 
     @Post("services/create")
@@ -82,10 +94,7 @@ export class RequestController extends Controller {
     public async getUsers(
         @Body() params: GetParamsBody
     ): Promise<any> {
-        return {
-            givenParams: params,
-            data: await this.userService.get(params.filter, params.projection)
-        };
+        return await this.userService.get(params.filter, params.projection);
     }
 
     @Put("users/update")
@@ -109,4 +118,33 @@ export class RequestController extends Controller {
         return await this.userService.delete(userId);
     }
 
+    // ROOMS ---------------------------------------------------------------------------------------
+
+    @Post("rooms/get")
+    public async getRooms(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.roomService.get(params.filter, params.projection);
+    }
+
+    @Put("rooms/update")
+    public async updateRoom(
+        @Body() room: { roomId : string, updatedRoom: Room }
+    ): Promise<any> {
+        return await this.roomService.modify(room.roomId, room.updatedRoom);
+    }
+
+    @Post("rooms/create")
+    public async createRoom(
+        @Body() room: Room
+    ): Promise<any> {
+        return await this.roomService.create(room);
+    }
+
+    @Delete("rooms/delete")
+    public async deleteRoom(
+        @Query() roomId: string
+    ): Promise<any> {
+        return await this.roomService.delete(roomId);
+    }
 }

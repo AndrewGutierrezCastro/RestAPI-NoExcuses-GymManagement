@@ -1,11 +1,11 @@
 import { Calendar } from './Calendar';
-import { Date } from './Date';
+import { GymDate } from './Date';
 
 export interface Room {
     name : string,
-    totalCapacity : number,
-    allowedCapaocliaty : number,
-    weeklySchedule : Date[],
-    sessionsCalendar : Calendar,
+    capacity : number,
+    allowedCapacity : number,
+    weeklySchedule : GymDate[],
+    sessionsCalendarId? : Calendar,
     _id? : string,
 };

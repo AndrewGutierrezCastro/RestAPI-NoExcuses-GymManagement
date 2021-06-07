@@ -113,6 +113,95 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"GymDate": {
+				"properties": {
+					"dayOfTheWeek": {
+						"type": "string"
+					},
+					"initialHour": {
+						"type": "string"
+					},
+					"finalHour": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"dayOfTheWeek",
+					"initialHour",
+					"finalHour"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Calendar": {
+				"properties": {
+					"roomId": {
+						"type": "string"
+					},
+					"sessions": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"month": {
+						"type": "string"
+					},
+					"year": {
+						"type": "string"
+					},
+					"published": {
+						"type": "boolean"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"roomId",
+					"sessions",
+					"month",
+					"year",
+					"published"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Room": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"capacity": {
+						"type": "number",
+						"format": "double"
+					},
+					"allowedCapacity": {
+						"type": "number",
+						"format": "double"
+					},
+					"weeklySchedule": {
+						"items": {
+							"$ref": "#/components/schemas/GymDate"
+						},
+						"type": "array"
+					},
+					"sessionsCalendarId": {
+						"$ref": "#/components/schemas/Calendar"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"capacity",
+					"allowedCapacity",
+					"weeklySchedule"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -317,6 +406,71 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/GymSession"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/sessions/delete": {
+			"delete": {
+				"operationId": "DeleteSession",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "sessionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/sessions/update": {
+			"put": {
+				"operationId": "UpdateSession",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedSession": {
+										"$ref": "#/components/schemas/GymSession"
+									},
+									"sessionId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedSession",
+									"sessionId"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -553,6 +707,125 @@
 					{
 						"in": "query",
 						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/rooms/get": {
+			"post": {
+				"operationId": "GetRooms",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/rooms/update": {
+			"put": {
+				"operationId": "UpdateRoom",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedRoom": {
+										"$ref": "#/components/schemas/Room"
+									},
+									"roomId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedRoom",
+									"roomId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/rooms/create": {
+			"post": {
+				"operationId": "CreateRoom",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Room"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/rooms/delete": {
+			"delete": {
+				"operationId": "DeleteRoom",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "roomId",
 						"required": true,
 						"schema": {
 							"type": "string"

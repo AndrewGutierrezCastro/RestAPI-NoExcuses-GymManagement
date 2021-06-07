@@ -1,4 +1,4 @@
-export interface Date {
+export interface GymDate {
     dayOfTheWeek : string,
     initialHour : string,
     finalHour : string,

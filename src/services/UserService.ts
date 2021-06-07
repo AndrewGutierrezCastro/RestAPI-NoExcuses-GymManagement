@@ -36,7 +36,37 @@ export class UserService implements IBaseService {
     return API.entityRepository.delete('users', entityId);
   }
 
-  get(filter: object, projection: object): Promise<object[]> {
+  async get(filter: object, projection: object): Promise<object[]> {
+
     return API.entityRepository.get('users', filter, DEFAULT_USER_PROJECTION);
+    // return new Promise(async () => {
+    //   let instructors = await API.entityRepository.get('instructors', filter, DEFAULT_USER_PROJECTION);
+    //   let clients = await API.entityRepository.get('clients', filter, DEFAULT_USER_PROJECTION);
+    //   let administrators = await API.entityRepository.get('administrators', filter, DEFAULT_USER_PROJECTION);
+
+    //   let popInstructors = await Promise.all(instructors.map(async (instructor:any) => {
+    //     let { userId, ...attrs } = instructor;
+    //     return {...attrs, userInfo : await API.entityRepository.getOne('users', userId)};
+    //   }));
+
+    //   let popAdministrators = await Promise.all(clients.map(async (administrator:any) => {
+    //     let { userId, ...attrs } = administrator;
+    //     let xd = {...attrs, userInfo : await API.entityRepository.getOne('users', userId)};
+    //     console.log(xd);
+        
+    //     return xd
+    //   }));
+
+    //   let popClients = await Promise.all(administrators.map(async (client:any) => {
+    //     let { userId, ...attrs } = client;
+    //     return {...attrs, userInfo : await API.entityRepository.getOne('users', userId)};
+    //   }));
+      
+    //   return [
+    //     ...popAdministrators,
+    //     ...popInstructors,
+    //     ...popClients
+    //   ];
+    // });
   }
 }

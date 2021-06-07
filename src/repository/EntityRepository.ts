@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 import { MongoDbConnection } from './../db/MongoDbConnection';
 import { IBaseRepository } from "./IBaseRepository";
 
