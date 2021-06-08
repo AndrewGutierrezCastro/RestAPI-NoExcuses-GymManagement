@@ -1,3 +1,4 @@
+import { Instructor, InstructorWithoutRef } from './../model/Instructor';
 import { SessionService } from './../services/SessionService';
 import {
     Body,
@@ -16,6 +17,7 @@ import { User } from '../model/User';
 import { GymSession } from '../model/GymSession';
 import { RoomService } from '../services/RoomService';
 import { Room } from '../model/Room';
+import { InstructorService } from '../services/InstructorService';
 
 /**
  * @description Request controller
@@ -28,7 +30,8 @@ export class RequestController extends Controller {
         private sessionService: SessionService = new SessionService(),
         private serviceService: ServiceService = new ServiceService(),
         private userService   : UserService    = new UserService(),
-        private roomService   : RoomService    = new RoomService()
+        private roomService   : RoomService    = new RoomService(),
+        private instructorService : InstructorService = new InstructorService()
     ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
@@ -147,4 +150,34 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.roomService.delete(roomId);
     }
+
+     // INSTRUCTOR ---------------------------------------------------------------------------------------
+
+     @Post("instructor/get")
+     public async getInstructor(
+        @Body() params: GetParamsBody
+     ): Promise<any> {
+        return await this.instructorService.get(params.filter, params.projection);
+     }
+ 
+     @Put("instructor/update")
+     public async updateInstructor(
+        @Body() instructor: { instructorId : string, updatedInstructor: Room }
+     ): Promise<any> {
+        return await this.instructorService.modify(instructor.instructorId, instructor.updatedInstructor);
+     }
+ 
+     @Post("instructor/create")
+     public async createInstructor(
+        @Body() instructor: InstructorWithoutRef
+     ): Promise<any> {
+        return await this.instructorService.create(instructor);
+     }
+ 
+     @Delete("instructor/delete")
+     public async deleteInstructor(
+        @Query() instructorId: string
+     ): Promise<any> {
+        return await this.instructorService.delete(instructorId);
+     }
 }

@@ -5,3 +5,9 @@ export interface Instructor extends User {
     category : string,
     specialities : string[],
 }
+
+export interface InstructorWithoutRef {
+    userId : string
+    category? : string,
+    specialities : string[],
+}

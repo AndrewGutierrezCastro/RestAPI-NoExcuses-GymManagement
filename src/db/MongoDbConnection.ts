@@ -22,7 +22,7 @@ export class MongoDbConnection {
     mongoose.model('services', ServiceSchema);
     mongoose.model('administrator', AdministratorSchema);
     mongoose.model('clients', ClientSchema);
-    mongoose.model('instructors', InstructorSchema);
+    mongoose.model('instructor', InstructorSchema);
   }
 
   private connect() {
