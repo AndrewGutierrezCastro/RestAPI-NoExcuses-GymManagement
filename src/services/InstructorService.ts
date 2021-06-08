@@ -21,16 +21,30 @@ export class InstructorService implements IBaseService {
     let instructors = <InstructorWithoutRef[]> await API.entityRepository.get('instructor', filter, projection );
     
     let filledInstructors = await Promise.all(instructors.map( async(instructor)=> {
-        let {userId, ...otherAttrs} = instructor;
-        let userInfo = await API.entityRepository.getOne('users', userId);
+        let {userId, ...otherAttrs} : any = instructor;
+        let userInfo = await API.entityRepository.getOne('users', userId, {}, {password:0});
 
-        let services = await Promise.all(otherAttrs.specialities.map( async(serviceId) => {
+        let services = await Promise.all(otherAttrs.specialities.map( async(serviceId:string) => {
             return await API.entityRepository.getOne('services', serviceId);
         }));
 
-        return {user : userInfo, specialities : services, category : otherAttrs.category};
+        return {_id: otherAttrs._id, user : userInfo, specialities : services, category : otherAttrs.category};
     }));
     
     return filledInstructors;
   }
+
+  async getOne(entityId: string): Promise<object> {
+    
+    let instructor = await API.entityRepository.getOne('instructor', entityId);
+
+    let {userId, ...otherAttrs} : any = instructor;
+    let userInfo = await API.entityRepository.getOne('users', userId, {}, {password:0});
+
+    let services = await Promise.all(otherAttrs.specialities.map( async(serviceId:string) => {
+        return await API.entityRepository.getOne('services', serviceId);
+    }));
+
+    return {_id: otherAttrs._id, user : userInfo, specialities : services, category : otherAttrs.category};
+}
 }

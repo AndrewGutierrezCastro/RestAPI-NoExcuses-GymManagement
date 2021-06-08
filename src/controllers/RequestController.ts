@@ -125,7 +125,6 @@ export class RequestController extends Controller {
     }
 
     // ROOMS ---------------------------------------------------------------------------------------
-
     @Post("rooms/get")
     public async getRooms(
         @Body() params: GetParamsBody

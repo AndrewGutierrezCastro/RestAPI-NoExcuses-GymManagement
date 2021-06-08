@@ -18,4 +18,8 @@ export class ClientService implements IBaseService {
   get(filter: object, projection: object): Promise<object[]> {
     return API.entityRepository.get('client', filter, projection);
   }
+
+  getOne(entityId: string): Promise<object> {
+    return API.entityRepository.getOne('instructor', entityId);
+    }
 }

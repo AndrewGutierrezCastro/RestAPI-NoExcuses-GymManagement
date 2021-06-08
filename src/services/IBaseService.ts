@@ -7,5 +7,7 @@ export interface IBaseService {
     delete(entityId : string) : Promise<object>;
 
     get(filter : object, projection : object) : Promise<object[]>;
+
+    getOne(entityId : string) : Promise<object>;
     
 }
