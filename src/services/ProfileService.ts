@@ -20,6 +20,6 @@ export class ProfileService implements IBaseService {
   }
 
   getOne(entityId: string): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId);
+    return API.entityRepository.getOne('profile', entityId);
     }
 }

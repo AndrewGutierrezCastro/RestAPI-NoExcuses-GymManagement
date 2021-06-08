@@ -20,6 +20,6 @@ export class ReservationService implements IBaseService {
   }
 
   getOne(entityId: string): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId);
+    return API.entityRepository.getOne('reservation', entityId);
     }
 }

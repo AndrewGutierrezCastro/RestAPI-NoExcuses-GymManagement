@@ -39,6 +39,6 @@ export class RoomService implements IBaseService {
   }
 
   getOne(entityId: string): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId);
+    return API.entityRepository.getOne('room', entityId);
     }
 }

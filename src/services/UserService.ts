@@ -37,7 +37,7 @@ export class UserService implements IBaseService {
   }
 
   getOne(entityId: string): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId);
+    return API.entityRepository.getOne('users', entityId);
   }
 
   async get(filter: object, projection: object): Promise<object[]> {

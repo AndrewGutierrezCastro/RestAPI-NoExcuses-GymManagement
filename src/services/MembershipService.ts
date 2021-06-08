@@ -20,6 +20,6 @@ export class MembershipService implements IBaseService {
   }
 
   getOne(entityId: string): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId);
+    return API.entityRepository.getOne('membership', entityId);
     }
 }
