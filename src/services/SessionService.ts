@@ -4,7 +4,7 @@ import API from "../API";
 import { Calendar } from "../model/Calendar";
 import { GymSession } from "../model/GymSession";
 import { IBaseService } from "./IBaseService";
-import { Date } from "../model/Date";
+import { GymDate } from "../model/Date";
 
 export class SessionService implements IBaseService {
 
@@ -13,7 +13,7 @@ export class SessionService implements IBaseService {
     let session : any = entity;
     session.serviceId = new mongoose.mongo.ObjectId(session.serviceId);
     session.dayHour = !session.dayHour ? [] : session.dayHour;
-    session.instructors = !session.instructors ? [] : session.instructors;
+    session.instructorId = new mongoose.mongo.ObjectId(session.instructorId);
     session.available = true;
     
     return API.entityRepository.create('sessions', session);
@@ -64,7 +64,7 @@ export class SessionService implements IBaseService {
       
       sessions.forEach(session => {
 
-        let datesBySession : Date[] = session.dayHour;
+        let datesBySession : GymDate[] = session.dayHour;
         datesBySession.forEach(pValidatedDate => {
           
           let dayOfTheWeek : string = pValidatedDate.dayOfTheWeek;
@@ -75,7 +75,7 @@ export class SessionService implements IBaseService {
       return result;
     });
   }
-  private isBetween(pDateValidated : Date, pDateNonValidatedDate : Date) : boolean {
+  private isBetween(pDateValidated : GymDate, pDateNonValidatedDate : GymDate) : boolean {
     let inicial1 : number = this.getHourAsNumber(pDateValidated.initialHour);
     let final1 : number = this.getHourAsNumber(pDateValidated.finalHour);
 

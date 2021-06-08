@@ -27,8 +27,8 @@ export const SessionSchema : Schema = new Schema({
         type : Schema.Types.ObjectId,
         required : true,
     },
-    instructors : {
-        type : [Schema.Types.ObjectId],
+    instructorId : {
+        type : Schema.Types.ObjectId,
         required : true,
     },
     available : {

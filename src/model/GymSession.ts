@@ -1,8 +1,8 @@
-import { Date } from "./Date";
+import { GymDate } from "./Date";
 
 export interface GymSession {
-    dayHour : Date[],
-    instructors : string[],
+    dayHour : GymDate[],
+    instructorId : string,
     serviceId : string,
     available : boolean,
     _id? : string,
