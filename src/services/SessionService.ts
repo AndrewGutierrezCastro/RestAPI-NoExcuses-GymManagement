@@ -1,5 +1,5 @@
+import { InstructorService } from './InstructorService';
 import mongoose, { model } from "mongoose";
-import { Session } from "node:inspector";
 import API from "../API";
 import { Calendar } from "../model/Calendar";
 import { GymSession } from "../model/GymSession";
@@ -7,6 +7,11 @@ import { IBaseService } from "./IBaseService";
 import { GymDate } from "../model/Date";
 
 export class SessionService implements IBaseService {
+
+  constructor(
+    private instructorService : InstructorService = new InstructorService()
+  ){}
+
 
   create(entity: object): Promise<object> {
 
@@ -16,6 +21,8 @@ export class SessionService implements IBaseService {
     session.instructorId = new mongoose.mongo.ObjectId(session.instructorId);
     session.available = true;
     
+    // TODO: agregar la session dentro del calendario de la sala dado
+
     return API.entityRepository.create('sessions', session);
   }
 
@@ -32,9 +39,9 @@ export class SessionService implements IBaseService {
     const result = await API.entityRepository.get('sessions', filter, projection);
     
     let populatedData = await Promise.all(result.map(async (session: any) => {
-      let { serviceId, instructors, ...sessionPart }: any = session;
+      let { serviceId, instructorId, ...sessionPart }: any = session;
       sessionPart.service = await API.entityRepository.getOne('services', serviceId);
-      sessionPart.instructors = await instructors.map(async (instructorId: string) => await API.entityRepository.getOne('instructors', instructorId));
+      sessionPart.instructor = await this.instructorService.getOne(instructorId);
       return sessionPart;
     }));
     
@@ -96,4 +103,8 @@ export class SessionService implements IBaseService {
 
   }
 
+
+  getOne(entityId: string): Promise<object> {
+    return API.entityRepository.getOne('instructor', entityId);
+    }
 }

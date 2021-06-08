@@ -18,4 +18,8 @@ export class ServiceService implements IBaseService {
   get(filter: object, projection: object): Promise<object[]> {
     return API.entityRepository.get('services', filter, projection);
   }
+
+  getOne(entityId: string): Promise<object> {
+    return API.entityRepository.getOne('instructor', entityId);
+    }
 }

@@ -1,3 +1,4 @@
+import { Instructor, InstructorWithoutRef } from './../model/Instructor';
 import { SessionService } from './../services/SessionService';
 import {
     Body,
@@ -16,6 +17,7 @@ import { User } from '../model/User';
 import { GymSession } from '../model/GymSession';
 import { RoomService } from '../services/RoomService';
 import { Room } from '../model/Room';
+import { InstructorService } from '../services/InstructorService';
 import { CalendarService } from '../services/CalendarService';
 import { Calendar } from '../model/Calendar';
 import { ReservationService } from '../services/ReservationService';
@@ -39,7 +41,9 @@ export class RequestController extends Controller {
         private calendarService : CalendarService = new CalendarService(),
         private reservationService : ReservationService = new ReservationService(),
         private membershipService : MembershipService = new MembershipService(),
-        private paymentService : PaymentService = new PaymentService()
+        private paymentService : PaymentService = new PaymentService(),
+        private instructorService : InstructorService = new InstructorService(),
+
     ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
@@ -130,7 +134,6 @@ export class RequestController extends Controller {
     }
 
     // ROOMS ---------------------------------------------------------------------------------------
-
     @Post("rooms/get")
     public async getRooms(
         @Body() params: GetParamsBody
@@ -159,6 +162,35 @@ export class RequestController extends Controller {
         return await this.roomService.delete(roomId);
     }
 
+     // INSTRUCTOR ---------------------------------------------------------------------------------------
+
+     @Post("instructor/get")
+     public async getInstructor(
+        @Body() params: GetParamsBody
+     ): Promise<any> {
+        return await this.instructorService.get(params.filter, params.projection);
+     }
+ 
+     @Put("instructor/update")
+     public async updateInstructor(
+        @Body() instructor: { instructorId : string, updatedInstructor: Room }
+     ): Promise<any> {
+        return await this.instructorService.modify(instructor.instructorId, instructor.updatedInstructor);
+     }
+ 
+     @Post("instructor/create")
+     public async createInstructor(
+        @Body() instructor: InstructorWithoutRef
+     ): Promise<any> {
+        return await this.instructorService.create(instructor);
+     }
+ 
+     @Delete("instructor/delete")
+     public async deleteInstructor(
+        @Query() instructorId: string
+     ): Promise<any> {
+        return await this.instructorService.delete(instructorId);
+     }
     //Calendar -------------------------------------------------------
     @Post("calendar/get")
     public async getCalendar(

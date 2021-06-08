@@ -36,6 +36,10 @@ export class UserService implements IBaseService {
     return API.entityRepository.delete('users', entityId);
   }
 
+  getOne(entityId: string): Promise<object> {
+    return API.entityRepository.getOne('instructor', entityId);
+  }
+
   async get(filter: object, projection: object): Promise<object[]> {
 
     return API.entityRepository.get('users', filter, DEFAULT_USER_PROJECTION);

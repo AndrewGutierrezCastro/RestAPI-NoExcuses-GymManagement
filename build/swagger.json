@@ -92,11 +92,8 @@
 					"roomId": {
 						"type": "string"
 					},
-					"instructors": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
+					"instructorId": {
+						"type": "string"
 					},
 					"serviceId": {
 						"type": "string"
@@ -111,7 +108,7 @@
 				"required": [
 					"dayHour",
 					"roomId",
-					"instructors",
+					"instructorId",
 					"serviceId",
 					"available"
 				],
@@ -202,6 +199,28 @@
 					"capacity",
 					"allowedCapacity",
 					"weeklySchedule"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InstructorWithoutRef": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"specialities": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"userId",
+					"specialities"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -909,6 +928,125 @@
 					{
 						"in": "query",
 						"name": "roomId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/instructor/get": {
+			"post": {
+				"operationId": "GetInstructor",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/instructor/update": {
+			"put": {
+				"operationId": "UpdateInstructor",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedInstructor": {
+										"$ref": "#/components/schemas/Room"
+									},
+									"instructorId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedInstructor",
+									"instructorId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/instructor/create": {
+			"post": {
+				"operationId": "CreateInstructor",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/InstructorWithoutRef"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/instructor/delete": {
+			"delete": {
+				"operationId": "DeleteInstructor",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "instructorId",
 						"required": true,
 						"schema": {
 							"type": "string"

@@ -7,11 +7,12 @@ export const InstructorSchema : Schema = new Schema({
     },
     category : {
         type: Schema.Types.String,
-        required : true
+        required : true,
+        default : 'Fijo'
     },
     specialities : {
         type : [Schema.Types.ObjectId],
         required : true,
-        default : true,
+        default : [],
     }
 });

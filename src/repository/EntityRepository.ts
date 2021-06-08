@@ -54,8 +54,11 @@ export class EntityRepository implements IBaseRepository {
         return await MongoDbConnection.db.collection(collectionName).find(filter, {projection}).toArray();
     }
 
-    public async getOne(collectionName : string, id : string) : Promise<object> {
-        return await MongoDbConnection.db.collection(collectionName).findOne({_id : id});
+    public async getOne(collectionName : string, id : string, filter : object = {}, projection : object = {}) : Promise<object> {
+
+        let objectId = new mongoose.mongo.ObjectID(id);
+        let result = await MongoDbConnection.db.collection(collectionName).findOne({_id : objectId, ...filter}, {projection});
+        return result;
     }
 }
 

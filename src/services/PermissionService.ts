@@ -18,4 +18,8 @@ export class PermissionService implements IBaseService {
   get(filter: object, projection: object): Promise<object[]> {
     return API.entityRepository.get('permission', filter, projection);
   }
+
+  getOne(entityId: string): Promise<object> {
+    return API.entityRepository.getOne('instructor', entityId);
+    }
 }
