@@ -89,8 +89,19 @@
 						},
 						"type": "array"
 					},
+<<<<<<< HEAD
 					"instructorId": {
 						"type": "string"
+=======
+					"roomId": {
+						"type": "string"
+					},
+					"instructors": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 					},
 					"serviceId": {
 						"type": "string"
@@ -104,7 +115,12 @@
 				},
 				"required": [
 					"dayHour",
+<<<<<<< HEAD
 					"instructorId",
+=======
+					"roomId",
+					"instructors",
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 					"serviceId",
 					"available"
 				],
@@ -852,9 +868,15 @@
 				]
 			}
 		},
+<<<<<<< HEAD
 		"/api/instructor/get": {
 			"post": {
 				"operationId": "GetInstructor",
+=======
+		"/api/calendar/get": {
+			"post": {
+				"operationId": "GetCalendar",
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -879,9 +901,15 @@
 				}
 			}
 		},
+<<<<<<< HEAD
 		"/api/instructor/update": {
 			"put": {
 				"operationId": "UpdateInstructor",
+=======
+		"/api/calendar/update": {
+			"put": {
+				"operationId": "UpdateCalendar",
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -900,16 +928,28 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+<<<<<<< HEAD
 									"updatedInstructor": {
 										"$ref": "#/components/schemas/Room"
 									},
 									"instructorId": {
+=======
+									"updatedCalendar": {
+										"$ref": "#/components/schemas/Calendar"
+									},
+									"calendarId": {
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 										"type": "string"
 									}
 								},
 								"required": [
+<<<<<<< HEAD
 									"updatedInstructor",
 									"instructorId"
+=======
+									"updatedCalendar",
+									"calendarId"
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 								],
 								"type": "object"
 							}
@@ -918,9 +958,15 @@
 				}
 			}
 		},
+<<<<<<< HEAD
 		"/api/instructor/create": {
 			"post": {
 				"operationId": "CreateInstructor",
+=======
+		"/api/calendar/create": {
+			"post": {
+				"operationId": "CreateCalendar",
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -938,16 +984,26 @@
 					"content": {
 						"application/json": {
 							"schema": {
+<<<<<<< HEAD
 								"$ref": "#/components/schemas/InstructorWithoutRef"
+=======
+								"$ref": "#/components/schemas/Calendar"
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 							}
 						}
 					}
 				}
 			}
 		},
+<<<<<<< HEAD
 		"/api/instructor/delete": {
 			"delete": {
 				"operationId": "DeleteInstructor",
+=======
+		"/api/calendar/delete": {
+			"delete": {
+				"operationId": "DeleteCalendar",
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -962,7 +1018,11 @@
 				"parameters": [
 					{
 						"in": "query",
+<<<<<<< HEAD
 						"name": "instructorId",
+=======
+						"name": "calendarId",
+>>>>>>> 297862c93c974d980ef6480130e89591137c3f24
 						"required": true,
 						"schema": {
 							"type": "string"
