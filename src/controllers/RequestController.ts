@@ -18,7 +18,12 @@ import { RoomService } from '../services/RoomService';
 import { Room } from '../model/Room';
 import { CalendarService } from '../services/CalendarService';
 import { Calendar } from '../model/Calendar';
-
+import { ReservationService } from '../services/ReservationService';
+import { Reservation } from '../model/Reservation';
+import { MembershipService } from '../services/MembershipService';
+import { Membership } from '../model/Membership';
+import { Payment } from '../model/Payment';
+import { PaymentService } from '../services/PaymenService';
 /**
  * @description Request controller
  * The request handler to invoke the respective service
@@ -31,7 +36,10 @@ export class RequestController extends Controller {
         private serviceService: ServiceService = new ServiceService(),
         private userService   : UserService    = new UserService(),
         private roomService   : RoomService    = new RoomService(),
-        private calendarService : CalendarService = new CalendarService()
+        private calendarService : CalendarService = new CalendarService(),
+        private reservationService : ReservationService = new ReservationService(),
+        private membershipService : MembershipService = new MembershipService(),
+        private paymentService : PaymentService = new PaymentService()
     ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
@@ -178,5 +186,89 @@ export class RequestController extends Controller {
         @Query() calendarId: string
     ): Promise<any> {
         return await this.calendarService.delete(calendarId);
+    }
+    //Reservations -------------------------------------------------------
+    @Post("reservation/get")
+    public async getReservation(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.reservationService.get(params.filter, params.projection);
+    }
+
+    @Put("reservation/update")
+    public async updateReservation(
+        @Body() reservation: { reservationId : string, updatedReservation: Reservation }
+    ): Promise<any> {
+        return await this.reservationService.modify(reservation.reservationId, reservation.updatedReservation);
+    }
+
+    @Post("reservation/create")
+    public async createReservation(
+        @Body() reservation: Reservation
+    ): Promise<any> {
+        return await this.reservationService.create(reservation);
+    }
+
+    @Delete("reservation/delete")
+    public async deleteReservation(
+        @Query() reservationId: string
+    ): Promise<any> {
+        return await this.reservationService.delete(reservationId);
+    }
+    //Memberships-------------------------------------------------------
+    @Post("membership/get")
+    public async getMembership(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.membershipService.get(params.filter, params.projection);
+    }
+
+    @Put("membership/update")
+    public async updateMembership(
+        @Body() membership: { membershipId : string, updatedMembership: Membership }
+    ): Promise<any> {
+        return await this.membershipService.modify(membership.membershipId, membership.updatedMembership);
+    }
+
+    @Post("membership/create")
+    public async createMembership(
+        @Body() membership: Membership
+    ): Promise<any> {
+        return await this.membershipService.create(membership);
+    }
+
+    @Delete("membership/delete")
+    public async deleteMembership(
+        @Query() membershipId: string
+    ): Promise<any> {
+        return await this.membershipService.delete(membershipId);
+    }
+    //Payment-------------------------------------------------------
+    @Post("payment/get")
+    public async getPayment(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.paymentService.get(params.filter, params.projection);
+    }
+
+    @Put("payment/update")
+    public async updatePayment(
+        @Body() payment: { paymentId : string, updatedPayment: Payment }
+    ): Promise<any> {
+        return await this.paymentService.modify(payment.paymentId, payment.updatedPayment);
+    }
+
+    @Post("payment/create")
+    public async createPayment(
+        @Body() payment: Payment
+    ): Promise<any> {
+        return await this.paymentService.create(payment);
+    }
+
+    @Delete("payment/delete")
+    public async deletePayment(
+        @Query() paymentId: string
+    ): Promise<any> {
+        return await this.paymentService.delete(paymentId);
     }
 }

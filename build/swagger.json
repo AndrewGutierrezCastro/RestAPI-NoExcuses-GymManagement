@@ -205,6 +205,86 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Reservation": {
+				"properties": {
+					"creationDate": {
+						"type": "string"
+					},
+					"sessionId": {
+						"type": "string"
+					},
+					"clientId": {
+						"type": "string"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"creationDate",
+					"sessionId",
+					"clientId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Membership": {
+				"properties": {
+					"state": {
+						"type": "boolean"
+					},
+					"clientId": {
+						"type": "string"
+					},
+					"paymentId": {
+						"type": "string"
+					},
+					"createdDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"state",
+					"clientId",
+					"paymentId",
+					"createdDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Payment": {
+				"properties": {
+					"paymentType": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"paymentType",
+					"amount",
+					"date",
+					"subject"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -948,6 +1028,363 @@
 					{
 						"in": "query",
 						"name": "calendarId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/reservation/get": {
+			"post": {
+				"operationId": "GetReservation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/reservation/update": {
+			"put": {
+				"operationId": "UpdateReservation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedReservation": {
+										"$ref": "#/components/schemas/Reservation"
+									},
+									"reservationId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedReservation",
+									"reservationId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/reservation/create": {
+			"post": {
+				"operationId": "CreateReservation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Reservation"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/reservation/delete": {
+			"delete": {
+				"operationId": "DeleteReservation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "reservationId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/membership/get": {
+			"post": {
+				"operationId": "GetMembership",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/membership/update": {
+			"put": {
+				"operationId": "UpdateMembership",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedMembership": {
+										"$ref": "#/components/schemas/Membership"
+									},
+									"membershipId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedMembership",
+									"membershipId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/membership/create": {
+			"post": {
+				"operationId": "CreateMembership",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Membership"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/membership/delete": {
+			"delete": {
+				"operationId": "DeleteMembership",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "membershipId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/payment/get": {
+			"post": {
+				"operationId": "GetPayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/payment/update": {
+			"put": {
+				"operationId": "UpdatePayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedPayment": {
+										"$ref": "#/components/schemas/Payment"
+									},
+									"paymentId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedPayment",
+									"paymentId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/payment/create": {
+			"post": {
+				"operationId": "CreatePayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Payment"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/payment/delete": {
+			"delete": {
+				"operationId": "DeletePayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "paymentId",
 						"required": true,
 						"schema": {
 							"type": "string"
