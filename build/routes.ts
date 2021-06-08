@@ -36,10 +36,21 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GymDate": {
+        "dataType": "refObject",
+        "properties": {
+            "dayOfTheWeek": {"dataType":"string","required":true},
+            "initialHour": {"dataType":"string","required":true},
+            "finalHour": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GymSession": {
         "dataType": "refObject",
         "properties": {
-            "dayHour": {"dataType":"array","array":{"dataType":"datetime"},"required":true},
+            "dayHour": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
+            "roomId": {"dataType":"string","required":true},
             "instructors": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "serviceId": {"dataType":"string","required":true},
             "available": {"dataType":"boolean","required":true},
@@ -54,16 +65,6 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "_id": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "GymDate": {
-        "dataType": "refObject",
-        "properties": {
-            "dayOfTheWeek": {"dataType":"string","required":true},
-            "initialHour": {"dataType":"string","required":true},
-            "finalHour": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -87,7 +88,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "capacity": {"dataType":"double","required":true},
             "allowedCapacity": {"dataType":"double","required":true},
-            "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "weeklySchedule": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "sessionsCalendarId": {"ref":"Calendar"},
             "_id": {"dataType":"string"},
         },
@@ -545,6 +546,94 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.deleteRoom.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/calendar/get',
+            function RequestController_getCalendar(request: any, response: any, next: any) {
+            const args = {
+                    params: {"in":"body","name":"params","required":true,"ref":"GetParamsBody"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getCalendar.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/calendar/update',
+            function RequestController_updateCalendar(request: any, response: any, next: any) {
+            const args = {
+                    calendar: {"in":"body","name":"calendar","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"updatedCalendar":{"ref":"Calendar","required":true},"calendarId":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.updateCalendar.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/calendar/create',
+            function RequestController_createCalendar(request: any, response: any, next: any) {
+            const args = {
+                    calendar: {"in":"body","name":"calendar","required":true,"ref":"Calendar"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.createCalendar.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/api/calendar/delete',
+            function RequestController_deleteCalendar(request: any, response: any, next: any) {
+            const args = {
+                    calendarId: {"in":"query","name":"calendarId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.deleteCalendar.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

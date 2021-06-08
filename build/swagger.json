@@ -61,14 +61,36 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GymDate": {
+				"properties": {
+					"dayOfTheWeek": {
+						"type": "string"
+					},
+					"initialHour": {
+						"type": "string"
+					},
+					"finalHour": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"dayOfTheWeek",
+					"initialHour",
+					"finalHour"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GymSession": {
 				"properties": {
 					"dayHour": {
 						"items": {
-							"type": "string",
-							"format": "date-time"
+							"$ref": "#/components/schemas/GymDate"
 						},
 						"type": "array"
+					},
+					"roomId": {
+						"type": "string"
 					},
 					"instructors": {
 						"items": {
@@ -88,6 +110,7 @@
 				},
 				"required": [
 					"dayHour",
+					"roomId",
 					"instructors",
 					"serviceId",
 					"available"
@@ -110,26 +133,6 @@
 				"required": [
 					"name",
 					"description"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"GymDate": {
-				"properties": {
-					"dayOfTheWeek": {
-						"type": "string"
-					},
-					"initialHour": {
-						"type": "string"
-					},
-					"finalHour": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"dayOfTheWeek",
-					"initialHour",
-					"finalHour"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -826,6 +829,125 @@
 					{
 						"in": "query",
 						"name": "roomId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/calendar/get": {
+			"post": {
+				"operationId": "GetCalendar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/calendar/update": {
+			"put": {
+				"operationId": "UpdateCalendar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedCalendar": {
+										"$ref": "#/components/schemas/Calendar"
+									},
+									"calendarId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedCalendar",
+									"calendarId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/calendar/create": {
+			"post": {
+				"operationId": "CreateCalendar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Calendar"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/calendar/delete": {
+			"delete": {
+				"operationId": "DeleteCalendar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "calendarId",
 						"required": true,
 						"schema": {
 							"type": "string"

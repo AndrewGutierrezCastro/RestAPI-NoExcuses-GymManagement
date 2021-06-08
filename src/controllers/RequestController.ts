@@ -16,6 +16,8 @@ import { User } from '../model/User';
 import { GymSession } from '../model/GymSession';
 import { RoomService } from '../services/RoomService';
 import { Room } from '../model/Room';
+import { CalendarService } from '../services/CalendarService';
+import { Calendar } from '../model/Calendar';
 
 /**
  * @description Request controller
@@ -28,7 +30,8 @@ export class RequestController extends Controller {
         private sessionService: SessionService = new SessionService(),
         private serviceService: ServiceService = new ServiceService(),
         private userService   : UserService    = new UserService(),
-        private roomService   : RoomService    = new RoomService()
+        private roomService   : RoomService    = new RoomService(),
+        private calendarService : CalendarService = new CalendarService()
     ) { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
@@ -146,5 +149,34 @@ export class RequestController extends Controller {
         @Query() roomId: string
     ): Promise<any> {
         return await this.roomService.delete(roomId);
+    }
+
+    //Calendar -------------------------------------------------------
+    @Post("calendar/get")
+    public async getCalendar(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.calendarService.get(params.filter, params.projection);
+    }
+
+    @Put("calendar/update")
+    public async updateCalendar(
+        @Body() calendar: { calendarId : string, updatedCalendar: Calendar }
+    ): Promise<any> {
+        return await this.calendarService.modify(calendar.calendarId, calendar.updatedCalendar);
+    }
+
+    @Post("calendar/create")
+    public async createCalendar(
+        @Body() calendar: Calendar
+    ): Promise<any> {
+        return await this.calendarService.create(calendar);
+    }
+
+    @Delete("calendar/delete")
+    public async deleteCalendar(
+        @Query() calendarId: string
+    ): Promise<any> {
+        return await this.calendarService.delete(calendarId);
     }
 }

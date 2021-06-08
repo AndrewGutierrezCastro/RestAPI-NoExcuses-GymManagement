@@ -2,7 +2,8 @@ import { GymDate } from "./Date";
 
 export interface GymSession {
     dayHour : GymDate[],
-    instructorId : string,
+    roomId : string,
+    instructors : string[],
     serviceId : string,
     available : boolean,
     _id? : string,

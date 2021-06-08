@@ -5,6 +5,7 @@ import { AdministratorSchema } from './schemas/AdministratorSchema';
 import { ServiceSchema } from './schemas/ServiceSchema';
 import { SessionSchema } from './schemas/SessionSchema';
 import { InstructorSchema } from './schemas/InstructorSchema';
+import { CalendarSchema} from './schemas/CalendarSchema';
 
 export class MongoDbConnection {
   
@@ -23,6 +24,8 @@ export class MongoDbConnection {
     mongoose.model('administrator', AdministratorSchema);
     mongoose.model('clients', ClientSchema);
     mongoose.model('instructors', InstructorSchema);
+
+    mongoose.model('calendar',CalendarSchema);
   }
 
   private connect() {
