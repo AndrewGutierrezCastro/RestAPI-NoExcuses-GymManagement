@@ -26,6 +26,7 @@ import { MembershipService } from '../services/MembershipService';
 import { Membership } from '../model/Membership';
 import { Payment } from '../model/Payment';
 import { PaymentService } from '../services/PaymenService';
+
 /**
  * @description Request controller
  * The request handler to invoke the respective service
@@ -72,7 +73,15 @@ export class RequestController extends Controller {
     public async updateSession(
         @Body() session: { sessionId : string, updatedSession: GymSession }
     ): Promise<any> {
-        return await this.serviceService.modify(session.sessionId, session.updatedSession);
+        return await this.sessionService.modify(session.sessionId, session.updatedSession);
+    }
+
+    @Put("sessions/calendar/add")
+    public async addSessionToCalendar(
+        @Query() sessionId : string, 
+        @Query() calendarId : string
+    ): Promise<any> {
+        return await this.addSessionToCalendar(sessionId, calendarId);
     }
 
     // SERVICES ---------------------------------------------------------------------------------

@@ -5,15 +5,17 @@ import { Calendar } from "../model/Calendar";
 import { GymSession } from "../model/GymSession";
 import { IBaseService } from "./IBaseService";
 import { GymDate } from "../model/Date";
+import { getDaysBetweenDates } from '../utils/DateUtils';
+import { CalendarService } from './CalendarService';
 
 export class SessionService implements IBaseService {
 
   constructor(
-    private instructorService : InstructorService = new InstructorService()
+    private instructorService : InstructorService = new InstructorService(),
+    private calendarService : CalendarService = new CalendarService()
   ){}
 
-
-  create(entity: object): Promise<object> {
+  async create(entity: object): Promise<object> {
 
     let session : any = entity;
     session.serviceId = new mongoose.mongo.ObjectId(session.serviceId);
@@ -21,8 +23,6 @@ export class SessionService implements IBaseService {
     session.instructorId = new mongoose.mongo.ObjectId(session.instructorId);
     session.available = true;
     
-    // TODO: agregar la session dentro del calendario de la sala dado
-
     return API.entityRepository.create('sessions', session);
   }
 
@@ -49,15 +49,10 @@ export class SessionService implements IBaseService {
   }
 
   public getAvailableAmount(sessionId : string) : Number {
+    
+    // TODO: get available amount using the reservation service
     return 0;
   }
-
-  /**
-   * dayOfTheWeek : L, K, M, J, V, S, D
-   * initialHour : 00:00, 12:00 16:00
-   * finalHour : 00:00, 12:00 16:00
-   * 
-   */
 
   public async isNotAllowed(pSession : GymSession, calendarId : string) : Promise<boolean>{
     let calendar : Calendar = <Calendar> await API.entityRepository.getOne('calendar',calendarId);
@@ -66,10 +61,11 @@ export class SessionService implements IBaseService {
     let sessions : GymSession[] = await Promise.all(sessionsIds.map(async(id:string) => {
       return <GymSession> await API.entityRepository.getOne('sessions', id);
     }));
-    return pSession.dayHour.some( pNonValidatedDate => {
+
+    return pSession.dayHour.some( (pNonValidatedDate: GymDate) => {
       let result = false;
       
-      sessions.forEach(session => {
+      sessions.forEach( (session:GymSession) => {
 
         let datesBySession : GymDate[] = session.dayHour;
         datesBySession.forEach(pValidatedDate => {
@@ -82,6 +78,7 @@ export class SessionService implements IBaseService {
       return result;
     });
   }
+
   private isBetween(pDateValidated : GymDate, pDateNonValidatedDate : GymDate) : boolean {
     let inicial1 : number = this.getHourAsNumber(pDateValidated.initialHour);
     let final1 : number = this.getHourAsNumber(pDateValidated.finalHour);
@@ -97,14 +94,57 @@ export class SessionService implements IBaseService {
     let [h, m] = pHour.split(':');
     let hour : number = parseInt(h);
     let minutes : number = parseInt(m);
+    return hour*100 + minutes;
+  }
 
-    return hour*100+minutes;
+  async addSessionToCalendar(sessionId : string, calendarId : string) : Promise<object> {
 
+    let session : any = await this.getOne(sessionId);
+    let sessionByDay = session.dayHour.map((dateDayHour:GymDate) => ({...session, dayHour : dateDayHour}));
+    let sessionsWithDates = sessionByDay.reduce((session:any, acc : object[]) => {
+      let datesByDay = getDaysBetweenDates(session.dayHour.dayOfTheWeek);
+      let sessionsReplicated = datesByDay.map(date => 
+        ({...session, 
+          dayHour : { 
+            dayOfTheWeek : date, 
+            initialHour : session.dayHour.initialHour, 
+            finalHour : session.dayHour.finalHour}
+        })
+      );
+      return [...acc, ...sessionsReplicated];
+    }, []);
+
+    let [calendarRoom] : any = await this.calendarService.get({roomId:session.roomId}, {});
+    let allowed = sessionsWithDates.some((session:any) => this.isNotAllowed(session, calendarRoom._id));
+
+    if (allowed) {
+
+      let creationResult = await Promise.all(sessionsWithDates.map(async (session:any) => {
+        return await API.entityRepository.create('sessions', session);
+      }));
+
+      // update calendar with new sessions
+      let {_id, ...calendarWithoutId} = calendarRoom;
+      let calendarId = _id;
+      calendarWithoutId.sessions = creationResult.map((session:any) => session.insertedId);
+      let updatedInfo = await this.calendarService.modify(calendarId, calendarWithoutId);
+
+      return {
+        message : `Se han agregado las sesiones para todos los dias del mes al calendario`,
+        addedSessionAmount : sessionsWithDates.length,
+        success : true
+      };
+    }
+    else {
+      return {
+        message : `No se pudo agregar la session al calendario de la sala, ya que existe al menos una sesion en el mismo horario semanal`,
+        success : false
+      }
+    }
 
   }
 
-
-  getOne(entityId: string): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId);
+  getOne(entityId: string, filter : object = {}, projection = {}): Promise<object> {
+    return API.entityRepository.getOne('instructor', entityId, filter, projection);
     }
 }
