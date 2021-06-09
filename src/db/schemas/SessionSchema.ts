@@ -6,7 +6,7 @@ export const SessionSchema : Schema = new Schema({
         type: Schema.Types.ObjectId
     },
     dayHour: {
-        type: [{
+        type: {
             dayOfTheWeek : {
                 type : Schema.Types.String,
                 required : true
@@ -19,9 +19,8 @@ export const SessionSchema : Schema = new Schema({
                 type : Schema.Types.String,
                 required : true
             }
-        }],
-        required : true,
-        default : []
+        },
+        required : true
     },
     serviceId : {
         type : Schema.Types.ObjectId,
