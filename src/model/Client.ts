@@ -5,3 +5,10 @@ export interface Client extends User {
     balance : number,
     memberships : string[]
 }
+
+export interface ClientWithoutRef {
+    userId : string,
+    pendingPayment? : string[],
+    balance? : number,
+    memberships? : string[]
+}

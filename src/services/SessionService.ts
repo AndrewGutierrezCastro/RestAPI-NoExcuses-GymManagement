@@ -147,7 +147,12 @@ export class SessionService implements IBaseService {
 
   }
 
-  getOne(entityId: string, filter : object = {}, projection = {}): Promise<object> {
-    return API.entityRepository.getOne('sessions', entityId, filter, projection);
-    }
+  async getOne(entityId: string, filter : object = {}, projection = {}): Promise<object> {
+
+    let session = await API.entityRepository.getOne('sessions', entityId, filter, projection);
+    let { serviceId, instructorId, ...sessionPart }: any = session;
+    sessionPart.service = await this.reqControllerRef.serviceService.getOne(serviceId);
+    sessionPart.instructor = await this.reqControllerRef.instructorService.getOne(instructorId);
+    return sessionPart;
+  }
 }
