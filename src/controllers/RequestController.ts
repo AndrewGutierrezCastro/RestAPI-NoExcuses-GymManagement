@@ -26,6 +26,10 @@ import { MembershipService } from '../services/MembershipService';
 import { Membership } from '../model/Membership';
 import { Payment } from '../model/Payment';
 import { PaymentService } from '../services/PaymenService';
+import { Client } from '../model/Client';
+import { ClientService } from './../services/ClientService';
+import { ProfileService } from './../services/ProfileService';
+
 /**
  * @description Request controller
  * The request handler to invoke the respective service
@@ -43,6 +47,8 @@ export class RequestController extends Controller {
         private membershipService : MembershipService = new MembershipService(),
         private paymentService : PaymentService = new PaymentService(),
         private instructorService : InstructorService = new InstructorService(),
+        private clientService : ClientService = new ClientService(),
+        private profileService : ProfileService = new ProfileService()
 
     ) { super(); }
 
@@ -302,5 +308,34 @@ export class RequestController extends Controller {
         @Query() paymentId: string
     ): Promise<any> {
         return await this.paymentService.delete(paymentId);
+    }
+
+    //client-----------------------------------------------------------------------------
+    @Post("client/get")
+    public async getClient(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.clientService.get(params.filter, params.projection);
+    }
+
+    @Put("client/update")
+    public async updateClient(
+        @Body() client: { clientId : string, updatedClient: Client }
+    ): Promise<any> {
+        return await this.clientService.modify(client.clientId, client.updated);
+    }
+
+    @Post("client/create")
+    public async createClient(
+        @Body() client: Client
+    ): Promise<any> {
+        return await this.clientService.create(client);
+    }
+
+    @Delete("client/delete")
+    public async deleteClient(
+        @Query() clientId: string
+    ): Promise<any> {
+        return await this.clientService.delete(clientId);
     }
 }
