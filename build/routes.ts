@@ -50,7 +50,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "dayHour": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
-            "roomId": {"dataType":"string","required":true},
+            "roomId": {"dataType":"string"},
             "instructorId": {"dataType":"string","required":true},
             "serviceId": {"dataType":"string","required":true},
             "available": {"dataType":"boolean","required":true},
@@ -267,7 +267,7 @@ export function RegisterRoutes(app: express.Router) {
         app.post('/api/sessions/create',
             function RequestController_createSession(request: any, response: any, next: any) {
             const args = {
-                    service: {"in":"body","name":"service","required":true,"ref":"GymSession"},
+                    session: {"in":"body","name":"session","required":true,"ref":"GymSession"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -330,11 +330,11 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/api/sessions/calendar/add',
+        app.put('/api/sessions/calendar',
             function RequestController_addSessionToCalendar(request: any, response: any, next: any) {
             const args = {
                     sessionId: {"in":"query","name":"sessionId","required":true,"dataType":"string"},
-                    calendarId: {"in":"query","name":"calendarId","required":true,"dataType":"string"},
+                    roomId: {"in":"query","name":"roomId","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -350,6 +350,27 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.addSessionToCalendar.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/sessions/fly',
+            function RequestController_sessionsFly(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.sessionsFly.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

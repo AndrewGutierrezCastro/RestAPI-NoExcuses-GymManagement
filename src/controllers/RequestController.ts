@@ -7,7 +7,8 @@ import {
     Post,
     Route,
     Query,
-    Put
+    Put,
+    Get
 } from "tsoa";
 import { ServiceService } from '../services/ServiceService';
 import { GetParamsBody } from './utils';
@@ -26,6 +27,8 @@ import { MembershipService } from '../services/MembershipService';
 import { Membership } from '../model/Membership';
 import { Payment } from '../model/Payment';
 import { PaymentService } from '../services/PaymenService';
+import API from '../API';
+import { MongoDbConnection } from '../db/MongoDbConnection';
 
 /**
  * @description Request controller
@@ -57,9 +60,9 @@ export class RequestController extends Controller {
 
     @Post("sessions/create")
     public async createSession(
-        @Body() service: GymSession
+        @Body() session : GymSession
     ): Promise<any> {
-        return await this.sessionService.create(service);
+        return await this.sessionService.create(session);
     }
 
     @Delete("sessions/delete")
@@ -76,12 +79,19 @@ export class RequestController extends Controller {
         return await this.sessionService.modify(session.sessionId, session.updatedSession);
     }
 
-    @Put("sessions/calendar/add")
+    @Put("sessions/calendar")
     public async addSessionToCalendar(
         @Query() sessionId : string, 
-        @Query() calendarId : string
+        @Query() roomId : string
     ): Promise<any> {
-        return await this.addSessionToCalendar(sessionId, calendarId);
+        return await this.sessionService.addSessionToCalendar(sessionId, roomId);
+    }
+
+    // TEST
+    @Get("sessions/fly")
+    public async sessionsFly(
+    ): Promise<any> {
+        return await MongoDbConnection.db.collection('sessions').deleteMany({});
     }
 
     // SERVICES ---------------------------------------------------------------------------------

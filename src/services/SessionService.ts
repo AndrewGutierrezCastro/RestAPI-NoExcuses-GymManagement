@@ -1,8 +1,9 @@
+
 import { InstructorService } from './InstructorService';
 import mongoose, { model } from "mongoose";
 import API from "../API";
 import { Calendar } from "../model/Calendar";
-import { GymSession } from "../model/GymSession";
+import { GymSession, GymSessionUniqueDate } from "../model/GymSession";
 import { IBaseService } from "./IBaseService";
 import { GymDate } from "../model/Date";
 import { getDaysBetweenDates } from '../utils/DateUtils';
@@ -54,29 +55,23 @@ export class SessionService implements IBaseService {
     return 0;
   }
 
-  public async isNotAllowed(pSession : GymSession, calendarId : string) : Promise<boolean>{
-    let calendar : Calendar = <Calendar> await API.entityRepository.getOne('calendar',calendarId);
-    let sessionsIds : string[] = calendar.sessions;//lista de IdSessiones
+  public async isNotAllowed(pSession : GymSession, calendarSessions : string[]) : Promise<boolean>{
+      let sessionsId = calendarSessions.map(e => e.toString());
+      let calendarSessionsObj =  await Promise.all(sessionsId.map(async(sessionId : string) => await this.getOne(sessionId)));
 
-    let sessions : GymSession[] = await Promise.all(sessionsIds.map(async(id:string) => {
-      return <GymSession> await API.entityRepository.getOne('sessions', id);
-    }));
+      if (calendarSessionsObj.length == 0)
+        return true;
 
-    return pSession.dayHour.some( (pNonValidatedDate: GymDate) => {
-      let result = false;
-      
-      sessions.forEach( (session:GymSession) => {
+      return calendarSessionsObj.reduce( (acc:boolean, session:any) => {
+        
+        console.log(session);
 
-        let datesBySession : GymDate[] = session.dayHour;
-        datesBySession.forEach(pValidatedDate => {
-          
-          let dayOfTheWeek : string = pValidatedDate.dayOfTheWeek;
-          result = result || ( pNonValidatedDate.dayOfTheWeek === dayOfTheWeek && this.isBetween(pValidatedDate, pNonValidatedDate));
-      
-        });
-      });
-      return result;
-    });
+        let datesBySession : GymDate = session.dayHour;
+        console.log(pSession, 'PSession');
+        console.log(datesBySession, 'DatesBySession');
+
+        return acc || datesBySession.dayOfTheWeek === pSession.dayHour[0].dayOfTheWeek && this.isBetween(datesBySession, pSession.dayHour[0]);
+      }, false);
   }
 
   private isBetween(pDateValidated : GymDate, pDateNonValidatedDate : GymDate) : boolean {
@@ -97,34 +92,42 @@ export class SessionService implements IBaseService {
     return hour*100 + minutes;
   }
 
-  async addSessionToCalendar(sessionId : string, calendarId : string) : Promise<object> {
+  async addSessionToCalendar(sessionId : string, roomId : string) : Promise<object> {
 
+    let [calendar] : any[] = await this.calendarService.get({roomId : new mongoose.mongo.ObjectID(roomId)}, {});
+    let calendarId = calendar._id;
     let session : any = await this.getOne(sessionId);
-    let sessionByDay = session.dayHour.map((dateDayHour:GymDate) => ({...session, dayHour : dateDayHour}));
-    let sessionsWithDates = sessionByDay.reduce((session:any, acc : object[]) => {
+    let sessionByDay : GymSessionUniqueDate[] = session.dayHour.map((dateDayHour:GymDate) => ({...session, dayHour : dateDayHour}));
+    
+    let sessionsWithDates : any = sessionByDay.reduce((acc : object[], session:any) => {
+      let {_id, ...sessionWithoutId} = session;
       let datesByDay = getDaysBetweenDates(session.dayHour.dayOfTheWeek);
       let sessionsReplicated = datesByDay.map(date => 
-        ({...session, 
-          dayHour : { 
+        ({...sessionWithoutId, 
+          dayHour : [{ 
             dayOfTheWeek : date, 
             initialHour : session.dayHour.initialHour, 
-            finalHour : session.dayHour.finalHour}
+            finalHour : session.dayHour.finalHour}]
         })
       );
+
+
       return [...acc, ...sessionsReplicated];
     }, []);
 
-    let [calendarRoom] : any = await this.calendarService.get({roomId:session.roomId}, {});
-    let allowed = sessionsWithDates.some((session:any) => this.isNotAllowed(session, calendarRoom._id));
+
+    let firstSession = sessionsWithDates[0];
+    let allowed = await this.isNotAllowed(firstSession, calendar.sessions);
 
     if (allowed) {
 
-      let creationResult = await Promise.all(sessionsWithDates.map(async (session:any) => {
+      let sessionsWithFullDates : any = sessionsWithDates.map((e:any) => ({...e, dayOfTheWeek : e.dayHour[0]}));
+      let creationResult = await Promise.all(sessionsWithFullDates.map(async (session:any) => {
         return await API.entityRepository.create('sessions', session);
       }));
 
       // update calendar with new sessions
-      let {_id, ...calendarWithoutId} = calendarRoom;
+      let {_id, ...calendarWithoutId} = calendar;
       let calendarId = _id;
       calendarWithoutId.sessions = creationResult.map((session:any) => session.insertedId);
       let updatedInfo = await this.calendarService.modify(calendarId, calendarWithoutId);
@@ -145,6 +148,6 @@ export class SessionService implements IBaseService {
   }
 
   getOne(entityId: string, filter : object = {}, projection = {}): Promise<object> {
-    return API.entityRepository.getOne('instructor', entityId, filter, projection);
+    return API.entityRepository.getOne('sessions', entityId, filter, projection);
     }
 }

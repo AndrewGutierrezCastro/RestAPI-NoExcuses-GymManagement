@@ -21,5 +21,5 @@ export class CalendarService implements IBaseService {
 
   getOne(entityId: string): Promise<object> {
     return API.entityRepository.getOne('calendar', entityId);
-    }
+  }
 }

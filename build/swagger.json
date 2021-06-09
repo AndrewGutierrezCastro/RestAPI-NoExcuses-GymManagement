@@ -107,7 +107,6 @@
 				},
 				"required": [
 					"dayHour",
-					"roomId",
 					"instructorId",
 					"serviceId",
 					"available"
@@ -579,7 +578,7 @@
 				}
 			}
 		},
-		"/api/sessions/calendar/add": {
+		"/api/sessions/calendar": {
 			"put": {
 				"operationId": "AddSessionToCalendar",
 				"responses": {
@@ -604,13 +603,30 @@
 					},
 					{
 						"in": "query",
-						"name": "calendarId",
+						"name": "roomId",
 						"required": true,
 						"schema": {
 							"type": "string"
 						}
 					}
 				]
+			}
+		},
+		"/api/sessions/fly": {
+			"get": {
+				"operationId": "SessionsFly",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/services/get": {
