@@ -6,6 +6,6 @@ export interface Room {
     capacity : number,
     allowedCapacity : number,
     weeklySchedule : GymDate[],
-    sessionsCalendarId? : Calendar,
+    monthlyCalendar? : Calendar,
     _id? : string,
 };

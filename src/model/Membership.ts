@@ -3,5 +3,7 @@ export interface Membership {
     clientId : string,
     paymentId : string,
     createdDate : Date,
+    sessionsAmount : number,
+    daysAmount : number,
     _id? : string,
 }

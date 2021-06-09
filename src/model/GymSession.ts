@@ -17,3 +17,11 @@ export interface GymSessionUniqueDate {
     available : boolean,
     _id? : string,
 }
+export interface GymSessionUniqueDate {
+    dayHour : GymDate,
+    roomId : string,
+    instructorId : string,
+    serviceId : string,
+    available : boolean,
+    _id? : string,
+}
