@@ -61,8 +61,9 @@ export class CalendarService implements IBaseService {
 
     if (!calendar)  
       return {
-        message : "Calendario oficial de la sala aun no se ha publicado",
-        success : false
+        message : `Calendario oficial de la sala para el mes ${monthNames[new Date().getMonth()]} aun no se ha publicado`,
+        success : false,
+        monthName : new Date().getMonth()
       }
 
     let sessions : string[] = calendar.sessions;
@@ -71,7 +72,7 @@ export class CalendarService implements IBaseService {
     }));
 
     let calendarWithSessions : CalendarWithSessions = 
-      {...calendar, sessions: sessionsObjs};
+      {...calendar, sessions: sessionsObjs, month : monthNames[new Date().getMonth()]};
 
     return calendarWithSessions;
   }
