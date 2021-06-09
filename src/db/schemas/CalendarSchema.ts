@@ -18,10 +18,9 @@ export const CalendarSchema : Schema = new Schema({
         type : Schema.Types.String,
         require: true,
     },
-    posted :{
+    published :{
         type : Schema.Types.Boolean,
         require :true,
         default : false
     }
-
 });

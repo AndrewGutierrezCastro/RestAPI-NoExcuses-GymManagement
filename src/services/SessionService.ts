@@ -1,3 +1,4 @@
+import { RequestController } from './../controllers/RequestController';
 
 import { InstructorService } from './InstructorService';
 import mongoose, { model } from "mongoose";
@@ -12,8 +13,7 @@ import { CalendarService } from './CalendarService';
 export class SessionService implements IBaseService {
 
   constructor(
-    private instructorService : InstructorService = new InstructorService(),
-    private calendarService : CalendarService = new CalendarService()
+    private reqControllerRef : RequestController 
   ){}
 
   async create(entity: object): Promise<object> {
@@ -42,7 +42,7 @@ export class SessionService implements IBaseService {
     let populatedData = await Promise.all(result.map(async (session: any) => {
       let { serviceId, instructorId, ...sessionPart }: any = session;
       sessionPart.service = await API.entityRepository.getOne('services', serviceId);
-      sessionPart.instructor = await this.instructorService.getOne(instructorId);
+      sessionPart.instructor = await this.reqControllerRef.instructorService.getOne(instructorId);
       return sessionPart;
     }));
     
@@ -94,7 +94,7 @@ export class SessionService implements IBaseService {
 
   async addSessionToCalendar(sessionId : string, roomId : string) : Promise<object> {
 
-    let [calendar] : any[] = await this.calendarService.get({roomId : new mongoose.mongo.ObjectID(roomId)}, {});
+    let [calendar] : any[] = await this.reqControllerRef.calendarService.get({roomId : new mongoose.mongo.ObjectID(roomId)}, {});
     let calendarId = calendar._id;
     let session : any = await this.getOne(sessionId);
     let sessionByDay : GymSessionUniqueDate[] = session.dayHour.map((dateDayHour:GymDate) => ({...session, dayHour : dateDayHour}));
@@ -130,7 +130,7 @@ export class SessionService implements IBaseService {
       let {_id, ...calendarWithoutId} = calendar;
       let calendarId = _id;
       calendarWithoutId.sessions = creationResult.map((session:any) => session.insertedId);
-      let updatedInfo = await this.calendarService.modify(calendarId, calendarWithoutId);
+      let updatedInfo = await this.reqControllerRef.calendarService.modify(calendarId, calendarWithoutId);
 
       return {
         message : `Se han agregado las sesiones para todos los dias del mes al calendario`,

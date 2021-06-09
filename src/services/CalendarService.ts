@@ -1,14 +1,22 @@
+import { ObjectId } from './../repository/IBaseRepository';
 import API from "../API";
-import { Calendar } from "../model/Calendar";
+import { Calendar, CalendarWithSessions } from "../model/Calendar";
 import { Room } from "../model/Room";
 import { IBaseService } from "./IBaseService";
-import { RoomService } from "./RoomService";
+import mongoose from "mongoose";
+import { GymSession } from '../model/GymSession';
+import { RequestController} from '../controllers/RequestController';
+
+const monthNames = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+]
 
 export class CalendarService implements IBaseService {
   
   constructor(
-    private roomService   : RoomService    = new RoomService()
-  ) {  }
+    private reqControllerRef : RequestController
+  ) {}
 
   create(entity: object): Promise<object> {
     return API.entityRepository.create('calendar', entity);
@@ -32,13 +40,39 @@ export class CalendarService implements IBaseService {
 
   public async publishCalendar (calendarId : string) : Promise<object> {
     let calendar =  <Calendar> await this.getOne(calendarId);
-    let room = <Room> await this.roomService.getOne(calendar.roomId);
+    let room = <Room> await this.reqControllerRef.roomService.getOne(calendar.roomId);
     calendar.published = true;
     room.monthlyCalendar = calendar;
-    await this.roomService.modify(room._id, room);
+    await this.reqControllerRef.roomService.modify(room._id, room);
     
     return {  message: "Calendario publicado con exito",
               success: true,
               object : calendar};
+  }
+
+  async getCalendarByRoom(roomId : string) : Promise<CalendarWithSessions | object> {
+
+    let [calendar]  = 
+      <Calendar[]> await this.get(
+        { roomId : new mongoose.mongo.ObjectId(roomId), 
+          month : new Date().getMonth().toString(),
+          year : new Date().getFullYear().toString(),
+          published : true}, {});
+
+    if (!calendar)  
+      return {
+        message : "Calendario oficial de la sala aun no se ha publicado",
+        success : false
+      }
+
+    let sessions : string[] = calendar.sessions;
+    let sessionsObjs = <GymSession[]> await Promise.all(sessions.map(async (sessionId: string) => {
+      return await this.reqControllerRef.sessionService.getOne(sessionId);
+    }));
+
+    let calendarWithSessions : CalendarWithSessions = 
+      {...calendar, sessions: sessionsObjs};
+
+    return calendarWithSessions;
   }
 }

@@ -89,7 +89,7 @@ const models: TsoaRoute.Models = {
             "capacity": {"dataType":"double","required":true},
             "allowedCapacity": {"dataType":"double","required":true},
             "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
-            "sessionsCalendarId": {"ref":"Calendar"},
+            "monthlyCalendar": {"ref":"Calendar"},
             "_id": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -123,6 +123,8 @@ const models: TsoaRoute.Models = {
             "clientId": {"dataType":"string","required":true},
             "paymentId": {"dataType":"string","required":true},
             "createdDate": {"dataType":"datetime","required":true},
+            "sessionsAmount": {"dataType":"double","required":true},
+            "daysAmount": {"dataType":"double","required":true},
             "_id": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -136,6 +138,25 @@ const models: TsoaRoute.Models = {
             "date": {"dataType":"datetime","required":true},
             "subject": {"dataType":"string","required":true},
             "_id": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Client": {
+        "dataType": "refObject",
+        "properties": {
+            "username": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+            "role": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "identification": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "phoneNumber": {"dataType":"string","required":true},
+            "_id": {"dataType":"string"},
+            "pendingPayment": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "balance": {"dataType":"double","required":true},
+            "memberships": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -814,6 +835,28 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/calendar/get',
+            function RequestController_getCalendarByRoom(request: any, response: any, next: any) {
+            const args = {
+                    roomId: {"in":"query","name":"roomId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getCalendarByRoom.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/api/reservation/get',
             function RequestController_getReservation(request: any, response: any, next: any) {
             const args = {
@@ -1075,6 +1118,94 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.deletePayment.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/client/get',
+            function RequestController_getClient(request: any, response: any, next: any) {
+            const args = {
+                    params: {"in":"body","name":"params","required":true,"ref":"GetParamsBody"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/client/update',
+            function RequestController_updateClient(request: any, response: any, next: any) {
+            const args = {
+                    client: {"in":"body","name":"client","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"updatedClient":{"ref":"Client","required":true},"clientId":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.updateClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/client/create',
+            function RequestController_createClient(request: any, response: any, next: any) {
+            const args = {
+                    client: {"in":"body","name":"client","required":true,"ref":"Client"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.createClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/api/client/delete',
+            function RequestController_deleteClient(request: any, response: any, next: any) {
+            const args = {
+                    clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.deleteClient.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

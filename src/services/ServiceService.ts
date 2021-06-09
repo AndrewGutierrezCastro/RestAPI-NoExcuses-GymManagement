@@ -1,7 +1,12 @@
 import API from "../API";
+import { RequestController } from "../controllers/RequestController";
 import { IBaseService } from "./IBaseService";
 
 export class ServiceService implements IBaseService {
+
+  constructor(
+    private reqControllerRef : RequestController 
+  ){}
 
   create(entity: object): Promise<object> {
     return API.entityRepository.create('services', entity);

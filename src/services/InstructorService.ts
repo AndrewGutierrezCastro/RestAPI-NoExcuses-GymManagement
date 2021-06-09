@@ -1,8 +1,14 @@
 import API from "../API";
+import { RequestController } from "../controllers/RequestController";
 import { InstructorWithoutRef } from "../model/Instructor";
 import { IBaseService } from "./IBaseService";
 
 export class InstructorService implements IBaseService {
+
+  constructor(
+    private reqControllerRef : RequestController 
+  ) {}
+
 
   create(entity: object): Promise<object> {
     return API.entityRepository.create('instructor', entity);

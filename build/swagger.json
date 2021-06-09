@@ -186,7 +186,7 @@
 						},
 						"type": "array"
 					},
-					"sessionsCalendarId": {
+					"monthlyCalendar": {
 						"$ref": "#/components/schemas/Calendar"
 					},
 					"_id": {
@@ -262,6 +262,14 @@
 						"type": "string",
 						"format": "date-time"
 					},
+					"sessionsAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"daysAmount": {
+						"type": "number",
+						"format": "double"
+					},
 					"_id": {
 						"type": "string"
 					}
@@ -270,7 +278,9 @@
 					"state",
 					"clientId",
 					"paymentId",
-					"createdDate"
+					"createdDate",
+					"sessionsAmount",
+					"daysAmount"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -300,6 +310,68 @@
 					"amount",
 					"date",
 					"subject"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Client": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"identification": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"_id": {
+						"type": "string"
+					},
+					"pendingPayment": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"balance": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberships": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"username",
+					"password",
+					"role",
+					"firstName",
+					"lastName",
+					"identification",
+					"email",
+					"phoneNumber",
+					"pendingPayment",
+					"balance",
+					"memberships"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1130,6 +1202,30 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "GetCalendarByRoom",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "roomId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/calendar/update": {
@@ -1573,6 +1669,125 @@
 					{
 						"in": "query",
 						"name": "paymentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/client/get": {
+			"post": {
+				"operationId": "GetClient",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/client/update": {
+			"put": {
+				"operationId": "UpdateClient",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"updatedClient": {
+										"$ref": "#/components/schemas/Client"
+									},
+									"clientId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"updatedClient",
+									"clientId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/client/create": {
+			"post": {
+				"operationId": "CreateClient",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Client"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/client/delete": {
+			"delete": {
+				"operationId": "DeleteClient",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "clientId",
 						"required": true,
 						"schema": {
 							"type": "string"

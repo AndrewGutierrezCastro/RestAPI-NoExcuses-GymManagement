@@ -1,18 +1,16 @@
-import { Session } from "node:inspector";
+
 import API from "../API";
 import { IBaseService } from "./IBaseService";
 import { Reservation } from "./../model/Reservation";
 import { GymSessionUniqueDate } from "./../model/GymSession";
-import { ClientService } from "./ClientService";
+import { RequestController } from '../controllers/RequestController';
 
 const previousHours : number= 8;
 
 export class ReservationService implements IBaseService {
 
-
   constructor(
-    private reservationService : ReservationService = new ReservationService(),
-    private clientService : ClientService = new ClientService()
+    private reqControllerRef : RequestController 
   ){}
 
   create(entity: object): Promise<object> {
@@ -38,12 +36,12 @@ export class ReservationService implements IBaseService {
   async cancelReservation(reservationId : string) : Promise<Object>{
     //obtener la reservacion y la reservacion
     let reservation : any = await this.getOne(reservationId);
-    let session : any = await this.reservationService.getOne(reservation.sessionId);
+    let session : any = await this.getOne(reservation.sessionId);
     //respuesta del reembolo o del cargo
     let response : any;
     if(this.isReservationRefund(reservation, session)){
       //generar un reembolso al cliente
-      response = await this.clientService.refund(reservation.clientId);
+      response = await this.reqControllerRef.membershipService.refund(reservation.clientId);
       return {  message : "Se hizo un reembolso a su favor",
               success : true,
               object  : response

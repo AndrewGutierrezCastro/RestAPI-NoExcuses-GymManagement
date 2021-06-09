@@ -26,11 +26,10 @@ import { Reservation } from '../model/Reservation';
 import { MembershipService } from '../services/MembershipService';
 import { Membership } from '../model/Membership';
 import { Payment } from '../model/Payment';
-import { PaymentService } from '../services/PaymenService';
+import { PaymentService } from '../services/PaymentService';
 import { MongoDbConnection } from '../db/MongoDbConnection';
 import { Client } from '../model/Client';
 import { ClientService } from './../services/ClientService';
-import { ProfileService } from './../services/ProfileService';
 
 /**
  * @description Request controller
@@ -39,20 +38,18 @@ import { ProfileService } from './../services/ProfileService';
 @Route("api")
 export class RequestController extends Controller {
 
-    constructor(
-        private sessionService: SessionService = new SessionService(),
-        private serviceService: ServiceService = new ServiceService(),
-        private userService   : UserService    = new UserService(),
-        private roomService   : RoomService    = new RoomService(),
-        private calendarService : CalendarService = new CalendarService(),
-        private reservationService : ReservationService = new ReservationService(),
-        private membershipService : MembershipService = new MembershipService(),
-        private paymentService : PaymentService = new PaymentService(),
-        private instructorService : InstructorService = new InstructorService(),
-        private clientService : ClientService = new ClientService(),
-        private profileService : ProfileService = new ProfileService()
+    public sessionService: SessionService = new SessionService(this);
+    public serviceService: ServiceService = new ServiceService(this);
+    public userService   : UserService    = new UserService(this);
+    public roomService   : RoomService    = new RoomService(this);
+    public calendarService : CalendarService = new CalendarService(this);   
+    public reservationService : ReservationService = new ReservationService(this);
+    public membershipService : MembershipService = new MembershipService(this);
+    public paymentService : PaymentService = new PaymentService(this);
+    public instructorService : InstructorService = new InstructorService(this);
+    public clientService : ClientService = new ClientService(this);
 
-    ) { super(); }
+    constructor() { super(); }
 
     // SESSIONS ---------------------------------------------------------------------------------
     @Post("sessions/get")
@@ -242,6 +239,14 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.calendarService.delete(calendarId);
     }
+
+    @Get("calendar/get")
+    public async getCalendarByRoom(
+        @Query() roomId: string
+    ) : Promise<any> {
+        return await this.calendarService.getCalendarByRoom(roomId);
+    }
+
     //Reservations -------------------------------------------------------
     @Post("reservation/get")
     public async getReservation(

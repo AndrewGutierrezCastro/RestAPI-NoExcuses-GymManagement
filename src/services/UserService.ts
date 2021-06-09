@@ -1,6 +1,7 @@
 import API from "../API";
 import { Authenticator } from "../auth/Authenticator";
 import { userCollections } from "../auth/UserMapping";
+import { RequestController } from "../controllers/RequestController";
 import { User } from "../model/User";
 import { IBaseService } from "./IBaseService";
 
@@ -16,6 +17,10 @@ const DEFAULT_USER_PROJECTION = {
 };
 
 export class UserService implements IBaseService {
+
+  constructor(
+    private reqControllerRef : RequestController 
+  ){}
 
   async create(entity: object): Promise<object> {
 
