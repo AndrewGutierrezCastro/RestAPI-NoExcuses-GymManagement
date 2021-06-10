@@ -13,6 +13,7 @@ export class MembershipService implements IBaseService {
   ) {}
 
   create(entity: object): Promise<object> {
+
     return API.entityRepository.create('membership', entity);
   }
   
@@ -31,7 +32,22 @@ export class MembershipService implements IBaseService {
   getOne(entityId: string): Promise<object> {
     return API.entityRepository.getOne('membership', entityId);
     }
-  
+  async createMembership(pMembership : Membership , clientId : string, pPayment : Payment) : Promise<object>{
+    //TODO create payment
+    let responseCreatedPayment : any = await this.reqControllerRef.paymentService.create(pPayment);
+    let createdPaymentId = responseCreatedPayment.insertedId;
+    //TODO Associate client to membership
+    pMembership.paymentId = createdPaymentId;
+    pMembership.clientId = clientId;
+    //TODO Create membership
+    let responseCreatedMembership : any = await this.create(pMembership);
+    let createdMembership : any = responseCreatedMembership.insertedId;
+
+    return {  message : "La membresia ha sido creada con exito", 
+              success : true,
+              object  : createdMembership
+           }
+  }
   async generateMembership(pPayment : Payment, clientId : string, membershipId : string) : Promise<Object> {
     //Obtener los objetos de la base de datos
     let payment : any = await this.reqControllerRef.paymentService.create(pPayment);
@@ -63,37 +79,63 @@ export class MembershipService implements IBaseService {
               object  : {}
             };
   }
+  
+  async hasMembership(pClientId : string) : Promise<boolean>{
+    let objClientId = new mongoose.mongo.ObjectID(pClientId);
+    let memberships = await this.get({clientId : objClientId}, {});
+    return memberships.length > 0;
+  }
 
   async hasActiveMembership(pClientId : string) : Promise<object>{
-    let objClientId = new mongoose.mongo.ObjectID(pClientId);
-    let memberships = <Membership[]> await this.get({clientId : objClientId}, {});
-    let result = false;
-    let todayDate = new Date();
-    memberships.some((membership) => {
-      membership.createdDate.setDate(membership.createdDate.getDate() + membership.daysAmount);
-
-      result = result || membership.createdDate >= todayDate || membership.sessionsAmount > 0
-    });
-    if(result){
-      return {  message: "Tiene una membresia activa",
-                success: result
+    if(await this.hasMembership(pClientId)){
+      return {  message: "No tiene ninguna membresia ",
+                success: false,
+                object : null
               };
     }else{
-      return {  message: "No tiene una membresia activa",
-                success: result
-              };
+      let objClientId = new mongoose.mongo.ObjectID(pClientId);
+      let memberships = <Membership[]> await this.get({clientId : objClientId}, {});
+      let result = false;
+      let todayDate = new Date();
+      memberships.some((membership) => {
+        membership.createdDate.setDate(membership.createdDate.getDate() + membership.daysAmount);
+
+        result = result || membership.createdDate >= todayDate || membership.sessionsAmount > 0
+      });
+      if(result){
+        return {  message: "Tiene una membresia activa",
+                  success: result,
+                  object : null
+                };
+      }else{
+        return {  message: "No tiene una membresia activa",
+                  success: result,
+                  object : null
+                };
+      }
     }
   }
 
-  async isDefaulter(pClientId : string) : Promise<boolean>{
-    let client  = <Client> await this.getOne(pClientId);
-    return client.pendingPayment.length > 0;
+  async isDefaulter(pClientId : string) : Promise<object>{
+    let client  = <Client> await this.reqControllerRef.clientService.getOne(pClientId);
+    let isDefaulter = client.pendingPayment.length > 0;
+
+    return {  message : isDefaulter ? 
+                          `El cliente ${client.firstName} ${client.lastName}, esta moroso. 
+                          Tiene ${client.pendingPayment.length} cuentas pendientes.` 
+                        : `El cliente ${client.firstName} ${client.lastName}, no esta moroso.`,
+              success : isDefaulter
+            };
   }
 
-  async itsAllowedToReserve(pClientId : string) : Promise<boolean>{
+  async itsAllowedToReserve(pClientId : string) : Promise<object>{
     let hasActiveMembership : any = await this.hasActiveMembership(pClientId);
     let isDefaulter : any = await this.isDefaulter(pClientId);
-    return hasActiveMembership.success || !isDefaulter;
+    return  {  message : !(hasActiveMembership.success && !isDefaulter.success) ? 
+                              `El cliente no puede reservar.` 
+                            : `El cliente puede reservar.`,
+              success : hasActiveMembership.success && !isDefaulter.success
+            };
   }
 
   async applyCharge(pClientId : string) : Promise<Object>{

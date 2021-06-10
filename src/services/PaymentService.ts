@@ -8,8 +8,8 @@ export class PaymentService implements IBaseService {
     private reqControllerRef : RequestController 
   ) {}
 
-  create(entity: object): Promise<object> {
-    return API.entityRepository.create('payment', entity);
+  async create(entity: object): Promise<object> {
+    return await API.entityRepository.create('payment', entity);
   }
   
   modify(oldEntityId: string = '', newEntity: object): Promise<object> {
