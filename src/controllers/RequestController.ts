@@ -1,5 +1,4 @@
-import { Instructor, InstructorWithoutRef } from './../model/Instructor';
-import { SessionService } from './../services/SessionService';
+
 import {
     Body,
     Controller,
@@ -10,6 +9,11 @@ import {
     Put,
     Get
 } from "tsoa";
+
+import mongoose from "mongoose";
+
+import { Instructor, InstructorWithoutRef } from './../model/Instructor';
+import { SessionService } from './../services/SessionService';
 import { ServiceService } from '../services/ServiceService';
 import { GetParamsBody } from './utils';
 import { Service } from '../model/Service';
@@ -57,6 +61,13 @@ export class RequestController extends Controller {
         @Body() params: GetParamsBody
     ): Promise<any> {
         return await this.sessionService.get(params.filter, params.projection);
+    }
+
+    @Post("sessions/getCompleted")
+    public async getCompletedSessions(
+        @Body() params: GetParamsBody
+    ) : Promise<any> {
+        return await this.sessionService.getCompleted(params.filter, params.projection);
     }
 
     @Post("sessions/create")

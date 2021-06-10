@@ -1,41 +1,41 @@
 import { Schema } from 'mongoose';
 
-export const RoomSchema : Schema = new Schema({
-    name : {
-        type : Schema.Types.String,
+export const RoomSchema: Schema = new Schema({
+    name: {
+        type: Schema.Types.String,
         require: true,
         default: "Sala sin nombre"
     },
-    capacity : {
-        type : Schema.Types.Number,
+    capacity: {
+        type: Schema.Types.Number,
         require: true,
-        default : 10
+        default: 10
     },
-    allowedCapacity :{
-        type : Schema.Types.Number,
-        require :true
+    allowedCapacity: {
+        type: Schema.Types.Number,
+        require: true
     },
-    semanalSchedule : {
+    semanalSchedule: {
         type: [{
-            dayOfTheWeek : {
-                type : Schema.Types.String,
-                required : true
+            dayOfTheWeek: {
+                type: Schema.Types.String,
+                required: true
             },
-            initialHour : {
-                type : Schema.Types.String,
-                required : true
+            initialHour: {
+                type: Schema.Types.String,
+                required: true
             },
-            finalHour : {
-                type : Schema.Types.String,
-                required : true
+            finalHour: {
+                type: Schema.Types.String,
+                required: true
             }
         }],
-        required : true,
-        default : []
+        required: true,
+        default: []
     },
-    monthlyCalendar : {
-        type : Schema.Types.ObjectId,
-        require : true
+    monthlyCalendar: {
+        type: Schema.Types.ObjectId,
+        require: true
     }
 
 });

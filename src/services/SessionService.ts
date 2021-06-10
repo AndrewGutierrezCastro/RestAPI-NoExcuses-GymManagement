@@ -23,6 +23,7 @@ export class SessionService implements IBaseService {
     session.dayHour = !session.dayHour ? [] : session.dayHour;
     session.instructorId = new mongoose.mongo.ObjectId(session.instructorId);
     session.available = true;
+    session.weekMode = !session.weekMode ? true : session.weekMode;
     
     return API.entityRepository.create('sessions', session);
   }
@@ -36,20 +37,25 @@ export class SessionService implements IBaseService {
   }
 
   async get(filter: object, projection: object): Promise<object[]> {
+    const result = await API.entityRepository.get('sessions', filter, projection);   
+    return result;
+  }
 
-    const result = await API.entityRepository.get('sessions', filter, projection);
+  async getCompleted(filter: object, projection: object): Promise<object[]> {
+
+    const result = await API.entityRepository.get('sessions', {...filter, weekMode : true}, projection);
     
     let populatedData = await Promise.all(result.map(async (session: any) => {
       let { serviceId, instructorId, ...sessionPart }: any = session;
-      sessionPart.service = await API.entityRepository.getOne('services', serviceId);
+      sessionPart.service = await this.reqControllerRef.serviceService.getOne(serviceId);
       sessionPart.instructor = await this.reqControllerRef.instructorService.getOne(instructorId);
       return sessionPart;
-    }));
+    }));  
     
     return populatedData;
   }
 
-  public getAvailableAmount(sessionId : string) : Number {
+  public getAvailableAmount(sessionId : string) : number {
     
     // TODO: get available amount using the reservation service
     return 0;
@@ -63,13 +69,8 @@ export class SessionService implements IBaseService {
         return true;
 
       return calendarSessionsObj.reduce( (acc:boolean, session:any) => {
-        
-        console.log(session);
-
+  
         let datesBySession : GymDate = session.dayHour;
-        console.log(pSession, 'PSession');
-        console.log(datesBySession, 'DatesBySession');
-
         return acc || datesBySession.dayOfTheWeek === pSession.dayHour[0].dayOfTheWeek && this.isBetween(datesBySession, pSession.dayHour[0]);
       }, false);
   }
@@ -89,16 +90,16 @@ export class SessionService implements IBaseService {
     let [h, m] = pHour.split(':');
     let hour : number = parseInt(h);
     let minutes : number = parseInt(m);
-    return hour*100 + minutes;
+    return hour * 100 + minutes;
   }
 
   async addSessionToCalendar(sessionId : string, roomId : string) : Promise<object> {
 
     let [calendar] : any[] = await this.reqControllerRef.calendarService.get({roomId : new mongoose.mongo.ObjectID(roomId)}, {});
-    let calendarId = calendar._id;
-    let session : any = await this.getOne(sessionId);
+    let [session] : any = await this.get({_id: new mongoose.mongo.ObjectID(sessionId)}, {});
     let sessionByDay : GymSessionUniqueDate[] = session.dayHour.map((dateDayHour:GymDate) => ({...session, dayHour : dateDayHour}));
     
+    let minimalSessions : GymSession[] = [];
     let sessionsWithDates : any = sessionByDay.reduce((acc : object[], session:any) => {
       let {_id, ...sessionWithoutId} = session;
       let datesByDay = getDaysBetweenDates(session.dayHour.dayOfTheWeek);
@@ -110,33 +111,42 @@ export class SessionService implements IBaseService {
             finalHour : session.dayHour.finalHour}]
         })
       );
-
-
+      minimalSessions.push(sessionsReplicated[0]);
       return [...acc, ...sessionsReplicated];
     }, []);
 
-
-    let firstSession = sessionsWithDates[0];
-    let allowed = await this.isNotAllowed(firstSession, calendar.sessions);
+    let allowed = 
+      !minimalSessions.some(async(session:any) => {
+        return (await this.isNotAllowed(session, calendar.sessions));
+      });
 
     if (allowed) {
 
       let sessionsWithFullDates : any = sessionsWithDates.map((e:any) => ({...e, dayOfTheWeek : e.dayHour[0]}));
+      console.log('sessions', sessionsWithFullDates);
       let creationResult = await Promise.all(sessionsWithFullDates.map(async (session:any) => {
+        session.weekMode = false;
         return await API.entityRepository.create('sessions', session);
       }));
 
       // update calendar with new sessions
       let {_id, ...calendarWithoutId} = calendar;
       let calendarId = _id;
-      calendarWithoutId.sessions = creationResult.map((session:any) => session.insertedId);
+      calendarWithoutId.sessions = [
+        ...calendar.sessions,
+        ...creationResult.map((session:any) => session.insertedId)
+      ];
+
       let updatedInfo = await this.reqControllerRef.calendarService.modify(calendarId, calendarWithoutId);
+
+      console.log('UPDATEDINFO', updatedInfo)
 
       return {
         message : `Se han agregado las sesiones para todos los dias del mes al calendario`,
-        addedSessionAmount : sessionsWithDates.length,
+        addedSessionAmount : sessionsWithFullDates.length,
         success : true
       };
+
     }
     else {
       return {
@@ -149,8 +159,11 @@ export class SessionService implements IBaseService {
 
   async getOne(entityId: string, filter : object = {}, projection = {}): Promise<object> {
 
-    let session = await API.entityRepository.getOne('sessions', entityId, filter, projection);
+    let session : any = await API.entityRepository.getOne('sessions', entityId, filter, projection);
+    console.log('id', entityId);
+    console.log(session);
     let { serviceId, instructorId, ...sessionPart }: any = session;
+
     sessionPart.service = await this.reqControllerRef.serviceService.getOne(serviceId);
     sessionPart.instructor = await this.reqControllerRef.instructorService.getOne(instructorId);
     return sessionPart;

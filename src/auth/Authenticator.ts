@@ -127,7 +127,7 @@ export class Authenticator {
         // password encryption process
         const saltRounds = 10;
 
-        const salt = bcrypt.genSaltSync(saltRounds);
+        const salt = bcrypt.genSaltSync( saltRounds);
         const hashedPassword = bcrypt.hashSync(user.password, salt);
         
         // register process

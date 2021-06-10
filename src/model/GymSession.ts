@@ -6,6 +6,7 @@ export interface GymSession {
     instructorId : string,
     serviceId : string,
     available : boolean,
+    weekMode : boolean,
     _id? : string,
 }
 
@@ -15,13 +16,6 @@ export interface GymSessionUniqueDate {
     instructorId : string,
     serviceId : string,
     available : boolean,
-    _id? : string,
-}
-export interface GymSessionUniqueDate {
-    dayHour : GymDate,
-    roomId : string,
-    instructorId : string,
-    serviceId : string,
-    available : boolean,
+    weekMode : boolean,
     _id? : string,
 }
