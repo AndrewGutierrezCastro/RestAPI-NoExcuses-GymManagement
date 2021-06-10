@@ -41,9 +41,8 @@ export class InstructorService implements IBaseService {
   }
 
   async getOne(entityId: string): Promise<object> {
-    
+  
     let instructor = await API.entityRepository.getOne('instructor', entityId);
-
     let {userId, ...otherAttrs} : any = instructor;
     let userInfo = await API.entityRepository.getOne('users', userId, {}, {password:0});
 
