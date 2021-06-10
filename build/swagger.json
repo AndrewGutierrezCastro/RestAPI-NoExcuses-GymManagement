@@ -1898,6 +1898,33 @@
 				}
 			}
 		},
+		"/api/client/getCompleted": {
+			"post": {
+				"operationId": "GetCompletedClient",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetParamsBody"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/client/update": {
 			"put": {
 				"operationId": "UpdateClient",

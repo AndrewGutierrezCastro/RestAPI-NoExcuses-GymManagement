@@ -389,6 +389,13 @@ export class RequestController extends Controller {
         return await this.clientService.get(params.filter, params.projection);
     }
 
+    @Post("client/getCompleted")
+    public async getCompletedClient(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.clientService.getCompleted(params.filter, params.projection);
+    }
+
     @Put("client/update")
     public async updateClient(
         @Body() client: { clientId : string, updatedClient: Client }
@@ -409,4 +416,6 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.clientService.delete(clientId);
     }
+
+    
 }

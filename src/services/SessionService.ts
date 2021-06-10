@@ -68,6 +68,8 @@ export class SessionService implements IBaseService {
       if (calendarSessionsObj.length == 0)
         return true;
 
+    console.log(calendarSessionsObj);
+
       return calendarSessionsObj.reduce( (acc:boolean, session:any) => {
   
         let datesBySession : GymDate = session.dayHour;

@@ -44,4 +44,22 @@ export class ClientService implements IBaseService {
   getOne(entityId: string): Promise<object> {
     return API.entityRepository.getOne('client', entityId);
   }
+
+  async getCompleted(filter: object, projection: object): Promise<object[]> {
+
+    let clients = await API.entityRepository.get('client', filter, projection);
+
+    let clientFilled = Promise.all(clients.map( async(client:any) => {
+      let _client :any = await this.getOne(client._id);
+      let {userId, ...clientWithoutId} = _client;
+
+      let userInfo = await this.reqControllerRef.userService.getOne(userId);
+      return {
+        ...userInfo, 
+        ..._client
+      };
+    }));
+
+    return clientFilled;
+  }
 }
