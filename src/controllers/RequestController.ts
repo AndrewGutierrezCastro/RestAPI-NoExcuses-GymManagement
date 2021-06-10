@@ -28,7 +28,7 @@ import { Membership } from '../model/Membership';
 import { Payment } from '../model/Payment';
 import { PaymentService } from '../services/PaymentService';
 import { MongoDbConnection } from '../db/MongoDbConnection';
-import { Client } from '../model/Client';
+import { Client, ClientWithoutRef } from '../model/Client';
 import { ClientService } from './../services/ClientService';
 
 /**
@@ -247,6 +247,13 @@ export class RequestController extends Controller {
         return await this.calendarService.getCalendarByRoom(roomId);
     }
 
+    @Put("calendar/publish")
+    public async publishCalendar(
+        @Query() calendarId : string
+    ) : Promise<any> {
+        return await this.calendarService.publishCalendar(calendarId);
+    }
+
     //Reservations -------------------------------------------------------
     @Post("reservation/get")
     public async getReservation(
@@ -292,9 +299,9 @@ export class RequestController extends Controller {
 
     @Post("membership/create")
     public async createMembership(
-        @Body() membership: Membership
+        @Body() requestMembership :{ pMembership : Membership , clientId : string, pPayment : Payment }
     ): Promise<any> {
-        return await this.membershipService.create(membership);
+        return await this.membershipService.createMembership(requestMembership.pMembership, requestMembership.clientId, requestMembership.pPayment);
     }
 
     @Delete("membership/delete")
@@ -302,6 +309,37 @@ export class RequestController extends Controller {
         @Query() membershipId: string
     ): Promise<any> {
         return await this.membershipService.delete(membershipId);
+    }
+
+    @Get("membership/hasActiveMembership")
+    public async hasActiveMembership(
+        @Query() clientId : string
+    ) : Promise<any> {
+        return await this.membershipService.hasActiveMembership(clientId);
+    }
+
+    @Get("membership/isDefaulter")
+    public async isDefaulter(
+        @Query() clientId : string
+    ) : Promise<any> {
+        return await this.membershipService.isDefaulter(clientId);
+    }
+
+    @Get("membership/itsAllowedToReserve")
+    public async itsAllowedToReserve(
+        @Query() clientId : string
+    ) : Promise<any> {
+        return await this.membershipService.itsAllowedToReserve(clientId);
+    }
+
+    @Post("membership/generateMembership")
+    public async generateMembership(
+        @Body() requestMembership :{ pPayment : Payment, clientId : string, membershipId : string }
+    ) : Promise<any> {
+        return await this.membershipService.generateMembership(
+                requestMembership.pPayment,
+                requestMembership.clientId,
+                requestMembership.membershipId);
     }
     //Payment-------------------------------------------------------
     @Post("payment/get")

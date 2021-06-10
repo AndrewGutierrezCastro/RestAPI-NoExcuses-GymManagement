@@ -7,14 +7,18 @@ export const ClientSchema : Schema = new Schema({
     },
     pendingPayments : {
         type : [Schema.Types.ObjectId],
+        required : true,
         default : []
     },
     amount : {
         type : Schema.Types.Decimal128,
-        default : 0.00
+        default : 0.00,
+        required : true,
     },
     memberShips : {
         type : [Schema.Types.ObjectId],
-        default : []
+        default : [],
+        required : true,
     }
 });
+

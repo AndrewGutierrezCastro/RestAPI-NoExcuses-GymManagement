@@ -1,11 +1,14 @@
 import { ClientSchema } from './schemas/ClientSchema';
-import mongoose from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
 import { UserSchema } from '../db/schemas/UserSchema';
 import { AdministratorSchema } from './schemas/AdministratorSchema';
 import { ServiceSchema } from './schemas/ServiceSchema';
 import { SessionSchema } from './schemas/SessionSchema';
 import { InstructorSchema } from './schemas/InstructorSchema';
 import { CalendarSchema} from './schemas/CalendarSchema';
+import { MembershipSchema } from './schemas/MembershipSchema';
+import { ReservationSchema } from './schemas/ReservationSchema';
+import { PaymentSchema } from './schemas/PaymentSchema';
 
 export class MongoDbConnection {
   
@@ -19,12 +22,15 @@ export class MongoDbConnection {
 
   private registerModels() {
     mongoose.model('users', UserSchema);
-    mongoose.model('sessions', SessionSchema);
-    mongoose.model('services', ServiceSchema);
-    mongoose.model('administrator', AdministratorSchema);
-    mongoose.model('clients', ClientSchema);
-    mongoose.model('instructors', InstructorSchema);
+    mongoose.model('sessions',SessionSchema);
+    mongoose.model('services',ServiceSchema);
+    mongoose.model('administrator',AdministratorSchema);
+    mongoose.model('clients',ClientSchema);
+    mongoose.model('instructors',InstructorSchema);
     mongoose.model('calendar',CalendarSchema);
+    mongoose.model('membership',MembershipSchema);
+    mongoose.model('reservation',ReservationSchema);
+    mongoose.model('payment', PaymentSchema);
   }
 
   private connect() {

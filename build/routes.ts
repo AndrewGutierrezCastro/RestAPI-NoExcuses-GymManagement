@@ -49,7 +49,7 @@ const models: TsoaRoute.Models = {
     "GymSession": {
         "dataType": "refObject",
         "properties": {
-            "dayHour": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "dayHour": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "roomId": {"dataType":"string"},
             "instructorId": {"dataType":"string","required":true},
             "serviceId": {"dataType":"string","required":true},
@@ -88,7 +88,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "capacity": {"dataType":"double","required":true},
             "allowedCapacity": {"dataType":"double","required":true},
-            "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "weeklySchedule": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "monthlyCalendar": {"ref":"Calendar"},
             "_id": {"dataType":"string"},
         },
@@ -857,6 +857,28 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/calendar/publish',
+            function RequestController_publishCalendar(request: any, response: any, next: any) {
+            const args = {
+                    calendarId: {"in":"query","name":"calendarId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.publishCalendar.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/api/reservation/get',
             function RequestController_getReservation(request: any, response: any, next: any) {
             const args = {
@@ -992,7 +1014,7 @@ export function RegisterRoutes(app: express.Router) {
         app.post('/api/membership/create',
             function RequestController_createMembership(request: any, response: any, next: any) {
             const args = {
-                    membership: {"in":"body","name":"membership","required":true,"ref":"Membership"},
+                    requestMembership: {"in":"body","name":"requestMembership","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"pPayment":{"ref":"Payment","required":true},"clientId":{"dataType":"string","required":true},"pMembership":{"ref":"Membership","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1030,6 +1052,94 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.deleteMembership.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/membership/hasActiveMembership',
+            function RequestController_hasActiveMembership(request: any, response: any, next: any) {
+            const args = {
+                    clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.hasActiveMembership.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/membership/isDefaulter',
+            function RequestController_isDefaulter(request: any, response: any, next: any) {
+            const args = {
+                    clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.isDefaulter.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/membership/itsAllowedToReserve',
+            function RequestController_itsAllowedToReserve(request: any, response: any, next: any) {
+            const args = {
+                    clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.itsAllowedToReserve.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/membership/generateMembership',
+            function RequestController_generateMembership(request: any, response: any, next: any) {
+            const args = {
+                    requestMembership: {"in":"body","name":"requestMembership","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"membershipId":{"dataType":"string","required":true},"clientId":{"dataType":"string","required":true},"pPayment":{"ref":"Payment","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.generateMembership.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
