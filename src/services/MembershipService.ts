@@ -58,13 +58,31 @@ export class MembershipService implements IBaseService {
            }
   }
 
-  async applyMembership() : Promise<Object>{
-    return {  message : "Metodo no implementado",
-              success : false,
-              object  : {}
+  async applyMembership(pMembershipId : any) : Promise<Object>{
+    //obtner la membresia
+    let membership = <Membership> await this.getOne(pMembershipId);
+    //aplicar el resto de membresia por reservacion
+    let membership2 : Membership = membership.typeMembership===SESSIONSAMOUNT ? 
+      this.applyMembershipByAmountSessions(membership) : 
+      this.applyMembershipByDays(membership);    
+  
+    //modificar la membresia actual
+    let membership3 : any = await this.modify(membership2._id, membership2);
+    
+    return {  message : "Se ha aplicado su membresia",
+              success : true,
+              object  : membership3.updatedElement
             };
   }
   
+  private applyMembershipByAmountSessions(pActiveMembership : Membership) : Membership{
+    pActiveMembership.sessionsAmount = pActiveMembership.sessionsAmount - 1;
+    return pActiveMembership;
+  }
+  private applyMembershipByDays(pActiveMembership : Membership) : Membership{
+    return pActiveMembership;
+  }
+
   async hasMembership(pClientId : string) : Promise<boolean>{
 
     let client : Client = <Client> await this.reqControllerRef.clientService.getOne(pClientId);
@@ -84,16 +102,22 @@ export class MembershipService implements IBaseService {
 
       let todayDate = new Date();
       let membership : Membership;
+      //variable para guardar la membresia activa al encontrarla
+      
       let result = memberships.some(async (membershipId) => {
         membership = <Membership> await this.reqControllerRef.membershipService.getOne(membershipId);
+        
         membership.createdDate.setDate(membership.createdDate.getDate() + membership.daysAmount);
-
-        return membership.createdDate >= todayDate || membership.sessionsAmount > 0
+        
+        return membership.createdDate >= todayDate || membership.sessionsAmount > 0;
       });
+      //obtener la membresia actual 
+      let activeMembership : any = result ? await this.getActiveMembership(memberships): null;
+
       if(result){
         return {  message: "Tiene una membresia activa",
                   success: result,
-                  object : null
+                  object : activeMembership
                 };
       }else{
         return {  message: "No tiene una membresia activa",
@@ -102,6 +126,23 @@ export class MembershipService implements IBaseService {
                 };
       }
     }
+  }
+  private async getActiveMembership(pMemberships : string[]){
+    let membership;
+    let todayDate = new Date();
+    let activeMembership;
+    
+    for (let i = 0; i < pMemberships.length; i++) {
+      let membershipId = pMemberships[i];
+      membership = <Membership> await this.reqControllerRef.membershipService.getOne(membershipId);
+
+      membership.createdDate.setDate(membership.createdDate.getDate() + membership.daysAmount);
+      
+      if(membership.createdDate >= todayDate || membership.sessionsAmount > 0){
+        activeMembership = membership;
+      }
+    }
+    return activeMembership;
   }
 
   async isDefaulter(pClientId : string) : Promise<object>{
