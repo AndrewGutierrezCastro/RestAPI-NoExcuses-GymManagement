@@ -5,5 +5,6 @@ export interface Membership {
     createdDate : Date,
     sessionsAmount : number,
     daysAmount : number,
+    typeMembership : string,
     _id? : string,
 }

@@ -25,6 +25,10 @@ export const MembershipSchema : Schema = new Schema({
     amountSession :{
         type : Schema.Types.Number,
         require :true
+    },
+    typeMembership :{
+        type : Schema.Types.String,
+        require : true
     }
 
 });

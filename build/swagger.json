@@ -306,6 +306,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"typeMembership": {
+						"type": "string"
+					},
 					"_id": {
 						"type": "string"
 					}
@@ -316,7 +319,8 @@
 					"paymentId",
 					"createdDate",
 					"sessionsAmount",
-					"daysAmount"
+					"daysAmount",
+					"typeMembership"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1741,9 +1745,9 @@
 				]
 			}
 		},
-		"/api/membership/generateMembership": {
+		"/api/membership/applyCharge": {
 			"post": {
-				"operationId": "GenerateMembership",
+				"operationId": "ApplyCharge",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1762,20 +1766,16 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"membershipId": {
-										"type": "string"
-									},
-									"clientId": {
-										"type": "string"
-									},
 									"pPayment": {
 										"$ref": "#/components/schemas/Payment"
+									},
+									"pClientId": {
+										"type": "string"
 									}
 								},
 								"required": [
-									"membershipId",
-									"clientId",
-									"pPayment"
+									"pPayment",
+									"pClientId"
 								],
 								"type": "object"
 							}

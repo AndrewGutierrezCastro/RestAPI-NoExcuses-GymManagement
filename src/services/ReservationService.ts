@@ -4,6 +4,8 @@ import { IBaseService } from "./IBaseService";
 import { Reservation } from "./../model/Reservation";
 import { GymSessionUniqueDate } from "./../model/GymSession";
 import { RequestController } from '../controllers/RequestController';
+import { Client } from "../model/Client";
+import { Membership } from "../model/Membership";
 
 const previousHours : number= 8;
 
@@ -13,8 +15,31 @@ export class ReservationService implements IBaseService {
     private reqControllerRef : RequestController 
   ){}
 
-  create(entity: object): Promise<object> {
-    return API.entityRepository.create('reservation', entity);
+  async create(entity: any): Promise<object> {
+    //set client id
+    let clientId : string = entity.clientId;
+    //get client
+    let client : Client = <Client> await this.reqControllerRef.clientService.getOne(clientId);
+    //get membership
+    let responseActiveMembership : any = await this.reqControllerRef.membershipService.hasActiveMembership(clientId);
+    let activeMembership = <Membership> responseActiveMembership.object;
+
+    //Revisar si puede reservar
+    let responseIsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId) 
+    if(!responseIsAllowedToReserve.success){
+      //Si no puede reservar entonces retornar ese mensaje
+      return responseIsAllowedToReserve;
+    }
+    let responseReservation : any = await API.entityRepository.create('reservation', entity);
+    let reservation : Reservation = responseReservation.createdObject;
+    let sessionId = reservation.sessionId;
+    //Aplicar la membresia y quitarle al cantidad de sesiones de ser necesario
+    this.reqControllerRef.membershipService.applyMembership(activeMembership._id);
+
+    return {message : `Se ha creado la reservacion al cliente ${client.firstName}`,
+            success : true,
+            object : reservation
+            };
   }
   
   modify(oldEntityId: string = '', newEntity: object): Promise<object> {
@@ -38,14 +63,16 @@ export class ReservationService implements IBaseService {
     let reservation : any = await this.getOne(reservationId);
     let session : any = await this.getOne(reservation.sessionId);
     //respuesta del reembolo o del cargo
-    let response : any;
+    let responseRefund : any;
     if(this.isReservationRefund(reservation, session)){
-      //TODO generar un reembolso al cliente
-      response = await this.reqControllerRef.membershipService.refund(reservation.clientId);
-      return {  message : "Se hizo un reembolso a su favor",
+      responseRefund = this.reqControllerRef.membershipService.refund(reservation.clientId);
+      /*
+       return{message : "Se ha hecho un reembolso a su cuenta",
               success : true,
-              object  : response
+              object  : null
             };
+      */
+      return responseRefund;
     }else{
       return {  message : "No se ha efectuado el reembolso por normas de cancelacion",
               success : false,

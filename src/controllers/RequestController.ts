@@ -345,15 +345,12 @@ export class RequestController extends Controller {
         return await this.membershipService.itsAllowedToReserve(clientId);
     }
 
-    @Post("membership/generateMembership")
-    public async generateMembership(
-        @Body() requestMembership :{ pPayment : Payment, clientId : string, membershipId : string }
-    ) : Promise<any> {
-        return await this.membershipService.generateMembership(
-                requestMembership.pPayment,
-                requestMembership.clientId,
-                requestMembership.membershipId);
-    }
+    @Post("membership/applyCharge")
+    public async applyCharge(
+        @Body() requestCharge :{ pClientId : string, pPayment : Payment }
+    ): Promise<any> {
+        return await this.membershipService.applyCharge(requestCharge.pClientId, requestCharge.pPayment);
+    }    
     //Payment-------------------------------------------------------
     @Post("payment/get")
     public async getPayment(
