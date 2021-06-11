@@ -123,7 +123,7 @@ export class ReservationService implements IBaseService {
     let successMessage = "Puede reservar, hay cupo y el cliente tiene permitido reservar.";
     let canReservate = responseQuoat.success && responseItsAllowedToReserve.success;
     //En caso de incumplir alguna de las dos mostrar la que incumplio
-    let errorMessage = responseQuoat.success ? responseItsAllowedToReserve : responseQuoat;
+    let errorMessage = responseQuoat.success ? responseItsAllowedToReserve.message : responseQuoat.message;
     //Ver si ambas no cumplen
     let isNotQuoatAndIsNotAllowedToReserve = !responseQuoat.success && !responseItsAllowedToReserve.success;
     //De no cumplir las dos entonces concatenar los mensajes

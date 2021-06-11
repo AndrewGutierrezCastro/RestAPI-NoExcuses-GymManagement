@@ -49,7 +49,7 @@ const models: TsoaRoute.Models = {
     "GymSession": {
         "dataType": "refObject",
         "properties": {
-            "dayHour": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
+            "dayHour": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
             "roomId": {"dataType":"string"},
             "instructorId": {"dataType":"string","required":true},
             "serviceId": {"dataType":"string","required":true},
@@ -89,7 +89,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "capacity": {"dataType":"double","required":true},
             "allowedCapacity": {"dataType":"double","required":true},
-            "weeklySchedule": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
+            "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
             "monthlyCalendar": {"ref":"Calendar"},
             "_id": {"dataType":"string"},
         },

@@ -120,7 +120,7 @@ export class SessionService implements IBaseService {
     }, []);
 
     let allowed = 
-      !minimalSessions.some(async(session:any) => {
+      calendar.sessions.length === 0 ||!minimalSessions.some(async(session:any) => {
         return (await this.isNotAllowed(session, calendar.sessions));
       });
 
@@ -130,6 +130,7 @@ export class SessionService implements IBaseService {
       console.log('sessions', sessionsWithFullDates);
       let creationResult = await Promise.all(sessionsWithFullDates.map(async (session:any) => {
         session.weekMode = false;
+        session.roomId = roomId;
         return await API.entityRepository.create('sessions', session);
       }));
 

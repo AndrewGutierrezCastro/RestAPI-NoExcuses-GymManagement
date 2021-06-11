@@ -1,3 +1,4 @@
+import { ClientWithoutRef } from './../model/Client';
 import API from "../API";
 import { RequestController } from "../controllers/RequestController";
 import { Client } from "../model/Client";
@@ -11,19 +12,21 @@ export class ClientService implements IBaseService {
 
   async create(entity: object): Promise<object> {
 
-    let client : Client = <Client> entity;
+    let client = <Client> entity;
     let responseCreatedUser = await Authenticator.registerUser(client); 
 
     if (!responseCreatedUser.newUser)
       return responseCreatedUser;
 
     let createdUser = responseCreatedUser.newUser;
-    client._id = createdUser._id;
-    client.pendingPayment = [];
-    client.balance = 0.00;
-    client.memberships = [];
 
-    let responseCreatedClient = await API.entityRepository.create('client', client);
+    let client1 : ClientWithoutRef = {
+      userId : createdUser._id,
+      pendingPayment : [],
+      balance : 0.00,
+      memberships : [],
+    };
+    let responseCreatedClient = await API.entityRepository.create('client', client1);
 
     return {  
       message : "El cliente se ha creado exitosamente",
