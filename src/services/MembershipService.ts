@@ -66,26 +66,29 @@ export class MembershipService implements IBaseService {
   }
   
   async hasMembership(pClientId : string) : Promise<boolean>{
-    let objClientId = new mongoose.mongo.ObjectID(pClientId);
-    let memberships = await this.get({clientId : objClientId}, {});
+
+    let client : Client = <Client> await this.reqControllerRef.clientService.getOne(pClientId);
+    let memberships = client.memberships;
     return memberships.length > 0;
   }
 
   async hasActiveMembership(pClientId : string) : Promise<object>{
-    if(await this.hasMembership(pClientId)){
-      return {  message: "No tiene ninguna membresia ",
+    if(!(await this.hasMembership(pClientId))){
+      return {  message: "No tiene ninguna membresia",
                 success: false,
                 object : null
               };
     }else{
-      let objClientId = new mongoose.mongo.ObjectID(pClientId);
-      let memberships = <Membership[]> await this.get({clientId : objClientId}, {});
-      let result = false;
+      let client : Client = <Client> await this.reqControllerRef.clientService.getOne(pClientId);
+      let memberships = client.memberships;
+
       let todayDate = new Date();
-      memberships.some((membership) => {
+      let membership : Membership;
+      let result = memberships.some(async (membershipId) => {
+        membership = <Membership> await this.reqControllerRef.membershipService.getOne(membershipId);
         membership.createdDate.setDate(membership.createdDate.getDate() + membership.daysAmount);
 
-        result = result || membership.createdDate >= todayDate || membership.sessionsAmount > 0
+        return membership.createdDate >= todayDate || membership.sessionsAmount > 0
       });
       if(result){
         return {  message: "Tiene una membresia activa",
@@ -116,6 +119,7 @@ export class MembershipService implements IBaseService {
   async itsAllowedToReserve(pClientId : string) : Promise<object>{
     let hasActiveMembership : any = await this.hasActiveMembership(pClientId);
     let isDefaulter : any = await this.isDefaulter(pClientId);
+
     return  {  message : !(hasActiveMembership.success && !isDefaulter.success) ? 
                               `El cliente no puede reservar.` 
                             : `El cliente puede reservar.`,

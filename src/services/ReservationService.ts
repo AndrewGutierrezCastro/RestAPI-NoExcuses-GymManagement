@@ -4,6 +4,7 @@ import { IBaseService } from "./IBaseService";
 import { Reservation } from "./../model/Reservation";
 import { GymSessionUniqueDate } from "./../model/GymSession";
 import { RequestController } from '../controllers/RequestController';
+import { Client } from "../model/Client";
 
 const previousHours : number= 8;
 
@@ -13,8 +14,24 @@ export class ReservationService implements IBaseService {
     private reqControllerRef : RequestController 
   ){}
 
-  create(entity: object): Promise<object> {
-    return API.entityRepository.create('reservation', entity);
+  async create(entity: any): Promise<object> {
+    //set client id
+    let clientId : string = entity.clientId;
+    //Revisar si puede reservar
+    let responseIsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId) 
+    if(!responseIsAllowedToReserve.success){
+      //Si no puede reservar entonces retornar ese mensaje
+      return responseIsAllowedToReserve;
+    }
+    let responseReservation : any = await API.entityRepository.create('reservation', entity);
+    let reservation : Reservation = responseReservation.createdObject;
+    let sessionId = reservation.sessionId;
+
+    let client : Client = <Client> await this.reqControllerRef.clientService.getOne(clientId);
+    return {message : `Se ha creado la reservacion al cliente ${client.firstName}`,
+            success : true,
+            object : reservation
+            };
   }
   
   modify(oldEntityId: string = '', newEntity: object): Promise<object> {
