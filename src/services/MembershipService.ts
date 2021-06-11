@@ -158,13 +158,19 @@ export class MembershipService implements IBaseService {
   }
 
   async itsAllowedToReserve(pClientId : string) : Promise<object>{
+    //tiene membresia activa
     let hasActiveMembership : any = await this.hasActiveMembership(pClientId);
+    //esta moroso
     let isDefaulter : any = await this.isDefaulter(pClientId);
-
-    return  {  message : !(hasActiveMembership.success && !isDefaulter.success) ? 
-                              `El cliente no puede reservar.` 
-                            : `El cliente puede reservar.`,
-              success : hasActiveMembership.success && !isDefaulter.success
+    //puede reservar
+    let itsAllowedToReserve = hasActiveMembership.success && !isDefaulter.success;
+    let message = hasActiveMembership.success ? "Tiene una membresia activa" :  "No tiene una membresia activa";
+    message = message + (isDefaulter.success ? " y esta moroso" : " y no esta moroso");
+    //Si puede reservar se muestra el mensaje que se puede reservar o porque no
+    return  {  message : itsAllowedToReserve ? 
+                              "El cliente puede reservar. " + message
+                            : "El cliente no puede reservar. " +  message,
+              success : itsAllowedToReserve
             };
   }
 
