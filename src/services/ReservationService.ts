@@ -6,6 +6,7 @@ import { GymSessionUniqueDate } from "./../model/GymSession";
 import { RequestController } from '../controllers/RequestController';
 import { Client } from "../model/Client";
 import { Membership } from "../model/Membership";
+import { Room } from "../model/Room";
 
 const previousHours : number= 8;
 
@@ -16,6 +17,12 @@ export class ReservationService implements IBaseService {
   ){}
 
   async create(entity: any): Promise<object> {
+    /*
+    creationDate : string,
+    sessionId : string,
+    clientId : string,
+    _id? : string,
+    */
     //set client id
     let clientId : string = entity.clientId;
     //get client
@@ -25,18 +32,17 @@ export class ReservationService implements IBaseService {
     let activeMembership = <Membership> responseActiveMembership.object;
 
     //Revisar si puede reservar
-    let responseIsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId) 
-    if(!responseIsAllowedToReserve.success){
+    let responseCanReservate : any = await this.canReservate(entity);
+    if(!responseCanReservate.success){
       //Si no puede reservar entonces retornar ese mensaje
-      return responseIsAllowedToReserve;
+      return responseCanReservate;
     }
     let responseReservation : any = await API.entityRepository.create('reservation', entity);
     let reservation : Reservation = responseReservation.createdObject;
-    let sessionId = reservation.sessionId;
     //Aplicar la membresia y quitarle al cantidad de sesiones de ser necesario
     this.reqControllerRef.membershipService.applyMembership(activeMembership._id);
 
-    return {message : `Se ha creado la reservacion al cliente ${client.firstName}`,
+    return {message : `Se ha creado la reservacion al cliente ${client.firstName} ` + responseCanReservate.message,
             success : true,
             object : reservation
             };
@@ -98,5 +104,49 @@ export class ReservationService implements IBaseService {
     return reservationDate < eightPreviousHoursSession ;
   }
 
+  private async canReservate(reservation : any) : Promise<object>{
+    /*
+    creationDate : string,
+    sessionId : string,
+    clientId : string,
+    _id? : string,
+    */
+    let clientId = reservation.clientId;
+    let sessionId = reservation.sessionId;
+    //revisar si existe reservaciones disponibles, cupos.
+    let responseQuoat : any = await this.isThereQuota(sessionId);
+    console.log("Quoat: ", responseQuoat);
+    //Revisar si el cliente puede reservar
+    let responseItsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId);
+    console.log("ItsAllowedToReserve: ", responseItsAllowedToReserve);
+    //Mensaje de exito
+    let successMessage = "Puede reservar, hay cupo y el cliente tiene permitido reservar.";
+    let canReservate = responseQuoat.success && responseItsAllowedToReserve.success;
+    //En caso de incumplir alguna de las dos mostrar la que incumplio
+    let errorMessage = responseQuoat.success ? responseItsAllowedToReserve : responseQuoat;
+    //Ver si ambas no cumplen
+    let isNotQuoatAndIsNotAllowedToReserve = !responseQuoat.success && !responseItsAllowedToReserve.success;
+    //De no cumplir las dos entonces concatenar los mensajes
+    errorMessage = isNotQuoatAndIsNotAllowedToReserve ? responseItsAllowedToReserve.message + " y " + responseQuoat.message : errorMessage;
+    //Si puede reservar mostrar el mensaje de exito, sino el de error y agregar si se puede reservar o no
+    return  {message : canReservate ? successMessage :  errorMessage,
+             success : canReservate
+    };
 
+  }
+
+  private async isThereQuota(pSessionId : string) : Promise<object>{
+    //Resivar si la session tiene cupo
+    let session = <GymSessionUniqueDate> await this.reqControllerRef.sessionService.getOne(pSessionId);
+    let roomId = session.roomId;
+    let room = <Room> await this.reqControllerRef.roomService.getOne(roomId);
+    let allowedCapacity = room.allowedCapacity;
+    //obtener la cantidad de reservaciones para una session
+    let reservationsAmount = await this.reqControllerRef.sessionService.getAvailableAmount(pSessionId);
+    //Revisar si queda almenos un cupo
+    let canReserve = reservationsAmount < allowedCapacity;
+    //dar mensaje que no quedan mas cupos
+    return {message : canReserve ? "Aun existen cupos para reservar en la session indicada" : "No existen mas cupos para la session indicada",
+              success : canReserve};
+  }
 }

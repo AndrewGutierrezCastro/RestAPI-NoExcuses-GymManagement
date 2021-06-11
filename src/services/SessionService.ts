@@ -9,6 +9,7 @@ import { IBaseService } from "./IBaseService";
 import { GymDate } from "../model/Date";
 import { getDaysBetweenDates } from '../utils/DateUtils';
 import { CalendarService } from './CalendarService';
+import { Reservation } from '../model/Reservation';
 
 export class SessionService implements IBaseService {
 
@@ -55,10 +56,11 @@ export class SessionService implements IBaseService {
     return populatedData;
   }
 
-  public getAvailableAmount(sessionId : string) : number {
+  public async getAvailableAmount(pSessionId : string) : Promise<number> {
     
-    // TODO: get available amount using the reservation service
-    return 0;
+    let reservations : Reservation[] =  <Reservation[]> await this.reqControllerRef.reservationService.get({sessionId : pSessionId}, {});
+    //Revisar si queda almenos un cupo
+    return reservations.length;
   }
 
   public async isNotAllowed(pSession : GymSession, calendarSessions : string[]) : Promise<boolean>{
@@ -162,8 +164,8 @@ export class SessionService implements IBaseService {
   async getOne(entityId: string, filter : object = {}, projection = {}): Promise<object> {
 
     let session : any = await API.entityRepository.getOne('sessions', entityId, filter, projection);
-    console.log('id', entityId);
-    console.log(session);
+    // console.log('id', entityId);
+    // console.log(session);
     let { serviceId, instructorId, ...sessionPart }: any = session;
 
     sessionPart.service = await this.reqControllerRef.serviceService.getOne(serviceId);

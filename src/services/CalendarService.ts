@@ -69,9 +69,18 @@ export class CalendarService implements IBaseService {
       }
 
     let sessions : string[] = calendar.sessions;
-    let sessionsObjs = <GymSession[]> await Promise.all(sessions.map(async (sessionId: string) => {
+    let sessionsObjs = <any[]> await Promise.all(sessions.map(async (sessionId: string) => {
       return await this.reqControllerRef.sessionService.getOne(sessionId);
     }));
+
+
+    let now = new Date();
+    
+    sessionsObjs = sessionsObjs.filter((session:any) => {
+      let sessionDate = session.dayOfTheWeek.dayOfTheWeek;
+      let d = new Date(sessionDate);  
+      return d > now;
+    });
 
     let calendarWithSessions : CalendarWithSessions = 
       {...calendar, sessions: sessionsObjs, month : monthNames[new Date().getMonth()]};

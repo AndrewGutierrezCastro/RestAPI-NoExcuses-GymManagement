@@ -34,6 +34,10 @@ export const SessionSchema : Schema = new Schema({
         type : Schema.Types.Boolean,
         required : true,
         default : true
+    },
+    roomId : {
+        type : Schema.Types.String,
+        required : true
     }
 });
 
