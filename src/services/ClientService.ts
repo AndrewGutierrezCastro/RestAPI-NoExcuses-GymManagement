@@ -12,20 +12,24 @@ export class ClientService implements IBaseService {
   async create(entity: object): Promise<object> {
 
     let client : Client = <Client> entity;
-    //CREATE USER WITH ENTITY USER DATA
     let responseCreatedUser = await Authenticator.registerUser(client); 
+
+    if (!responseCreatedUser.newUser)
+      return responseCreatedUser;
+
     let createdUser = responseCreatedUser.newUser;
-
-    //Set id user to entity client
     client._id = createdUser._id;
+    client.pendingPayment = [];
+    client.balance = 0.00;
+    client.memberships = [];
 
-    //create client
     let responseCreatedClient = await API.entityRepository.create('client', client);
 
-    return {  message : "El cliente se ha creado exitosamente",
-              success: true,
-              object : responseCreatedClient
-            }
+    return {  
+      message : "El cliente se ha creado exitosamente",
+      success: true,
+      object : responseCreatedClient
+    };
   }
 
 

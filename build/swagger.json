@@ -206,9 +206,33 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InstructorWithoutRef": {
+			"Instructor": {
 				"properties": {
-					"userId": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"identification": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"_id": {
 						"type": "string"
 					},
 					"category": {
@@ -222,7 +246,15 @@
 					}
 				},
 				"required": [
-					"userId",
+					"username",
+					"password",
+					"role",
+					"firstName",
+					"lastName",
+					"identification",
+					"email",
+					"phoneNumber",
+					"category",
 					"specialities"
 				],
 				"type": "object",
@@ -1175,7 +1207,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/InstructorWithoutRef"
+								"$ref": "#/components/schemas/Instructor"
 							}
 						}
 					}

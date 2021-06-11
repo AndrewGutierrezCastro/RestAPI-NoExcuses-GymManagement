@@ -96,11 +96,19 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InstructorWithoutRef": {
+    "Instructor": {
         "dataType": "refObject",
         "properties": {
-            "userId": {"dataType":"string","required":true},
-            "category": {"dataType":"string"},
+            "username": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+            "role": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "identification": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "phoneNumber": {"dataType":"string","required":true},
+            "_id": {"dataType":"string"},
+            "category": {"dataType":"string","required":true},
             "specialities": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": false,
@@ -729,7 +737,7 @@ export function RegisterRoutes(app: express.Router) {
         app.post('/api/instructor/create',
             function RequestController_createInstructor(request: any, response: any, next: any) {
             const args = {
-                    instructor: {"in":"body","name":"instructor","required":true,"ref":"InstructorWithoutRef"},
+                    instructor: {"in":"body","name":"instructor","required":true,"ref":"Instructor"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

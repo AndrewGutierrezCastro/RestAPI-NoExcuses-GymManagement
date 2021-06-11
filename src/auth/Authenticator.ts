@@ -24,7 +24,7 @@ export class Authenticator {
             return {message: 'Username and password are required', auth : false};
 
         // query user from mongo db
-        const [user] = <User[]> await API.entityRepository.get('users',{username}, {username:1, password:1, role:1, _id:1});
+        const [user] = <User[]> await API.entityRepository.get('users',{username}, {});
 
         // request handling
         if (user) {
@@ -121,6 +121,7 @@ export class Authenticator {
         if (usersEmails.length > 0)
             return {
                 signup : false,
+                succes : false,
                 message : 'The email or username is already used'
             }
         
@@ -136,6 +137,7 @@ export class Authenticator {
         return {
             newUser: result.createdObject,
             signup : true,
+            success : true,
             message : `Sign up correctly for ${user.firstName} ${user.lastName}, now you can login`
         };
     }

@@ -1,6 +1,7 @@
 import API from "../API";
+import { Authenticator } from "../auth/Authenticator";
 import { RequestController } from "../controllers/RequestController";
-import { InstructorWithoutRef } from "../model/Instructor";
+import { Instructor, InstructorWithoutRef } from "../model/Instructor";
 import { IBaseService } from "./IBaseService";
 
 export class InstructorService implements IBaseService {
@@ -10,8 +11,43 @@ export class InstructorService implements IBaseService {
   ) {}
 
 
-  create(entity: object): Promise<object> {
-    return API.entityRepository.create('instructor', entity);
+  async create(entity: object): Promise<object> {
+
+    /**
+       *  {
+    [0]   firstName: 'Julano',
+    [0]   lastName: 'Xd',
+    [0]   email: 'julandoxd@gmail.com',
+    [0]   identification: '123123123',
+    [0]   phoneNumber: '123123123',
+    [0]   username: 'julanoxd',
+    [0]   role: 'instructor',
+    [0]   password: 'julanoxd',
+    [0]   category: '',
+    [0]   specialities: []
+    [0] }
+     */
+
+    let instructor = <Instructor> entity;
+    let responseCreatedUser = await Authenticator.registerUser(instructor); 
+
+    if (!responseCreatedUser.newUser)
+      return responseCreatedUser;
+
+    let createdUser = responseCreatedUser.newUser;
+    let newInstructor : InstructorWithoutRef = {
+      userId : createdUser._id,
+      category : '',
+      specialities : []
+    };
+
+    let responseCreatedClient = await API.entityRepository.create('instructor', newInstructor);
+
+    return {  
+      message : "El instructor se ha creado exitosamente",
+      success: true,
+      object : responseCreatedClient
+    };
   }
   
   modify(oldEntityId: string = '', newEntity: object): Promise<object> {

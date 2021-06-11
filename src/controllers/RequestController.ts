@@ -211,7 +211,7 @@ export class RequestController extends Controller {
  
      @Post("instructor/create")
      public async createInstructor(
-        @Body() instructor: InstructorWithoutRef
+        @Body() instructor: Instructor
      ): Promise<any> {
         return await this.instructorService.create(instructor);
      }
@@ -222,6 +222,8 @@ export class RequestController extends Controller {
      ): Promise<any> {
         return await this.instructorService.delete(instructorId);
      }
+
+
     //Calendar -------------------------------------------------------
     @Post("calendar/get")
     public async getCalendar(

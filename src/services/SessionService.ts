@@ -68,7 +68,7 @@ export class SessionService implements IBaseService {
       if (calendarSessionsObj.length == 0)
         return true;
 
-    console.log(calendarSessionsObj);
+      console.log('CALENDARSESSIONS', calendarSessionsObj);
 
       return calendarSessionsObj.reduce( (acc:boolean, session:any) => {
   
