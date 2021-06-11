@@ -49,7 +49,7 @@ const models: TsoaRoute.Models = {
     "GymSession": {
         "dataType": "refObject",
         "properties": {
-            "dayHour": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "dayHour": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "roomId": {"dataType":"string"},
             "instructorId": {"dataType":"string","required":true},
             "serviceId": {"dataType":"string","required":true},
@@ -89,7 +89,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "capacity": {"dataType":"double","required":true},
             "allowedCapacity": {"dataType":"double","required":true},
-            "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "weeklySchedule": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "monthlyCalendar": {"ref":"Calendar"},
             "_id": {"dataType":"string"},
         },
@@ -126,6 +126,7 @@ const models: TsoaRoute.Models = {
             "createdDate": {"dataType":"datetime","required":true},
             "sessionsAmount": {"dataType":"double","required":true},
             "daysAmount": {"dataType":"double","required":true},
+            "typeMembership": {"dataType":"string","required":true},
             "_id": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -1144,10 +1145,10 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/api/membership/generateMembership',
-            function RequestController_generateMembership(request: any, response: any, next: any) {
+        app.post('/api/membership/applyCharge',
+            function RequestController_applyCharge(request: any, response: any, next: any) {
             const args = {
-                    requestMembership: {"in":"body","name":"requestMembership","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"membershipId":{"dataType":"string","required":true},"clientId":{"dataType":"string","required":true},"pPayment":{"ref":"Payment","required":true}}},
+                    requestCharge: {"in":"body","name":"requestCharge","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"pPayment":{"ref":"Payment","required":true},"pClientId":{"dataType":"string","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1162,7 +1163,7 @@ export function RegisterRoutes(app: express.Router) {
             const controller = new RequestController();
 
 
-            const promise = controller.generateMembership.apply(controller, validatedArgs as any);
+            const promise = controller.applyCharge.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -38,14 +38,16 @@ export class ReservationService implements IBaseService {
     let reservation : any = await this.getOne(reservationId);
     let session : any = await this.getOne(reservation.sessionId);
     //respuesta del reembolo o del cargo
-    let response : any;
+    let responseRefund : any;
     if(this.isReservationRefund(reservation, session)){
-      //TODO generar un reembolso al cliente
-      response = await this.reqControllerRef.membershipService.refund(reservation.clientId);
-      return {  message : "Se hizo un reembolso a su favor",
+      responseRefund = this.reqControllerRef.membershipService.refund(reservation.clientId);
+      /*
+       return{message : "Se ha hecho un reembolso a su cuenta",
               success : true,
-              object  : response
+              object  : null
             };
+      */
+      return responseRefund;
     }else{
       return {  message : "No se ha efectuado el reembolso por normas de cancelacion",
               success : false,

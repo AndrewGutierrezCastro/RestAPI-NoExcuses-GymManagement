@@ -6,12 +6,15 @@ import { Payment } from "../model/Payment";
 import { IBaseService } from "./IBaseService";
 import { RequestController } from "../controllers/RequestController";
 
+const REFUNDSESSIONS : number = 1;
+const SESSIONSAMOUNT : string = "SESSIONSAMOUNT";
+const DAYSAMOUNT : string = "DAYSAMOUNT";
 export class MembershipService implements IBaseService {
-
+  
   constructor(
     private reqControllerRef : RequestController 
-  ) {}
-
+  ) { }
+  
   create(entity: object): Promise<object> {
 
     return API.entityRepository.create('membership', entity);
@@ -33,44 +36,26 @@ export class MembershipService implements IBaseService {
     return API.entityRepository.getOne('membership', entityId);
     }
   async createMembership(pMembership : Membership , clientId : string, pPayment : Payment) : Promise<object>{
-    //TODO create payment
+    //create payment
     let responseCreatedPayment : any = await this.reqControllerRef.paymentService.create(pPayment);
     let createdPaymentId = responseCreatedPayment.insertedId;
-    //TODO Associate client to membership
+    //Associate client to membership
     pMembership.paymentId = createdPaymentId;
     pMembership.clientId = clientId;
-    //TODO Create membership
+    //Create membership
     let responseCreatedMembership : any = await this.create(pMembership);
     let createdMembership : any = responseCreatedMembership.insertedId;
+
+    //Update client
+    let client : any = await this.reqControllerRef.clientService.getOne(clientId);
+    client.memberships.push(createdMembership);//id de la memebresia
+
+    let client2 : any = await this.reqControllerRef.clientService.modify(client._id,client);
 
     return {  message : "La membresia ha sido creada con exito", 
               success : true,
               object  : createdMembership
            }
-  }
-  async generateMembership(pPayment : Payment, clientId : string, membershipId : string) : Promise<Object> {
-    //Obtener los objetos de la base de datos
-    let payment : any = await this.reqControllerRef.paymentService.create(pPayment);
-    let client : any =  await this.reqControllerRef.clientService.getOne(clientId);
-    //Crear la membresia
-    let membership : Membership = <Membership> await this.getOne(membershipId);
-
-    //agregar el pago pendiente a la lista del cliente
-    client.pendingPayment.push(payment.createdObject._id);
-
-    //el cliente modificado
-    let client2 : any  = await this.reqControllerRef.clientService.modify(client._id, client);
-
-    //seter el clientId a la membresia
-    membership.clientId = client2.updatedElement._id;
-    //obtener la nueva membresia modificada
-    let membership2 : any = await this.modify(membership._id, membership);
-
-    return {  message : "Membresia generada con exito",
-              success : true,
-              object  : membership2.updatedElement
-            };
-
   }
 
   async applyMembership() : Promise<Object>{
@@ -138,17 +123,67 @@ export class MembershipService implements IBaseService {
             };
   }
 
-  async applyCharge(pClientId : string) : Promise<Object>{
-    return {  message : "Metodo no implementado",
-              success : false,
-              object  : {}
+  async applyCharge(pClientId : string, pPayment : Payment) : Promise<Object>{
+    //create payment
+    let responseCreatedPayment : any = await this.reqControllerRef.paymentService.create(pPayment);
+    let createdPaymentId = responseCreatedPayment.insertedId;
+    //Get client
+    let client1 : Client = <Client> await this.reqControllerRef.clientService.getOne(pClientId);
+    //Associate payment to Client
+    client1.pendingPayment.push(createdPaymentId);
+    //Update client
+    let client2 : any = await this.reqControllerRef.clientService.modify(client1._id, client1);
+
+    return {  message : `Se le ha hecho el cargo a  ${client2.updatedElement.firstName}, de: ${responseCreatedPayment.createdObject.amount}.`,
+              success : true,
+              object  : responseCreatedPayment.createdObject
             };
   }
 
   async refund(pCliendId : string) : Promise<Object>{
-    return {  message : "Metodo no implementado",
-              success : false,
-              object  : {}
+
+    //Obtener el cliente de la base de datos
+    let client : any = await this.reqControllerRef.clientService.getOne(pCliendId);
+    //buscar la membresia activa
+    let activeMembership : any = null; 
+    client.membership.forEach( async (element : string) => {
+      let isActive = await this.isActive(element);
+      activeMembership = isActive ? element : activeMembership;  
+    });
+    //Sino tiene ninguna membresia activa se envia la respuesta 
+    if(activeMembership==null){
+      return {  message : "No se ha encontrado una membresia activa",
+                success : false,
+                object  : null
+              };
+    }
+    //obtener la membresia
+    let membership : any = await this.getOne(activeMembership);
+    let membership2 = membership.typeMembership==SESSIONSAMOUNT ? 
+      this.refundMembershipByAmountSessions(activeMembership) : 
+      this.refundMembershipByDays(activeMembership);    
+
+    this.modify(membership2._id, membership2);
+
+    return {  message : "Se ha hecho un reembolso a su cuenta",
+              success : true,
+              object  : null
             };
+  }
+
+  private refundMembershipByAmountSessions(pMembership : Membership) : Membership{
+    pMembership.daysAmount = pMembership.daysAmount + REFUNDSESSIONS;
+    return pMembership;
+  }
+  private refundMembershipByDays(pMembership : Membership) : Membership {
+    return pMembership;
+  }
+  private async isActive(pMembresiaId : string) : Promise<boolean>{
+    let membresia : Membership = <Membership> await this.getOne(pMembresiaId);
+    let endDate : Date = membresia.createdDate;
+    endDate.setDate(endDate.getDate() + membresia.daysAmount);
+    let isExpired = new Date() > endDate;
+    let isOutDays = membresia.sessionsAmount < 0;
+    return !isExpired && !isOutDays || !isExpired
   }
 }
