@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 
 import API from '../API';
 import { User } from '../model/User';
+import mongoose from 'mongoose';
 
 const allowableApiCallsWithoutAuth = [
     "/user/login",
@@ -45,12 +46,17 @@ export class Authenticator {
                 const refreshToken = randtoken.uid(256);
                 refreshTokens.set(refreshToken, userInfo._id || '');
 
+                // get user role related info
+                console.log(user);
+                const [obj] = await API.entityRepository.get(user.role, {userId : new mongoose.mongo.ObjectID(user._id),}, {});
+
                 return {
                     user : userInfo,
                     token : jwtToken,
                     refreshToken,
                     expireTimeInSeconds : process.env.TOKEN_EXPIRE_TIME, // seconds to refresh to frontend use to refresh session
-                    auth : true
+                    auth : true,
+                    obj
                 };
             }   
         } 

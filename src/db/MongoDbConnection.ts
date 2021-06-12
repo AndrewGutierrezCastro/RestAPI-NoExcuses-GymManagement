@@ -1,5 +1,5 @@
 import { ClientSchema } from './schemas/ClientSchema';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import { UserSchema } from '../db/schemas/UserSchema';
 import { AdministratorSchema } from './schemas/AdministratorSchema';
 import { ServiceSchema } from './schemas/ServiceSchema';
@@ -9,6 +9,7 @@ import { CalendarSchema} from './schemas/CalendarSchema';
 import { MembershipSchema } from './schemas/MembershipSchema';
 import { ReservationSchema } from './schemas/ReservationSchema';
 import { PaymentSchema } from './schemas/PaymentSchema';
+import { MembershipOfferSchema } from './schemas/MembershipOfferSchema';
 
 export class MongoDbConnection {
   
@@ -31,6 +32,7 @@ export class MongoDbConnection {
     mongoose.model('membership',MembershipSchema);
     mongoose.model('reservation',ReservationSchema);
     mongoose.model('payment', PaymentSchema);
+    mongoose.model('membershipoffer', MembershipOfferSchema);
   }
 
   private connect() {

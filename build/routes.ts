@@ -152,6 +152,18 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MembershipOffer": {
+        "dataType": "refObject",
+        "properties": {
+            "payment": {"dataType":"nestedObjectLiteral","nestedProperties":{"subject":{"dataType":"string","required":true},"date":{"dataType":"string","required":true},"amount":{"dataType":"double","required":true},"paymentType":{"dataType":"string","required":true}},"required":true},
+            "creationDate": {"dataType":"string","required":true},
+            "amountDays": {"dataType":"double","required":true},
+            "amountSession": {"dataType":"double","required":true},
+            "typeMembership": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Client": {
         "dataType": "refObject",
         "properties": {
@@ -933,6 +945,28 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/reservation/getByClient',
+            function RequestController_getReservationByClient(request: any, response: any, next: any) {
+            const args = {
+                    clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getReservationByClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/api/reservation/update',
             function RequestController_updateReservation(request: any, response: any, next: any) {
             const args = {
@@ -1172,6 +1206,50 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.applyCharge.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/membershipoffer/get',
+            function RequestController_getMembershipOffer(request: any, response: any, next: any) {
+            const args = {
+                    params: {"in":"body","name":"params","required":true,"ref":"GetParamsBody"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getMembershipOffer.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/membershipoffer/create',
+            function RequestController_createMembershipOffer(request: any, response: any, next: any) {
+            const args = {
+                    membershipOffer: {"in":"body","name":"membershipOffer","required":true,"ref":"MembershipOffer"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.createMembershipOffer.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

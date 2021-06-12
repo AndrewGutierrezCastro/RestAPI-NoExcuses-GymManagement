@@ -1,3 +1,4 @@
+import { MembershipOfferService } from './../services/MembershipOfferService';
 
 import {
     Body,
@@ -34,6 +35,7 @@ import { PaymentService } from '../services/PaymentService';
 import { MongoDbConnection } from '../db/MongoDbConnection';
 import { Client, ClientWithoutRef } from '../model/Client';
 import { ClientService } from './../services/ClientService';
+import { MembershipOffer } from '../model/MembershipOffer';
 
 /**
  * @description Request controller
@@ -52,6 +54,7 @@ export class RequestController extends Controller {
     public paymentService : PaymentService = new PaymentService(this);
     public instructorService : InstructorService = new InstructorService(this);
     public clientService : ClientService = new ClientService(this);
+    public membershipOfferService : MembershipOfferService = new MembershipOfferService(this);
 
     constructor() { super(); }
 
@@ -274,6 +277,13 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.reservationService.get(params.filter, params.projection);
     }
+    
+    @Get("reservation/getByClient")
+    public async getReservationByClient(
+        @Query() clientId : string
+    ): Promise<any> {
+        return await this.reservationService.getReservationByClient(clientId);
+    }
 
     @Put("reservation/update")
     public async updateReservation(
@@ -351,6 +361,22 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.membershipService.applyCharge(requestCharge.pClientId, requestCharge.pPayment);
     }    
+
+    //MembershipOffer-----------------------------------------------
+    @Post("membershipoffer/get")
+    public async getMembershipOffer(
+        @Body() params: GetParamsBody
+    ): Promise<any> {
+        return await this.membershipOfferService.get(params.filter, params.projection);
+    }
+    
+    @Post("membershipoffer/create")
+    public async createMembershipOffer(
+        @Body() membershipOffer : MembershipOffer
+    ): Promise<any> {
+        return await this.membershipOfferService.create(membershipOffer);
+    }
+
     //Payment-------------------------------------------------------
     @Post("payment/get")
     public async getPayment(

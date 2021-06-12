@@ -1,4 +1,4 @@
-
+import mongoose from "mongoose";
 import API from "../API";
 import { IBaseService } from "./IBaseService";
 import { Reservation } from "./../model/Reservation";
@@ -72,12 +72,9 @@ export class ReservationService implements IBaseService {
     let responseRefund : any;
     if(this.isReservationRefund(reservation, session)){
       responseRefund = this.reqControllerRef.membershipService.refund(reservation.clientId);
-      /*
-       return{message : "Se ha hecho un reembolso a su cuenta",
-              success : true,
-              object  : null
-            };
-      */
+      //eliminar la session
+      let responseReservation = await this.delete(reservationId);
+      console.log(responseReservation);
       return responseRefund;
     }else{
       return {  message : "No se ha efectuado el reembolso por normas de cancelacion",
@@ -149,4 +146,30 @@ export class ReservationService implements IBaseService {
     return {message : canReserve ? "Aun existen cupos para reservar en la session indicada" : "No existen mas cupos para la session indicada",
               success : canReserve};
   }
+
+   async getReservationByClient(clientId : string) : Promise<object> {
+
+    let id = new mongoose.mongo.ObjectId(clientId);
+    let reservations = await this.reqControllerRef.reservationService.get({clientId : id}, {});
+
+    let populatedReservations = reservations.map(async(reservation : any) => {
+
+      let clientId = reservation.clientId;
+      let sessionId = reservation.sessionId;
+      let creationDate = reservation.creationDate;
+
+      let sessionObj = await this.reqControllerRef.sessionService.getOne(sessionId)
+      let clientObj = await this.reqControllerRef.clientService.getOne(clientId);
+
+      return {
+        session : sessionObj,
+        client : clientObj,
+        creationDate,
+        _id : reservation._id
+      };
+    });
+
+    return populatedReservations;
+  }
+   
 }
