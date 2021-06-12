@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import API from "../API";
 import { IBaseService } from "./IBaseService";
 import { Reservation } from "./../model/Reservation";
-import { GymSessionUniqueDate } from "./../model/GymSession";
+import { GymSession, GymSessionUniqueDate } from "./../model/GymSession";
 import { RequestController } from '../controllers/RequestController';
 import { Client } from "../model/Client";
 import { Membership } from "../model/Membership";
@@ -66,15 +66,15 @@ export class ReservationService implements IBaseService {
 
   async cancelReservation(reservationId : string) : Promise<Object>{
     //obtener la reservacion y la reservacion
-    let reservation : any = await this.getOne(reservationId);
-    let session : any = await this.getOne(reservation.sessionId);
+    let reservation = <Reservation> await this.getOne(reservationId);
+    let session  = <GymSession> await this.reqControllerRef.sessionService.getOne(reservation.sessionId);
     //respuesta del reembolo o del cargo
     let responseRefund : any;
     if(this.isReservationRefund(reservation, session)){
       responseRefund = this.reqControllerRef.membershipService.refund(reservation.clientId);
       //eliminar la session
       let responseReservation = await this.delete(reservationId);
-      console.log(responseReservation);
+      //console.log(responseReservation);
       return responseRefund;
     }else{
       return {  message : "No se ha efectuado el reembolso por normas de cancelacion",
@@ -86,18 +86,17 @@ export class ReservationService implements IBaseService {
     
   } 
 
-  private isReservationRefund(reservation : Reservation, session : GymSessionUniqueDate) : boolean{
+  private isReservationRefund(reservation : Reservation, session : GymSession) : boolean{
     //obtener las horas y minutos en formato de string
-    let [h,m] = session.dayHour.initialHour.split(':');
+    let [h,m] = session.dayHour[0].initialHour.split(':');
      //crear un Date, con la fecha de esa session
-    let eightPreviousHoursSession = new Date(session.dayHour.dayOfTheWeek);
+    let eightPreviousHoursSession = new Date(session.dayHour[0].dayOfTheWeek);
     //Setear las hours y los minutos
     eightPreviousHoursSession.setHours((parseInt(h)-previousHours));
     eightPreviousHoursSession.setMinutes(parseInt(m));
 
     //Obtener el date de la creacion de la reservation
     let reservationDate = new Date(reservation.creationDate);
-  
     return reservationDate < eightPreviousHoursSession ;
   }
 
@@ -112,10 +111,10 @@ export class ReservationService implements IBaseService {
     let sessionId = reservation.sessionId;
     //revisar si existe reservaciones disponibles, cupos.
     let responseQuoat : any = await this.isThereQuota(sessionId);
-    console.log("Quoat: ", responseQuoat);
+    //console.log("Quoat: ", responseQuoat);
     //Revisar si el cliente puede reservar
     let responseItsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId);
-    console.log("ItsAllowedToReserve: ", responseItsAllowedToReserve);
+    //console.log("ItsAllowedToReserve: ", responseItsAllowedToReserve);
     //Mensaje de exito
     let successMessage = "Puede reservar, hay cupo y el cliente tiene permitido reservar.";
     let canReservate = responseQuoat.success && responseItsAllowedToReserve.success;

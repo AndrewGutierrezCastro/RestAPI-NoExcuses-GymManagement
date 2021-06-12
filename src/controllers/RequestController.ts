@@ -303,7 +303,7 @@ export class RequestController extends Controller {
     public async deleteReservation(
         @Query() reservationId: string
     ): Promise<any> {
-        return await this.reservationService.delete(reservationId);
+        return await this.reservationService.cancelReservation(reservationId);
     }
     //Memberships-------------------------------------------------------
     @Post("membership/get")

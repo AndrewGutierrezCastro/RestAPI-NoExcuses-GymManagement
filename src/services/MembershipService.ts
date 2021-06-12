@@ -128,20 +128,11 @@ export class MembershipService implements IBaseService {
     }
   }
   private async getActiveMembership(pMemberships : string[]){
-    let membership;
-    let todayDate = new Date();
-    let activeMembership;
     
-    for (let i = 0; i < pMemberships.length; i++) {
-      let membershipId = pMemberships[i];
-      membership = <Membership> await this.reqControllerRef.membershipService.getOne(membershipId);
-
-      membership.createdDate.setDate(membership.createdDate.getDate() + membership.daysAmount);
-      
-      if(membership.createdDate >= todayDate || membership.sessionsAmount > 0){
-        activeMembership = membership;
-      }
-    }
+    let activeMembershipId : any = pMemberships.find( async (element : string) => {
+      return await this.isActive(element);
+    });
+    let activeMembership = await this.getOne(activeMembershipId);
     return activeMembership;
   }
 
@@ -196,34 +187,37 @@ export class MembershipService implements IBaseService {
     //Obtener el cliente de la base de datos
     let client : any = await this.reqControllerRef.clientService.getOne(pCliendId);
     //buscar la membresia activa
-    let activeMembership : any = null; 
-    client.membership.forEach( async (element : string) => {
-      let isActive = await this.isActive(element);
-      activeMembership = isActive ? element : activeMembership;  
+    let activeMembershipId : any = null;
+    activeMembershipId = await client.memberships.find( async (element : string) => {
+      return await this.isActive(element);
     });
+
     //Sino tiene ninguna membresia activa se envia la respuesta 
-    if(activeMembership==null){
+    if(activeMembershipId===null){
       return {  message : "No se ha encontrado una membresia activa",
                 success : false,
                 object  : null
               };
     }
     //obtener la membresia
-    let membership : any = await this.getOne(activeMembership);
-    let membership2 = membership.typeMembership==SESSIONSAMOUNT ? 
-      this.refundMembershipByAmountSessions(activeMembership) : 
-      this.refundMembershipByDays(activeMembership);    
+    let membership : any = await this.getOne(activeMembershipId);
+    let membership2 = membership.typeMembership===SESSIONSAMOUNT ? 
+      this.refundMembershipByAmountSessions(membership) : 
+      this.refundMembershipByDays(membership);    
 
-    this.modify(membership2._id, membership2);
+    let membership4 : any = await this.getOne(activeMembershipId);
+    let membership3 : any = await this.modify(membership2._id, membership2);
 
     return {  message : "Se ha hecho un reembolso a su cuenta",
               success : true,
-              object  : null
+              object  : { old : membership4,
+                          updated: membership3.updatedElement
+                        }
             };
   }
 
   private refundMembershipByAmountSessions(pMembership : Membership) : Membership{
-    pMembership.daysAmount = pMembership.daysAmount + REFUNDSESSIONS;
+    pMembership.sessionsAmount = pMembership.sessionsAmount + REFUNDSESSIONS;
     return pMembership;
   }
   private refundMembershipByDays(pMembership : Membership) : Membership {
@@ -235,6 +229,6 @@ export class MembershipService implements IBaseService {
     endDate.setDate(endDate.getDate() + membresia.daysAmount);
     let isExpired = new Date() > endDate;
     let isOutDays = membresia.sessionsAmount < 0;
-    return !isExpired && !isOutDays || !isExpired
+    return !isOutDays || !isExpired
   }
 }
