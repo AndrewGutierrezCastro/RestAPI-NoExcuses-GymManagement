@@ -17,12 +17,6 @@ export class ReservationService implements IBaseService {
   ){}
 
   async create(entity: any): Promise<object> {
-    /*
-    creationDate : string,
-    sessionId : string,
-    clientId : string,
-    _id? : string,
-    */
     //set client id
     let clientId : string = entity.clientId;
     //get client
@@ -30,6 +24,8 @@ export class ReservationService implements IBaseService {
     //get membership
     let responseActiveMembership : any = await this.reqControllerRef.membershipService.hasActiveMembership(clientId);
     let activeMembership = <Membership> responseActiveMembership.object;
+
+    console.log(entity);
 
     //Revisar si puede reservar
     let responseCanReservate : any = await this.canReservate(entity);
@@ -42,7 +38,7 @@ export class ReservationService implements IBaseService {
     //Aplicar la membresia y quitarle al cantidad de sesiones de ser necesario
     this.reqControllerRef.membershipService.applyMembership(activeMembership._id);
 
-    return {message : `Se ha creado la reservacion al cliente ${client.firstName} ` + responseCanReservate.message,
+    return {message : `Se ha creado la reservacion al cliente ` + responseCanReservate.message,
             success : true,
             object : reservation
             };
@@ -65,16 +61,17 @@ export class ReservationService implements IBaseService {
     }
 
   async cancelReservation(reservationId : string) : Promise<Object>{
-    //obtener la reservacion y la reservacion
-    let reservation = <Reservation> await this.getOne(reservationId);
-    let session  = <GymSession> await this.reqControllerRef.sessionService.getOne(reservation.sessionId);
+    //obtener la reservacion y la sesion
+    let [reservation] : any[] = await this.get({_id: new mongoose.mongo.ObjectID(reservationId)},{});
+    console.log('R', reservation)
+    let [session] : any[] = await this.reqControllerRef.sessionService.get({_id: new mongoose.mongo.ObjectID(reservation.sessionId)}, {});
+    console.log('S', session)
     //respuesta del reembolo o del cargo
     let responseRefund : any;
+    let _ = await this.delete(reservationId);
     if(this.isReservationRefund(reservation, session)){
       responseRefund = this.reqControllerRef.membershipService.refund(reservation.clientId);
       //eliminar la session
-      let responseReservation = await this.delete(reservationId);
-      //console.log(responseReservation);
       return responseRefund;
     }else{
       return {  message : "No se ha efectuado el reembolso por normas de cancelacion",
@@ -82,11 +79,10 @@ export class ReservationService implements IBaseService {
               object  : {}
             };
     }
-
-    
   } 
 
-  private isReservationRefund(reservation : Reservation, session : GymSession) : boolean{
+  private isReservationRefund(reservation : Reservation, session : any) : boolean{
+
     //obtener las horas y minutos en formato de string
     let [h,m] = session.dayHour[0].initialHour.split(':');
      //crear un Date, con la fecha de esa session
@@ -148,10 +144,10 @@ export class ReservationService implements IBaseService {
 
    async getReservationByClient(clientId : string) : Promise<object> {
 
-    let id = new mongoose.mongo.ObjectId(clientId);
-    let reservations = await this.reqControllerRef.reservationService.get({clientId : id}, {});
+    // let id = new mongoose.mongo.ObjectId(clientId);
+    let reservations = await this.reqControllerRef.reservationService.get({clientId}, {}  );
 
-    let populatedReservations = reservations.map(async(reservation : any) => {
+    let populatedReservations = await Promise.all(reservations.map(async(reservation : any) => {
 
       let clientId = reservation.clientId;
       let sessionId = reservation.sessionId;
@@ -166,7 +162,9 @@ export class ReservationService implements IBaseService {
         creationDate,
         _id : reservation._id
       };
-    });
+    }
+    )
+    );
 
     return populatedReservations;
   }

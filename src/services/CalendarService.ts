@@ -69,6 +69,10 @@ export class CalendarService implements IBaseService {
       }
 
     let sessions : string[] = calendar.sessions;
+
+    if (!sessions || sessions.length === 0)
+      return [];
+
     let sessionsObjs = <any[]> await Promise.all(sessions.map(async (sessionId: string) => {
       return await this.reqControllerRef.sessionService.getOne(sessionId);
     }));
@@ -82,8 +86,8 @@ export class CalendarService implements IBaseService {
       return d > now;
     });
 
-    let calendarWithSessions : CalendarWithSessions = 
-      {...calendar, sessions: sessionsObjs, month : monthNames[new Date().getMonth()]};
+    let calendarWithSessions : any = 
+      {...calendar, success: true, sessions: sessionsObjs, month : monthNames[new Date().getMonth()]};
 
     return calendarWithSessions;
   }

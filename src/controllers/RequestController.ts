@@ -305,6 +305,14 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.reservationService.cancelReservation(reservationId);
     }
+
+    @Delete("reservation/cancel")
+    public async cancelReservation(
+        @Query() reservationId: string
+    ): Promise<any> {
+        return await this.reservationService.cancelReservation(reservationId);
+    }
+    
     //Memberships-------------------------------------------------------
     @Post("membership/get")
     public async getMembership(
