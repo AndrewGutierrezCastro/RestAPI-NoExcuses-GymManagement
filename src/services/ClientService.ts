@@ -31,6 +31,7 @@ export class ClientService implements IBaseService {
     return {  
       message : "El cliente se ha creado exitosamente",
       success: true,
+      signup : true,
       object : responseCreatedClient
     };
   }

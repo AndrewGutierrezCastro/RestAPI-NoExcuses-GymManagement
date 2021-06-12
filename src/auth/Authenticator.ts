@@ -47,7 +47,6 @@ export class Authenticator {
                 refreshTokens.set(refreshToken, userInfo._id || '');
 
                 // get user role related info
-                console.log(user);
                 const [obj] = await API.entityRepository.get(user.role, {userId : new mongoose.mongo.ObjectID(user._id),}, {});
 
                 return {
