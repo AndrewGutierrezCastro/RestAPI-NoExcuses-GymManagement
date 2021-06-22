@@ -3,32 +3,32 @@ import { Schema } from 'mongoose';
 export const MembershipSchema : Schema = new Schema({
     state : {
         type : Schema.Types.Boolean,
-        require: true,
+        required: true,
         default: true
     },
     clientId : {
         type : Schema.Types.ObjectId,
-        require: true
+        required: true
     },
     paymentId : {
         type : Schema.Types.ObjectId,
-        require: true,
+        required: true,
     },
     creationDate : {
         type :  Schema.Types.String,
-        require : true,
+        required : true,
     },
     amountDays : {
         type : Schema.Types.Number,
-        require: true
+        required: true
     },
     amountSession :{
         type : Schema.Types.Number,
-        require :true
+        required :true
     },
     typeMembership :{
         type : Schema.Types.String,
-        require : true
+        required : true
     }
 
 });
