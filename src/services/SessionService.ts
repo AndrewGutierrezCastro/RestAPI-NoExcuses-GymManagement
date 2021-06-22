@@ -185,12 +185,14 @@ export class SessionService implements IBaseService {
     //Obtener la informacion del aforo y la capacitdad total
     let gymSession = <GymSessionUniqueDate> await this.getOne(sessionId);
     let room = <Room> await this.reqControllerRef.roomService.getOne( gymSession.roomId );
-
+    let cantidadMaximaReservaciones = room.capacity / (100 / room.allowedCapacity);
+        
     return {  clients : populateClients,
               aforoSesion : room.allowedCapacity, 
               cantidadSala : room.capacity,                 
-              cantidadMaximaReservaciones : room.allowedCapacity,  
-              cantidadReservaciones : reservationsOfTheSession.length
+              cantidadMaximaReservaciones : cantidadMaximaReservaciones,  
+              cantidadReservaciones : reservationsOfTheSession.length,
+              cupoDisponible : room.capacity - reservationsOfTheSession.length
     };
   }
 
