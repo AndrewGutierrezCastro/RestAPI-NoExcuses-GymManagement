@@ -102,6 +102,13 @@ export class RequestController extends Controller {
         return await this.sessionService.addSessionToCalendar(sessionId, roomId);
     }
 
+    @Get("sessions/getClientsBySession")
+    public async getClientsBySession(
+        @Query() sessionId : string
+    ): Promise<any> {
+        return await this.sessionService.getClientsBySession(sessionId);
+    }
+
     // TEST
     @Get("sessions/fly")
     public async sessionsFly(
@@ -312,6 +319,7 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.reservationService.cancelReservation(reservationId);
     }
+    
     
     //Memberships-------------------------------------------------------
     @Post("membership/get")

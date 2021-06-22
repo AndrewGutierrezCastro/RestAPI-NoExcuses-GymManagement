@@ -1,15 +1,12 @@
 import { RequestController } from './../controllers/RequestController';
-
-import { InstructorService } from './InstructorService';
 import mongoose, { model } from "mongoose";
 import API from "../API";
-import { Calendar } from "../model/Calendar";
 import { GymSession, GymSessionUniqueDate } from "../model/GymSession";
 import { IBaseService } from "./IBaseService";
 import { GymDate } from "../model/Date";
 import { getDaysBetweenDates } from '../utils/DateUtils';
-import { CalendarService } from './CalendarService';
 import { Reservation } from '../model/Reservation';
+import { Room } from '../model/Room';
 
 export class SessionService implements IBaseService {
 
@@ -171,4 +168,32 @@ export class SessionService implements IBaseService {
     sessionPart.instructor = await this.reqControllerRef.instructorService.getOne(instructorId);
     return sessionPart;
   }
+
+  async getClientsBySession(sessionId : string){
+    //Obtener todas las reservaciones de esa session
+    let reservationsOfTheSession = await this.reqControllerRef.reservationService.get({sessionId}, {}  );
+    //Obtener los objetos cliente que tienen reservacion para esa session
+    let populateClients = await Promise.all(reservationsOfTheSession.map(async(reservation : any) => {
+        let clientId = reservation.clientId;
+        let clientObj = await this.reqControllerRef.clientService.getOne(clientId);
+
+        return clientObj;
+        }
+      )
+    );
+    
+    //Obtener la informacion del aforo y la capacitdad total
+    let gymSession = <GymSessionUniqueDate> await this.getOne(sessionId);
+    let room = <Room> await this.reqControllerRef.roomService.getOne( gymSession.roomId );
+    let cantidadMaximaReservaciones = room.capacity / (100 / room.allowedCapacity);
+        
+    return {  clients : populateClients,
+              aforoSesion : room.allowedCapacity, 
+              cantidadSala : room.capacity,                 
+              cantidadMaximaReservaciones : cantidadMaximaReservaciones,  
+              cantidadReservaciones : reservationsOfTheSession.length,
+              cupoDisponible : room.capacity - reservationsOfTheSession.length
+    };
+  }
+
 }

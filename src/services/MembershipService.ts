@@ -52,7 +52,7 @@ export class MembershipService implements IBaseService {
 
     let client2 : any = await this.reqControllerRef.clientService.modify(client._id,client);
 
-    return {  message : "La membresia ha sido creada con exito", 
+    return {  message : "La membresia ha sido adquirida con exito", 
               success : true,
               object  : createdMembership
            }
@@ -76,6 +76,7 @@ export class MembershipService implements IBaseService {
   }
   
   private applyMembershipByAmountSessions(pActiveMembership : Membership) : Membership{
+    pActiveMembership.state = pActiveMembership.sessionsAmount < 2 ? false : true;
     pActiveMembership.sessionsAmount = pActiveMembership.sessionsAmount - 1;
     return pActiveMembership;
   }
