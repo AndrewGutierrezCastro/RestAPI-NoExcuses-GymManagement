@@ -13,21 +13,6 @@ export class InstructorService implements IBaseService {
 
   async create(entity: object): Promise<object> {
 
-    /**
-       *  {
-    [0]   firstName: 'Julano',
-    [0]   lastName: 'Xd',
-    [0]   email: 'julandoxd@gmail.com',
-    [0]   identification: '123123123',
-    [0]   phoneNumber: '123123123',
-    [0]   username: 'julanoxd',
-    [0]   role: 'instructor',
-    [0]   password: 'julanoxd',
-    [0]   category: '',
-    [0]   specialities: []
-    [0] }
-     */
-
     let instructor = <Instructor> entity;
     let responseCreatedUser = await Authenticator.registerUser(instructor); 
 
@@ -54,7 +39,12 @@ export class InstructorService implements IBaseService {
     return API.entityRepository.modify('instructor', oldEntityId, newEntity);
   }
 
-  delete(entityId : string) : Promise<object> {
+  async delete(entityId : string) : Promise<object> {
+
+    let instructor : any = await this.getOne(entityId);
+    let userId = instructor.userId;
+    let _ = await this.reqControllerRef.userService.delete(userId);
+
     return API.entityRepository.delete('instructor', entityId);
   }
 
