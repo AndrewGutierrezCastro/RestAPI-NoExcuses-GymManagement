@@ -196,7 +196,7 @@ export class SessionService implements IBaseService {
               cantidadSala : room.capacity,                 
               cantidadMaximaReservaciones : cantidadMaximaReservaciones,  
               cantidadReservaciones : reservationsOfTheSession.length,
-              cupoDisponible : room.allowedCapacity - reservationsOfTheSession.length
+              cupoDisponible : cantidadMaximaReservaciones - reservationsOfTheSession.length
     };
   }
 
