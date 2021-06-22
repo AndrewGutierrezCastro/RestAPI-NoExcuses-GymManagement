@@ -127,7 +127,6 @@ export class SessionService implements IBaseService {
     if (allowed) {
 
       let sessionsWithFullDates : any = sessionsWithDates.map((e:any) => ({...e, dayOfTheWeek : e.dayHour[0]}));
-      console.log('sessions', sessionsWithFullDates);
       let creationResult = await Promise.all(sessionsWithFullDates.map(async (session:any) => {
         session.weekMode = false;
         session.roomId = roomId;
@@ -141,10 +140,9 @@ export class SessionService implements IBaseService {
         ...calendar.sessions,
         ...creationResult.map((session:any) => session.insertedId)
       ];
+      calendarWithoutId.published = true;
 
       let updatedInfo = await this.reqControllerRef.calendarService.modify(calendarId, calendarWithoutId);
-
-      console.log('UPDATEDINFO', updatedInfo)
 
       return {
         message : `Se han agregado las sesiones para todos los dias del mes al calendario`,

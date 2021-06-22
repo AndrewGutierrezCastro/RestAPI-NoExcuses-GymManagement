@@ -3,7 +3,7 @@ import { Schema } from 'mongoose';
 export const CalendarSchema : Schema = new Schema({
     roomId : {
         type : Schema.Types.ObjectId,
-        require: true
+        required: true
     },
     sessions : {
         type : [Schema.Types.ObjectId],
@@ -12,15 +12,15 @@ export const CalendarSchema : Schema = new Schema({
     },
     month : {
         type :  Schema.Types.String,
-        require : true,
+        required : true,
     },
     year : {
         type : Schema.Types.String,
-        require: true,
+        required: true,
     },
     published :{
         type : Schema.Types.Boolean,
-        require :true,
+        required :true,
         default : false
     }
 });

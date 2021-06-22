@@ -11,8 +11,9 @@ export class RoomService implements IBaseService {
     private reqControllerRef : RequestController 
   ){}
 
-  async create(entity: object): Promise<object> {
+  async create(entity: any): Promise<object> {
     //Crear la nueva sala
+    entity.monthlyCalendar = null; 
     let room : any = await API.entityRepository.create('room', entity);
 
     //Crear date para obtener la fecha actual
@@ -23,10 +24,10 @@ export class RoomService implements IBaseService {
                   { roomId: room.createdObject._id,
                     month : date.getMonth().toString(),
                     year : date.getFullYear().toString(),
-                    published : false //cambia a true cuando se cambia de calendario preeliminar a actual
+                    published : false, //cambia a true cuando se cambia de calendario preeliminar a actual
+                    sessions : [],
                   }
                 );
-    console.log("Calendario supernumenario equisde: ",calendar);
     //retornar la sala
     return room;
   }
