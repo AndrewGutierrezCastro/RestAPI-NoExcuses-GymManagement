@@ -41,15 +41,25 @@ export class CalendarService implements IBaseService {
   public async publishCalendar (calendarId : string) : Promise<object> {
 
     let calendar =  <Calendar> await this.getOne(calendarId);
+
+    if (calendar.published) 
+      return { 
+        message: "El calendario de este mes ya ha sido publicado",
+        success: false,
+        object : calendar
+      }; 
+
     let room = <Room> await this.reqControllerRef.roomService.getOne(calendar.roomId);
     calendar.published = true;
     room.monthlyCalendar = calendar;
     let modifyCalendar = await this.modify(calendar._id, calendar);
     await this.reqControllerRef.roomService.modify(room._id, room);
     
-    return {  message: "Calendario publicado con exito",
-              success: true,
-              object : modifyCalendar};
+    return {  
+      message: "Calendario publicado con exito",
+      success: true,
+      object : modifyCalendar
+    };
   }
 
   async getCalendarByRoom(roomId : string) : Promise<CalendarWithSessions | object> {
