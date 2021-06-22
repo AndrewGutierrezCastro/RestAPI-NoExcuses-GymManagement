@@ -10,7 +10,7 @@ import { RequestController} from '../controllers/RequestController';
 const monthNames = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-]
+];
 
 export class CalendarService implements IBaseService {
   

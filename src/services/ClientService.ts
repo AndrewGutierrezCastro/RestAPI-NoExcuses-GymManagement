@@ -41,7 +41,12 @@ export class ClientService implements IBaseService {
     return API.entityRepository.modify('client', oldEntityId, newEntity);
   }
 
-  delete(entityId : string) : Promise<object> {
+  async delete(entityId : string) : Promise<object> {
+
+    let client : any = await this.getOne(entityId);
+    let userId = client.userId;
+    let _ = await this.reqControllerRef.userService.delete(userId);
+
     return API.entityRepository.delete('client', entityId);
   }
 
