@@ -10,6 +10,7 @@ export interface Client extends User, VisitedClient {
 }
 
 export interface ClientWithoutRef {
+    _id? : string,
     userId : string,
     pendingPayment? : string[],
     balance? : number,

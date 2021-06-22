@@ -7,6 +7,7 @@ import { GymDate } from "../model/Date";
 import { getDaysBetweenDates } from '../utils/DateUtils';
 import { Reservation } from '../model/Reservation';
 import { Room } from '../model/Room';
+import { ClientWithoutRef } from '../model/Client';
 
 export class SessionService implements IBaseService {
 
@@ -169,15 +170,18 @@ export class SessionService implements IBaseService {
     return sessionPart;
   }
 
-  async getClientsBySession(sessionId : string){
+  async getClientsBySession(sessionId : string) : Promise<object>{
     //Obtener todas las reservaciones de esa session
     let reservationsOfTheSession = await this.reqControllerRef.reservationService.get({sessionId}, {}  );
     //Obtener los objetos cliente que tienen reservacion para esa session
     let populateClients = await Promise.all(reservationsOfTheSession.map(async(reservation : any) => {
         let clientId = reservation.clientId;
-        let clientObj = await this.reqControllerRef.clientService.getOne(clientId);
+        let clientObj = <ClientWithoutRef> await this.reqControllerRef.clientService.getOne(clientId);
+        let {password,...user} : any = await this.reqControllerRef.userService.getOne(clientObj.userId);
 
-        return clientObj;
+        return {...clientObj,
+                ...user
+                };
         }
       )
     );
