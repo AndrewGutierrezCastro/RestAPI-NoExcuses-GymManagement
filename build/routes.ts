@@ -49,7 +49,7 @@ const models: TsoaRoute.Models = {
     "GymSession": {
         "dataType": "refObject",
         "properties": {
-            "dayHour": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "dayHour": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "roomId": {"dataType":"string"},
             "instructorId": {"dataType":"string","required":true},
             "serviceId": {"dataType":"string","required":true},
@@ -89,7 +89,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "capacity": {"dataType":"double","required":true},
             "allowedCapacity": {"dataType":"double","required":true},
-            "weeklySchedule": {"dataType":"array","array":{"ref":"GymDate"},"required":true},
+            "weeklySchedule": {"dataType":"array","array":{"dataType":"refObject","ref":"GymDate"},"required":true},
             "monthlyCalendar": {"ref":"Calendar"},
             "_id": {"dataType":"string"},
         },
@@ -415,6 +415,28 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.addSessionToCalendar.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/sessions/getClientsBySession',
+            function RequestController_getClientsBySession(request: any, response: any, next: any) {
+            const args = {
+                    sessionId: {"in":"query","name":"sessionId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getClientsBySession.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
