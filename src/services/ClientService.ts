@@ -75,4 +75,13 @@ export class ClientService implements IBaseService {
 
     return clientFilled;
   }
+
+  async getClientWithAllInfo(clientId : string) : Promise<object>{
+    let clientObj = <ClientWithoutRef> await this.reqControllerRef.clientService.getOne(clientId);
+    let {password,...user} : any = await this.reqControllerRef.userService.getOne(clientObj.userId);
+
+    return {...clientObj,
+            ...user
+            };
+  }
 }

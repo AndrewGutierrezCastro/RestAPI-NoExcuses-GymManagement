@@ -408,47 +408,81 @@
 			"Client": {
 				"properties": {
 					"username": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"password": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"role": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"firstName": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"lastName": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"identification": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"email": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"phoneNumber": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"_id": {
-						"type": "string"
+						"type": "string",
+						"default": ""
 					},
 					"pendingPayment": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"default": []
 					},
 					"balance": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"default": 0
 					},
 					"memberships": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"default": []
+					},
+					"favoritesServices": {
+						"items": {
+							"$ref": "#/components/schemas/Service"
+						},
+						"type": "array",
+						"default": []
+					},
+					"starLevel": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array",
+						"default": []
+					},
+					"notifications": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"default": []
 					}
 				},
 				"required": [
@@ -459,10 +493,7 @@
 					"lastName",
 					"identification",
 					"email",
-					"phoneNumber",
-					"pendingPayment",
-					"balance",
-					"memberships"
+					"phoneNumber"
 				],
 				"type": "object",
 				"additionalProperties": false

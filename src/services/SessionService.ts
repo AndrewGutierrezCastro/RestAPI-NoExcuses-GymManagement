@@ -176,12 +176,8 @@ export class SessionService implements IBaseService {
     //Obtener los objetos cliente que tienen reservacion para esa session
     let populateClients = await Promise.all(reservationsOfTheSession.map(async(reservation : any) => {
         let clientId = reservation.clientId;
-        let clientObj = <ClientWithoutRef> await this.reqControllerRef.clientService.getOne(clientId);
-        let {password,...user} : any = await this.reqControllerRef.userService.getOne(clientObj.userId);
-
-        return {...clientObj,
-                ...user
-                };
+        let clientObj = await this.reqControllerRef.clientService.getClientWithAllInfo(clientId);
+        return clientObj;
         }
       )
     );

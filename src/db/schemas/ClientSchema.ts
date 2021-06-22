@@ -19,6 +19,21 @@ export const ClientSchema : Schema = new Schema({
         type : [Schema.Types.ObjectId],
         default : [],
         required : true,
+    },
+    favoritesServices : {
+        type : [Schema.Types.ObjectId],
+        default : [],
+        required : true,
+    },
+    starLevel : {
+        type : [Schema.Types.Number],
+        default : [],
+        required : true,
+    },
+    notifications : {
+        type : [Schema.Types.String],
+        default : [],
+        required : true,
     }
 });
 
