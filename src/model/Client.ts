@@ -1,9 +1,12 @@
+import { VisitedClient } from "./patterns/star_assigner/VisitedClient";
+import { Visitor } from "./patterns/star_assigner/Visitor";
 import { User } from "./User";
 
-export interface Client extends User {
+export interface Client extends User, VisitedClient {
     pendingPayment : string[],
     balance : number,
-    memberships : string[]
+    memberships : string[];
+    accept(visitor : Visitor) : void;//TODO implement this XD
 }
 
 export interface ClientWithoutRef {
