@@ -25,6 +25,7 @@ export class ClientService implements IBaseService {
       pendingPayment : [],
       balance : 0.00,
       memberships : [],
+      favoritesServices : []
     };
     let responseCreatedClient = await API.entityRepository.create('client', client1);
 
@@ -84,4 +85,85 @@ export class ClientService implements IBaseService {
             ...user
             };
   }
+
+  async addFavoriteService(clientId : string, serviceId : string) : Promise<object> {
+
+    let client = <ClientWithoutRef> await this.getOne(clientId);
+
+    if (client.favoritesServices)
+    {
+
+      if (client.favoritesServices.includes(serviceId))
+      {
+        return {
+          success : false,
+          message : "El servicio seleccionado ya esta marcado como favorito"
+        };
+      }
+      else
+      {
+        client.favoritesServices.push(serviceId);
+      }
+    }
+    else
+    {
+      client.favoritesServices = [ serviceId ];
+    }
+
+    let {_id, ...clientWithoutId} = client;
+    let result : any = await this.modify(_id, clientWithoutId);
+
+    if (result?.modifiedCount > 0)
+    {
+      return {
+        success : true,
+        message : "Se ha agregado un nuevo servicio a tus favoritos"
+      };
+    }
+    else
+    {
+      return {
+        success : false,
+        message : "Hubo un problema al agregar a tus favoritos"
+      }
+    }
+  }
+
+  async deleteFavoriteService(clientId : string, serviceId : string) : Promise<any> {
+
+    let client = <ClientWithoutRef> await this.getOne(clientId);
+    client.favoritesServices = client.favoritesServices.filter((sId) => sId != serviceId);
+
+    let {_id, ...clientWithoutId} = client;
+    let result : any = await this.modify(_id, clientWithoutId);
+
+    return {
+      success : true,
+      message : "Se ha eliminado el servicio de tus favoritos"
+    }
+  } 
+
+  async getFavoritesServices(clientId : string) : Promise<any> {
+
+    let client = <ClientWithoutRef> await this.getOne(clientId);
+
+    if (client.favoritesServices?.length > 0)
+    {
+      let populatedServices = await Promise.all(client.favoritesServices.map(async (serviceId) => {
+        return await this.reqControllerRef.serviceService.getOne(serviceId);
+      }));
+
+      return {
+        services : populatedServices,
+        message : "Estos son tus servicios favoritos"
+      }
+    }
+    else
+    {
+      return {
+        services : [],
+        message : "No tienes servicios favoritos aun"
+      }
+    }
+  } 
 }

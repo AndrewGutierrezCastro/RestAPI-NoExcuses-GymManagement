@@ -458,5 +458,26 @@ export class RequestController extends Controller {
         return await this.clientService.delete(clientId);
     }
 
-    
+    @Put("client/addFavoriteService")
+    public async addFavoriteService(
+        @Query() clientId : string,
+        @Query() serviceId : string
+    ) : Promise<any> {
+        return await this.clientService.addFavoriteService(clientId, serviceId);
+    }
+
+    @Delete("client/deleteFavoriteService")
+    public async deleteFavoriteService(
+        @Query() clientId : string,
+        @Query() serviceId : string
+    ) : Promise<any> {
+        return await this.clientService.deleteFavoriteService(clientId, serviceId);
+    }
+
+    @Get("client/getFavoritesServices")
+    public async getFavoriteService(
+        @Query() clientId : string
+    ) : Promise<any> {
+        return await this.clientService.getFavoritesServices(clientId);
+    }
 }

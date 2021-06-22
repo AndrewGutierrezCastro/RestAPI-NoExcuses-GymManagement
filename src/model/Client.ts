@@ -30,7 +30,7 @@ export interface ClientWithoutRef {
     pendingPayment? : string[],
     balance? : number,
     memberships? : string[],
-    favoritesServices? : Service[],
+    favoritesServices : string[],
     starLevel? : number[],
     notifications? : string[];
 }
