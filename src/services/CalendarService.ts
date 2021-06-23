@@ -1,10 +1,8 @@
-import { ObjectId } from './../repository/IBaseRepository';
 import API from "../API";
 import { Calendar, CalendarWithSessions } from "../model/Calendar";
 import { Room } from "../model/Room";
 import { IBaseService } from "./IBaseService";
 import mongoose from "mongoose";
-import { GymSession } from '../model/GymSession';
 import { RequestController} from '../controllers/RequestController';
 
 const monthNames = [

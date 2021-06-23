@@ -1,9 +1,7 @@
 import { Subscriber } from "./Subscriber";
 
-export class WaitingListUpdater implements Subscriber {
+export interface WaitingListUpdater extends Subscriber {
 
-    update(data: Object): void {
-        throw new Error("Method not implemented.");
-    }
+    update(data: object): void;
     
 }

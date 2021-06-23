@@ -2,19 +2,27 @@ import mongoose from "mongoose";
 import API from "../API";
 import { IBaseService } from "./IBaseService";
 import { Reservation } from "./../model/Reservation";
-import { GymSession, GymSessionUniqueDate } from "./../model/GymSession";
+import { GymSessionUniqueDate } from "./../model/GymSession";
 import { RequestController } from '../controllers/RequestController';
 import { Client } from "../model/Client";
 import { Membership } from "../model/Membership";
 import { Room } from "../model/Room";
+import { WaitingListPublisher } from "../model/patterns/waiting_list-reward_checker/WaitingListPublisher";
+import { Subscriber } from "../model/patterns/waiting_list-reward_checker/Subscriber";
 
-const previousHours : number= 8;
+const previousHours : number = 8;
 
-export class ReservationService implements IBaseService {
+export class ReservationService extends WaitingListPublisher implements IBaseService {
 
   constructor(
     private reqControllerRef : RequestController 
-  ){}
+  ){
+    super();
+
+    // suscribimos al servicio de sesiones estar pendiente de las reservaciones 
+    // para actualizar la lista de espera de la sesion donde se cancela alguna reservacion
+    this.subscribe(this.reqControllerRef.sessionService);
+  }
 
   async create(entity: any): Promise<object> {
     //set client id
@@ -24,9 +32,6 @@ export class ReservationService implements IBaseService {
     //get membership
     let responseActiveMembership : any = await this.reqControllerRef.membershipService.hasActiveMembership(clientId);
     let activeMembership = <Membership> responseActiveMembership.object;
-
-    console.log(entity);
-
     //Revisar si puede reservar
     let responseCanReservate : any = await this.canReservate(entity);
     if(!responseCanReservate.success){
@@ -63,12 +68,18 @@ export class ReservationService implements IBaseService {
   async cancelReservation(reservationId : string) : Promise<Object>{
     //obtener la reservacion y la sesion
     let [reservation] : any[] = await this.get({_id: new mongoose.mongo.ObjectID(reservationId)},{});
-    console.log('R', reservation)
     let [session] : any[] = await this.reqControllerRef.sessionService.get({_id: new mongoose.mongo.ObjectID(reservation.sessionId)}, {});
-    console.log('S', session)
     //respuesta del reembolo o del cargo
     let responseRefund : any;
+
+    // eliminamos la reservacion
     let _ = await this.delete(reservationId);
+
+    // notificamos a los subscriptores
+    // sobre la cancelacion de la reservacion a esta sesion
+    this.notifySubscribers(session);
+
+    // se revisa si es necesario efectuar la multa o devolver la membresia al estado anterior a la reservacion
     if(this.isReservationRefund(reservation, session)){
       responseRefund = this.reqControllerRef.membershipService.refund(reservation.clientId);
       //eliminar la session
@@ -97,17 +108,10 @@ export class ReservationService implements IBaseService {
   }
 
   private async canReservate(reservation : any) : Promise<object>{
-    /*
-    creationDate : string,
-    sessionId : string,
-    clientId : string,
-    _id? : string,
-    */
     let clientId = reservation.clientId;
     let sessionId = reservation.sessionId;
     //revisar si existe reservaciones disponibles, cupos.
     let responseQuoat : any = await this.isThereQuota(sessionId);
-    //console.log("Quoat: ", responseQuoat);
     //Revisar si el cliente puede reservar
     let responseItsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId);
     //console.log("ItsAllowedToReserve: ", responseItsAllowedToReserve);
@@ -128,7 +132,7 @@ export class ReservationService implements IBaseService {
   }
 
   private async isThereQuota(pSessionId : string) : Promise<object>{
-    //Resivar si la session tiene cupo
+    //Revisar si la session tiene cupo
     let session = <GymSessionUniqueDate> await this.reqControllerRef.sessionService.getOne(pSessionId);
     let roomId = session.roomId;
     let room = <Room> await this.reqControllerRef.roomService.getOne(roomId);
@@ -139,7 +143,8 @@ export class ReservationService implements IBaseService {
     let canReserve = reservationsAmount < allowedCapacity;
     //dar mensaje que no quedan mas cupos
     return {message : canReserve ? "Aun existen cupos para reservar en la session indicada" : "No existen mas cupos para la session indicada",
-              success : canReserve};
+              success : canReserve,
+            waitingChance : !canReserve };
   }
 
    async getReservationByClient(clientId : string) : Promise<object> {
@@ -162,11 +167,21 @@ export class ReservationService implements IBaseService {
         creationDate,
         _id : reservation._id
       };
-    }
-    )
-    );
+    }));
 
     return populatedReservations;
   }
    
+  subscribe(subscriber: Subscriber): void {
+    this.subscribers.push(subscriber);
+  }
+  notifySubscribers(data: object): void {
+    this.subscribers.forEach((subscriber : Subscriber) => {
+      subscriber.update(data);
+    })
+  }
+  unsubscribe(subscriber: Subscriber): void {
+    this.subscribers = this.subscribers.filter(s => s !== subscriber);
+  }
+
 }

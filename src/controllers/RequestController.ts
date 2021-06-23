@@ -11,9 +11,7 @@ import {
     Get
 } from "tsoa";
 
-import mongoose from "mongoose";
-
-import { Instructor, InstructorWithoutRef } from './../model/Instructor';
+import { Instructor } from './../model/Instructor';
 import { SessionService } from './../services/SessionService';
 import { ServiceService } from '../services/ServiceService';
 import { GetParamsBody } from './utils';
@@ -33,13 +31,14 @@ import { Membership } from '../model/Membership';
 import { Payment } from '../model/Payment';
 import { PaymentService } from '../services/PaymentService';
 import { MongoDbConnection } from '../db/MongoDbConnection';
-import { Client, ClientWithoutRef } from '../model/Client';
+import { Client } from '../model/Client';
 import { ClientService } from './../services/ClientService';
 import { MembershipOffer } from '../model/MembershipOffer';
 
 /**
  * @description Request controller
  * The request handler to invoke the respective service
+ * associated with some business logic
  */
 @Route("api")
 export class RequestController extends Controller {
@@ -109,11 +108,11 @@ export class RequestController extends Controller {
         return await this.sessionService.getClientsBySession(sessionId);
     }
 
-    // TEST
-    @Get("sessions/fly")
-    public async sessionsFly(
-    ): Promise<any> {
-        return await MongoDbConnection.db.collection('sessions').deleteMany({});
+    @Post("sessions/enqueueWaitingList")
+    public async enqueueWaitingList(
+        @Body() waitingClient : {sessionId : string, clientId : string}
+    ) : Promise<any> {
+        return await this.sessionService.enqueueWaitingList(waitingClient.sessionId, waitingClient.clientId);
     }
 
     // SERVICES ---------------------------------------------------------------------------------
@@ -479,5 +478,12 @@ export class RequestController extends Controller {
         @Query() clientId : string
     ) : Promise<any> {
         return await this.clientService.getFavoritesServices(clientId);
+    }
+
+    @Post("client/addNotification")
+    public async addNotification(
+        @Body() notification : {clientId : string, message : string}
+    ) : Promise<any> {
+        return await this.clientService.addNotification(notification.clientId, notification.message);
     }
 }

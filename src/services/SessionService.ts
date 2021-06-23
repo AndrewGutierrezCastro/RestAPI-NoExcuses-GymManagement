@@ -1,15 +1,16 @@
-import { RequestController } from './../controllers/RequestController';
-import mongoose, { model } from "mongoose";
+
+import mongoose from "mongoose";
 import API from "../API";
+import { WaitingListUpdater } from './../model/patterns/waiting_list-reward_checker/WaitingListUpdater';
+import { RequestController } from './../controllers/RequestController';
 import { GymSession, GymSessionUniqueDate } from "../model/GymSession";
 import { IBaseService } from "./IBaseService";
 import { GymDate } from "../model/Date";
 import { getDaysBetweenDates } from '../utils/DateUtils';
 import { Reservation } from '../model/Reservation';
 import { Room } from '../model/Room';
-import { ClientWithoutRef } from '../model/Client';
 
-export class SessionService implements IBaseService {
+export class SessionService implements IBaseService,WaitingListUpdater {
 
   constructor(
     private reqControllerRef : RequestController 
@@ -23,6 +24,7 @@ export class SessionService implements IBaseService {
     session.instructorId = new mongoose.mongo.ObjectId(session.instructorId);
     session.available = true;
     session.weekMode = !session.weekMode ? true : session.weekMode;
+    session.waitingList = [];
     
     return API.entityRepository.create('sessions', session);
   }
@@ -196,4 +198,65 @@ export class SessionService implements IBaseService {
     };
   }
 
+  async update(sesionObj: object): Promise<void> {
+
+    let sesion = <GymSession> sesionObj;
+    
+    // buscamos si hay algun cliente en espera, si hay al menos uno
+    // en la cola de espera, se agrega al primero de ellos
+
+    if (sesion.waitingList.length > 0) 
+    {
+      let clientId = <string> sesion.waitingList.shift();
+      
+      // creamos una reservacion para el primer cliente de la lista de espera
+      let reservation : Reservation = {
+        creationDate : new Date().toString(),
+        clientId,
+        sessionId : sesion?._id
+      };
+
+      let reservationInfo : any = await this.reqControllerRef.reservationService.create(reservation);
+
+      // una vez se intenta reservar con el cliente en la lista de espera
+      // se notifica al usuario de lo sucedido
+
+      let notification = 
+        reservationInfo.success 
+          ? `Haz salido de la lista de espera y ahora te encuentras registrado para participar de la sesion: Detalles: ${reservationInfo.message}`
+          : `Se ha intentado reservar a su nombre en la sesion pero no se ha logrado. Detalles : ${reservationInfo.message}`;
+
+      this.reqControllerRef.clientService.addNotification(clientId, notification);
+    }
+    else {
+      // si no hay nadie en la lista de espera... nada que hacer :)
+    }
+  }
+
+  async enqueueWaitingList(sessionId : string, clientId : string) : Promise<object> {
+
+    let {_id, ...sessionWithoutId}  = <GymSession> await this.getOne(sessionId);
+    if (!sessionWithoutId.waitingList)
+    {
+      sessionWithoutId.waitingList = [];
+    }
+
+    sessionWithoutId.waitingList.push(clientId); // poner al cliente al final de la cola para la sesion deseada
+    let sInfo : any = await this.modify(_id, sessionWithoutId);
+
+    if (sInfo.modifiedCount > 0)
+    {
+      return {
+        sucess : true,
+        message : `Has sido agregado al final de la lista de espera de la sesion, eres el numero ${sessionWithoutId.waitingList.length + 1} seras agregado una vez se libere el campo`
+      };
+    }
+    else 
+    {
+      return {
+        sucess : false,
+        message : `No has sido agregado al final de la lista de espera de la sesion`
+      };
+    }
+  }
 }

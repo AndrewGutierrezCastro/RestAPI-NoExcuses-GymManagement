@@ -1,8 +1,5 @@
 import API from "../API";
 import { IBaseService } from "./IBaseService";
-import { Calendar } from "../model/Calendar";
-import { Room } from "../model/Room";
-import { CalendarService } from "./CalendarService";
 import { RequestController } from "../controllers/RequestController";
 
 export class RoomService implements IBaseService {

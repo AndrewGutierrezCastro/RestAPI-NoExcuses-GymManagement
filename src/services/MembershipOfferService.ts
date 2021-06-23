@@ -1,8 +1,4 @@
 import API from "../API";
-import mongoose from "mongoose";
-import { Client } from "../model/Client";
-import { Membership } from "../model/Membership";
-import { Payment } from "../model/Payment";
 import { IBaseService } from "./IBaseService";
 import { RequestController } from "../controllers/RequestController";
 

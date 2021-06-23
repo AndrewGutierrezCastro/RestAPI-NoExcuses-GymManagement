@@ -38,6 +38,10 @@ export const SessionSchema : Schema = new Schema({
     roomId : {
         type : Schema.Types.String,
         required : true
+    },
+    waitingList : {
+        type : [Schema.Types.String],
+        required : true
     }
 });
 

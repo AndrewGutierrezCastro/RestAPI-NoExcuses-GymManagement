@@ -55,7 +55,8 @@ const models: TsoaRoute.Models = {
             "serviceId": {"dataType":"string","required":true},
             "available": {"dataType":"boolean","required":true},
             "weekMode": {"dataType":"boolean","required":true},
-            "_id": {"dataType":"string"},
+            "waitingList": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "_id": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -1563,6 +1564,28 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.getFavoriteService.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/client/addNotification',
+            function RequestController_addNotification(request: any, response: any, next: any) {
+            const args = {
+                    notification: {"in":"body","name":"notification","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"message":{"dataType":"string","required":true},"clientId":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.addNotification.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -1,3 +1,3 @@
 export interface Subscriber {
-    update(data : Object) : void;
+    update(data : object) : void;
 }

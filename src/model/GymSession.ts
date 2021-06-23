@@ -7,7 +7,8 @@ export interface GymSession {
     serviceId : string,
     available : boolean,
     weekMode : boolean,
-    _id? : string,
+    waitingList? : string[],
+    _id : string,
 }
 
 export interface GymSessionUniqueDate {

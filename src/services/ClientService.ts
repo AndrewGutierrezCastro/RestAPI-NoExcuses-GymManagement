@@ -25,7 +25,8 @@ export class ClientService implements IBaseService {
       pendingPayment : [],
       balance : 0.00,
       memberships : [],
-      favoritesServices : []
+      favoritesServices : [],
+      notifications : ["Felicidades por ser parte de nuestra comunidad fitness! Disfruta de nuestros servicios"]
     };
     let responseCreatedClient = await API.entityRepository.create('client', client1);
 
@@ -165,4 +166,10 @@ export class ClientService implements IBaseService {
       }
     }
   } 
+
+  async addNotification(clientId : string, notification : string) {
+    let {_id, ...clientWithoutId} = <Client> await this.getOne(clientId);
+    clientWithoutId.notifications.push(notification);
+    let storeInfo = await this.modify(_id, clientWithoutId);
+  }
 }
