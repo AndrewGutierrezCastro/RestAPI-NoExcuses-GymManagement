@@ -8,8 +8,14 @@ export class ServiceService implements IBaseService {
     private reqControllerRef : RequestController 
   ){}
 
-  create(entity: object): Promise<object> {
-    return API.entityRepository.create('services', entity);
+  async create(entity: object): Promise<object> {
+    let service = await API.entityRepository.create('services', entity);
+    
+    return {
+      message : "El servicio se ha creado con exito",
+      success : true,
+      object  : service
+    }
   }
   
   modify(oldEntityId: string = '', newEntity: object): Promise<object> {

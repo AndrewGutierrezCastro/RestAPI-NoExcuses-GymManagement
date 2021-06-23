@@ -92,7 +92,6 @@ export class ClientService implements IBaseService {
 
     if (client.favoritesServices)
     {
-
       if (client.favoritesServices.includes(serviceId))
       {
         return {
