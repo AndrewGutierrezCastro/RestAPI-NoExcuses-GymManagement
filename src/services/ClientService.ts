@@ -4,6 +4,7 @@ import { RequestController } from "../controllers/RequestController";
 import { Client } from "../model/Client";
 import { IBaseService } from "./IBaseService";
 import { Authenticator } from "../auth/Authenticator";
+import { StarVerifier } from '../model/patterns/star_assigner/StarVerifier';
 
 export class ClientService implements IBaseService {
   constructor(
@@ -81,8 +82,8 @@ export class ClientService implements IBaseService {
     let clientObj = <ClientWithoutRef> await this.reqControllerRef.clientService.getOne(clientId);
     let {password,...user} : any = await this.reqControllerRef.userService.getOne(clientObj.userId);
 
-    return {...clientObj,
-            ...user
+    return {...user,
+            ...clientObj,
             };
   }
 
@@ -165,4 +166,20 @@ export class ClientService implements IBaseService {
       }
     }
   } 
+
+  async checkStars() : Promise<object>{
+    let clientsIds =  await this.get({},{});
+    let clients = await Promise.all(clientsIds.map(async (client1 : any) =>{
+      let client : any = await this.getClientWithAllInfo(client1._id);
+      return new Client(client);
+      }
+    ));
+    //VISITORSH
+    let starVerifier = new StarVerifier(this.reqControllerRef);
+    let clientsModify = await Promise.all(clients.map(async (client : Client) => {
+      return await client.accept(starVerifier);
+      }
+    ));
+    return clientsModify;
+  }
 }

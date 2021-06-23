@@ -464,7 +464,7 @@
 					},
 					"favoritesServices": {
 						"items": {
-							"$ref": "#/components/schemas/Service"
+							"type": "string"
 						},
 						"type": "array",
 						"default": []
@@ -483,6 +483,10 @@
 						},
 						"type": "array",
 						"default": []
+					},
+					"userId": {
+						"type": "string",
+						"default": ""
 					}
 				},
 				"required": [
@@ -2356,6 +2360,26 @@
 					}
 				]
 			}
+<<<<<<< Updated upstream
+=======
+		},
+		"/api/client/checkStars": {
+			"get": {
+				"operationId": "CheckStars",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+>>>>>>> Stashed changes
 		}
 	},
 	"servers": [

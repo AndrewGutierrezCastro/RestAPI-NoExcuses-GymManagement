@@ -480,4 +480,10 @@ export class RequestController extends Controller {
     ) : Promise<any> {
         return await this.clientService.getFavoritesServices(clientId);
     }
+
+    @Get("client/checkStars")
+    public async checkStars(
+    ) : Promise<any> {
+        return await this.clientService.checkStars();
+    }
 }
