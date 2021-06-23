@@ -59,7 +59,7 @@ export class Client implements User, VisitedClient {
     public notifications : string[] = [];
     public userId : string = "";
 
-    async accept(visitor : Visitor) : Promise<Client>{
+    async accept(visitor : Visitor) : Promise<void>{
         return await visitor.visite(this);
     }
 }

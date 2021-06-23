@@ -44,10 +44,12 @@ export const getRangeDates = (blockDays : any) => {
     // bloque 0 = 10          = 10 + 0*10
     // bloque 1 = 20          = 10 + 1*10
     // bloque 2 = 28-29-30-31 = ?Metodo
-    finalDate.setDate(10 + blockDays*10);
+    
     if(blockDays > 1){
         //Debo obtener todos los dias del 20 hasta el final de mes
-            finalDate = new Date(finalDate.getDate(), finalDate.getMonth() + 1, 0);
+        finalDate = new Date(finalDate.getFullYear(), finalDate.getMonth() + 1, 0);
+    }else{
+        finalDate.setDate(10 + blockDays*10);
     }
     return {    initialDate : initialDate,
                 finalDate : finalDate

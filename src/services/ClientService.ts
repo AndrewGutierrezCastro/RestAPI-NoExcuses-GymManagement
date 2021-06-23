@@ -183,10 +183,14 @@ export class ClientService implements IBaseService {
     ));
     //VISITORSH
     let starVerifier = new StarVerifier(this.reqControllerRef);
-    let clientsModify = await Promise.all(clients.map(async (client : Client) => {
-      return await client.accept(starVerifier);
+    await Promise.all(clients.map(async (client : Client) => {
+        await client.accept(starVerifier);
+        await this.modify(client._id, client);
       }
     ));
-    return clientsModify;
+    return {message : `Se han otorgado las estrellas del bloque fechas actual. Se modificaron ${clients.length}`,
+            result : true ,
+            object : clients
+    }
   }
 }
