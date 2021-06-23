@@ -180,9 +180,10 @@ const models: TsoaRoute.Models = {
             "pendingPayment": {"dataType":"array","array":{"dataType":"string"},"default":[]},
             "balance": {"dataType":"double","default":0},
             "memberships": {"dataType":"array","array":{"dataType":"string"},"default":[]},
-            "favoritesServices": {"dataType":"array","array":{"ref":"Service"},"default":[]},
+            "favoritesServices": {"dataType":"array","array":{"dataType":"string"},"default":[]},
             "starLevel": {"dataType":"array","array":{"dataType":"double"},"default":[]},
             "notifications": {"dataType":"array","array":{"dataType":"string"},"default":[]},
+            "userId": {"dataType":"string","default":""},
         },
         "additionalProperties": false,
     },
@@ -444,9 +445,10 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/sessions/fly',
-            function RequestController_sessionsFly(request: any, response: any, next: any) {
+        app.post('/api/sessions/enqueueWaitingList',
+            function RequestController_enqueueWaitingList(request: any, response: any, next: any) {
             const args = {
+                    waitingClient: {"in":"body","name":"waitingClient","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"clientId":{"dataType":"string","required":true},"sessionId":{"dataType":"string","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -461,7 +463,7 @@ export function RegisterRoutes(app: express.Router) {
             const controller = new RequestController();
 
 
-            const promise = controller.sessionsFly.apply(controller, validatedArgs as any);
+            const promise = controller.enqueueWaitingList.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1586,6 +1588,27 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.addNotification.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/client/checkStars',
+            function RequestController_checkStars(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.checkStars.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

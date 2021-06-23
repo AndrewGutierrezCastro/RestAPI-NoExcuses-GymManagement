@@ -486,4 +486,10 @@ export class RequestController extends Controller {
     ) : Promise<any> {
         return await this.clientService.addNotification(notification.clientId, notification.message);
     }
+    
+    @Get("client/checkStars")
+    public async checkStars(
+    ) : Promise<any> {
+        return await this.clientService.checkStars();
+    }
 }

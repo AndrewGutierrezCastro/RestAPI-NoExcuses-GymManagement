@@ -7,7 +7,7 @@ export interface GymSession {
     serviceId : string,
     available : boolean,
     weekMode : boolean,
-    waitingList? : string[],
+    waitingList : string[],
     _id : string,
 }
 

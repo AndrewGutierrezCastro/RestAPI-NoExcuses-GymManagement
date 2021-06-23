@@ -205,9 +205,9 @@ export class SessionService implements IBaseService,WaitingListUpdater {
     // buscamos si hay algun cliente en espera, si hay al menos uno
     // en la cola de espera, se agrega al primero de ellos
 
-    if (sesion.waitingList.length > 0) 
+    if (sesion.waitingList?.length > 0) 
     {
-      let clientId = <string> sesion.waitingList.shift();
+      let clientId = <string> sesion.waitingList?.shift();
       
       // creamos una reservacion para el primer cliente de la lista de espera
       let reservation : Reservation = {

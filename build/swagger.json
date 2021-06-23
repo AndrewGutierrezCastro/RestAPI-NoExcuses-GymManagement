@@ -472,7 +472,7 @@
 					},
 					"favoritesServices": {
 						"items": {
-							"$ref": "#/components/schemas/Service"
+							"type": "string"
 						},
 						"type": "array",
 						"default": []
@@ -491,6 +491,10 @@
 						},
 						"type": "array",
 						"default": []
+					},
+					"userId": {
+						"type": "string",
+						"default": ""
 					}
 				},
 				"required": [
@@ -867,9 +871,9 @@
 				]
 			}
 		},
-		"/api/sessions/fly": {
-			"get": {
-				"operationId": "SessionsFly",
+		"/api/sessions/enqueueWaitingList": {
+			"post": {
+				"operationId": "EnqueueWaitingList",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -881,7 +885,29 @@
 					}
 				},
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"clientId": {
+										"type": "string"
+									},
+									"sessionId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"clientId",
+									"sessionId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/services/get": {
@@ -2402,6 +2428,23 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/client/checkStars": {
+			"get": {
+				"operationId": "CheckStars",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		}
 	},
