@@ -69,7 +69,8 @@ export interface Client extends User {
     pendingPayment : string[],
     balance : number,
     memberships : string[],
-    notifications : string[]
+    notifications : string[],
+    starLevel : number[]
 }
 
 export interface ClientWithoutRef {
