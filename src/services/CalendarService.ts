@@ -23,7 +23,7 @@ export class CalendarService implements IBaseService {
     private filterStrategy: FilterStrategy
   ) {  }
 
-  public setStrategy(pStrategyMode: number) {
+  private setStrategy(pStrategyMode: number) {
     switch(pStrategyMode){
       case 0:
       this.filterStrategy = new FilterByInstructor();
@@ -40,7 +40,7 @@ export class CalendarService implements IBaseService {
     }
   }
 
-  public async filterCalendar(roomId : string, filter : any) : Promise<GymSession[]> {
+  async filterCalendar(roomId : string, filter : any) : Promise<GymSession[]> {
     let calendar = <CalendarWithSessions> await this.getCalendarByRoom(roomId);
     let sessions : GymSession[] = calendar.sessions;
     this.setStrategy(filter.strategyMode);
