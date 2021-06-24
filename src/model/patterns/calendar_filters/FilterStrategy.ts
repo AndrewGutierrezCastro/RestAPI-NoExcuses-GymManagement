@@ -1,5 +1,5 @@
-import { GymSessionUniqueDate } from "../../GymSession";
+import { GymSession } from "../../GymSession";
 
 export interface FilterStrategy {
-    filter(sessions : GymSessionUniqueDate[]) : GymSessionUniqueDate[];
+    filter(sessions : GymSession[], filter : any) : GymSession[];
 }
