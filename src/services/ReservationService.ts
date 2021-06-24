@@ -77,7 +77,7 @@ export class ReservationService extends WaitingListPublisher implements IBaseSer
 
     // notificamos a los subscriptores
     // sobre la cancelacion de la reservacion a esta sesion
-    this.notifySubscribers(session);
+    await this.notifySubscribers(session);
 
     // se revisa si es necesario efectuar la multa o devolver la membresia al estado anterior a la reservacion
     if(this.isReservationRefund(reservation, session)){
@@ -112,6 +112,8 @@ export class ReservationService extends WaitingListPublisher implements IBaseSer
     let sessionId = reservation.sessionId;
     //revisar si existe reservaciones disponibles, cupos.
     let responseQuoat : any = await this.isThereQuota(sessionId);
+    if (!responseQuoat.success)
+      return responseQuoat;
     //Revisar si el cliente puede reservar
     let responseItsAllowedToReserve : any = await this.reqControllerRef.membershipService.itsAllowedToReserve(clientId);
     //console.log("ItsAllowedToReserve: ", responseItsAllowedToReserve);
@@ -140,7 +142,7 @@ export class ReservationService extends WaitingListPublisher implements IBaseSer
     //obtener la cantidad de reservaciones para una session
     let reservationsAmount = await this.reqControllerRef.sessionService.getAvailableAmount(pSessionId);
     //Revisar si queda almenos un cupo
-    let canReserve = reservationsAmount < allowedCapacity;
+    let canReserve = reservationsAmount <  (room.capacity) * (allowedCapacity/100);
     //dar mensaje que no quedan mas cupos
     return {message : canReserve ? "Aun existen cupos para reservar en la session indicada" : "No existen mas cupos para la session indicada",
               success : canReserve,
@@ -175,9 +177,9 @@ export class ReservationService extends WaitingListPublisher implements IBaseSer
   subscribe(subscriber: Subscriber): void {
     this.subscribers.push(subscriber);
   }
-  notifySubscribers(data: object): void {
-    this.subscribers.forEach((subscriber : Subscriber) => {
-      subscriber.update(data);
+  async notifySubscribers(data: object): Promise<void> {
+    this.subscribers.forEach(async (subscriber : Subscriber) => {
+      await subscriber.update(data);
     })
   }
   unsubscribe(subscriber: Subscriber): void {

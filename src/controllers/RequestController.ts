@@ -445,7 +445,7 @@ export class RequestController extends Controller {
 
     @Post("client/create")
     public async createClient(
-        @Body() client: Client
+        @Body() client: any
     ): Promise<any> {
         return await this.clientService.create(client);
     }

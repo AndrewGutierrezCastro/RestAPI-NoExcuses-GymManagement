@@ -63,20 +63,20 @@ export class SessionService implements IBaseService,WaitingListUpdater {
     return reservations.length;
   }
 
-  public async isNotAllowed(pSession : GymSession, calendarSessions : string[]) : Promise<boolean>{
+  public async isNotAllowed(pSession : GymSession, calendarSessions : string[]) : Promise<boolean>
+  {    
       let sessionsId = calendarSessions.map(e => e.toString());
       let calendarSessionsObj =  await Promise.all(sessionsId.map(async(sessionId : string) => await this.getOne(sessionId)));
 
       if (calendarSessionsObj.length == 0)
         return true;
 
-      console.log('CALENDARSESSIONS', calendarSessionsObj);
+      let result = calendarSessionsObj.some( (session:any) => {
+        let datesBySession : GymDate = session.dayHour[0];
+        return ((datesBySession.dayOfTheWeek.toString() == pSession.dayHour[0].dayOfTheWeek.toString()) && this.isBetween(datesBySession, pSession.dayHour[0]));
+      }); 
 
-      return calendarSessionsObj.reduce( (acc:boolean, session:any) => {
-  
-        let datesBySession : GymDate = session.dayHour;
-        return acc || datesBySession.dayOfTheWeek === pSession.dayHour[0].dayOfTheWeek && this.isBetween(datesBySession, pSession.dayHour[0]);
-      }, false);
+      return result;
   }
 
   private isBetween(pDateValidated : GymDate, pDateNonValidatedDate : GymDate) : boolean {
@@ -86,8 +86,13 @@ export class SessionService implements IBaseService,WaitingListUpdater {
     let inicial2 : number = this.getHourAsNumber(pDateNonValidatedDate.initialHour);
     let final2 : number = this.getHourAsNumber(pDateNonValidatedDate.finalHour);
 
-    return inicial1 > inicial2 && inicial1 < final2 ||
-           final1   > inicial2 && final1   < final2;
+    console.log(inicial1, final1, inicial2, final2, inicial1 >= inicial2 && inicial1 <= final2 ||
+      final1   >= inicial2 && final1   <= final2);
+
+    // [0] 1800 1900 1700 1750
+
+    return inicial1 >= inicial2 && inicial1 <= final2 ||
+           final1   >= inicial2 && final1   <= final2;
   }
 
   private getHourAsNumber(pHour : string) : number {
@@ -119,10 +124,12 @@ export class SessionService implements IBaseService,WaitingListUpdater {
       return [...acc, ...sessionsReplicated];
     }, []);
 
+    let calendarIntersection = minimalSessions.every(async(session:any) => {
+      return !(await this.isNotAllowed(session, calendar.sessions));
+    });
+
     let allowed = 
-      calendar.sessions.length === 0 ||!minimalSessions.some(async(session:any) => {
-        return (await this.isNotAllowed(session, calendar.sessions));
-      });
+      calendar.sessions.length === 0 || calendarIntersection;
 
     if (allowed) {
 
@@ -200,20 +207,23 @@ export class SessionService implements IBaseService,WaitingListUpdater {
 
   async update(sesionObj: object): Promise<void> {
 
+
+    console.log('LISTA DE ESPERA CAMBIANDO');
     let sesion = <GymSession> sesionObj;
     
     // buscamos si hay algun cliente en espera, si hay al menos uno
     // en la cola de espera, se agrega al primero de ellos
 
-    if (sesion.waitingList?.length > 0) 
+    if ((sesion.waitingList?.length || 0) > 0) 
     {
       let clientId = <string> sesion.waitingList?.shift();
+      console.log('IDClient', clientId);
       
       // creamos una reservacion para el primer cliente de la lista de espera
       let reservation : Reservation = {
         creationDate : new Date().toString(),
         clientId,
-        sessionId : sesion?._id
+        sessionId : sesion._id || ''
       };
 
       let reservationInfo : any = await this.reqControllerRef.reservationService.create(reservation);
@@ -225,6 +235,8 @@ export class SessionService implements IBaseService,WaitingListUpdater {
         reservationInfo.success 
           ? `Haz salido de la lista de espera y ahora te encuentras registrado para participar de la sesion: Detalles: ${reservationInfo.message}`
           : `Se ha intentado reservar a su nombre en la sesion pero no se ha logrado. Detalles : ${reservationInfo.message}`;
+
+      console.log('NOTIF', notification);
 
       this.reqControllerRef.clientService.addNotification(clientId, notification);
     }
@@ -242,13 +254,13 @@ export class SessionService implements IBaseService,WaitingListUpdater {
     }
 
     sessionWithoutId.waitingList.push(clientId); // poner al cliente al final de la cola para la sesion deseada
-    let sInfo : any = await this.modify(_id, sessionWithoutId);
+    let sInfo : any = await this.modify(_id || '', sessionWithoutId);
 
     if (sInfo.modifiedCount > 0)
     {
       return {
         sucess : true,
-        message : `Has sido agregado al final de la lista de espera de la sesion, eres el numero ${sessionWithoutId.waitingList.length + 1} seras agregado una vez se libere el campo`
+        message : `Has sido agregado al final de la lista de espera de la sesion, eres el numero ${sessionWithoutId.waitingList.length} seras agregado una vez se libere el campo`
       };
     }
     else 

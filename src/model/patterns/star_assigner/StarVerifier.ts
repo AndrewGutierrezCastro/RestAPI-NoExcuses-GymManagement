@@ -1,5 +1,5 @@
 import { RequestController } from "../../../controllers/RequestController";
-import { Client, ClientWithoutRef } from "../../Client";
+import { ClientComplete, ClientWithoutRef } from "../../Client";
 import { Visitor } from "./Visitor";
 import mongoose, { model } from "mongoose";
 import { Reservation } from "../../Reservation";
@@ -13,7 +13,7 @@ export class StarVerifier implements Visitor{
         private reqControllerRef : RequestController,
       ) {}
 
-    async visite(client: Client): Promise<void> {
+    async visite(client: ClientComplete): Promise<void> {
 
         let blockDays = getMonthBlockIndex(new Date());
         
@@ -30,7 +30,7 @@ export class StarVerifier implements Visitor{
         this.giveStarToClient(client, reservationsOfTenDays, blockDays);
     }
     
-    giveStarToClient(client: Client, reservationsOfTenDays: any[], blockDays : number) {
+    giveStarToClient(client: ClientComplete, reservationsOfTenDays: any[], blockDays : number) {
         let amountOfStars = 0;
         //no tiene reservaciones este bloque tiene 0 estrellas
         if(reservationsOfTenDays === undefined){
@@ -49,7 +49,7 @@ export class StarVerifier implements Visitor{
 
     }
 
-    async getReservationsOfFavorites(client : Client, reservations : Reservation[], initialDate: Date, finalDate : Date){
+    async getReservationsOfFavorites(client : ClientComplete, reservations : Reservation[], initialDate: Date, finalDate : Date){
         let result = await Promise.all( reservations.map( async reservation => {
             let reservationDate = new Date(reservation.creationDate);
             //Si la reservacion esta en el bloque de dias revisar

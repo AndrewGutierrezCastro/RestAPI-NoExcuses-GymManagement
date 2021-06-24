@@ -119,9 +119,7 @@
 					"instructorId",
 					"serviceId",
 					"available",
-					"weekMode",
-					"waitingList",
-					"_id"
+					"weekMode"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -416,85 +414,53 @@
 			"Client": {
 				"properties": {
 					"username": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"password": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"role": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"firstName": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"lastName": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"identification": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"email": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"phoneNumber": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"_id": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"pendingPayment": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array",
-						"default": []
+						"type": "array"
 					},
 					"balance": {
 						"type": "number",
-						"format": "double",
-						"default": 0
+						"format": "double"
 					},
 					"memberships": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array",
-						"default": []
-					},
-					"favoritesServices": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"default": []
-					},
-					"starLevel": {
-						"items": {
-							"type": "number",
-							"format": "double"
-						},
-						"type": "array",
-						"default": []
+						"type": "array"
 					},
 					"notifications": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array",
-						"default": []
-					},
-					"userId": {
-						"type": "string",
-						"default": ""
+						"type": "array"
 					}
 				},
 				"required": [
@@ -505,7 +471,11 @@
 					"lastName",
 					"identification",
 					"email",
-					"phoneNumber"
+					"phoneNumber",
+					"pendingPayment",
+					"balance",
+					"memberships",
+					"notifications"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2263,9 +2233,7 @@
 					"required": true,
 					"content": {
 						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Client"
-							}
+							"schema": {}
 						}
 					}
 				}
