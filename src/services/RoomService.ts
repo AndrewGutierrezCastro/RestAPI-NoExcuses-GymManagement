@@ -18,6 +18,7 @@ export class RoomService extends RewardPublisher implements IBaseService {
     private reqControllerRef : RequestController 
   ){
     super();
+    console.log(this.reqControllerRef.clientService);
     this.subscribers.push(this.reqControllerRef.clientService);
   }
 
@@ -58,7 +59,7 @@ export class RoomService extends RewardPublisher implements IBaseService {
     return API.entityRepository.getOne('room', entityId);
   }
 
-  async giveClientReward() : Promise<object[]>{
+  async giveClientReward() : Promise<object>{
     
     // una vez el administrador hace el listado del programa de disciplina,
     // al final del mes, con las estrellas de los usuarios otorgadas
@@ -133,12 +134,16 @@ export class RoomService extends RewardPublisher implements IBaseService {
       };
     });
 
-    console.log(clientWithRewards);
+    // console.log(clientWithRewards);
 
     // notificar a los clientes de los premios recibidos
-    // await this.notifySubscribers(clientWithRewards);
+    await this.notifySubscribers(clientWithRewards);
 
-    return clientWithRewards;
+    return {
+      message : 'Se han otorgado los premios segun el nivel de estrellas de cada cliente',
+      success : true,
+      info: clientWithRewards
+    };
   }
 
   subscribe(subscriber: Subscriber): void {

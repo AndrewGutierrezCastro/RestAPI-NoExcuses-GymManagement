@@ -196,7 +196,6 @@ export class ClientService implements RewardChecker, IBaseService {
     let {_id, ...clientWithoutId} = <Client> await this.getOne(clientId);
     clientWithoutId.notifications.push(notification);
     let storeInfo : any = await this.modify(_id, clientWithoutId);
-    console.log('RESULT', storeInfo.modifiedCount > 0 ? 'EXITO' : 'FAIL');
   }
   
   async checkStars() : Promise<object>{
@@ -216,7 +215,7 @@ export class ClientService implements RewardChecker, IBaseService {
       }
     ));
     return {message : `Se han otorgado las estrellas del bloque fechas actual. Se modificaron ${clients.length}`,
-            result : true ,
+            success : true ,
             object : clients
     }
   }

@@ -46,13 +46,13 @@ export class RequestController extends Controller {
     public sessionService: SessionService = new SessionService(this);
     public serviceService: ServiceService = new ServiceService(this);
     public userService   : UserService    = new UserService(this);
+    public clientService : ClientService = new ClientService(this);
     public roomService   : RoomService    = new RoomService(this);
     public calendarService : CalendarService = new CalendarService(this);   
     public reservationService : ReservationService = new ReservationService(this);
     public membershipService : MembershipService = new MembershipService(this);
     public paymentService : PaymentService = new PaymentService(this);
     public instructorService : InstructorService = new InstructorService(this);
-    public clientService : ClientService = new ClientService(this);
     public membershipOfferService : MembershipOfferService = new MembershipOfferService(this);
 
     constructor() { super(); }
@@ -493,8 +493,7 @@ export class RequestController extends Controller {
     }
     
     @Get("client/checkStars")
-    public async checkStars(
-    ) : Promise<any> {
+    public async checkStars() : Promise<any> {
         return await this.clientService.checkStars();
     }
 }
