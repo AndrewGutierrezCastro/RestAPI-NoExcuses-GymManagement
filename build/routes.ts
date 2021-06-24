@@ -55,8 +55,8 @@ const models: TsoaRoute.Models = {
             "serviceId": {"dataType":"string","required":true},
             "available": {"dataType":"boolean","required":true},
             "weekMode": {"dataType":"boolean","required":true},
-            "waitingList": {"dataType":"array","array":{"dataType":"string"},"required":true},
-            "_id": {"dataType":"string","required":true},
+            "waitingList": {"dataType":"array","array":{"dataType":"string"}},
+            "_id": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -168,22 +168,20 @@ const models: TsoaRoute.Models = {
     "Client": {
         "dataType": "refObject",
         "properties": {
-            "username": {"dataType":"string","default":""},
-            "password": {"dataType":"string","default":""},
-            "role": {"dataType":"string","default":""},
-            "firstName": {"dataType":"string","default":""},
-            "lastName": {"dataType":"string","default":""},
-            "identification": {"dataType":"string","default":""},
-            "email": {"dataType":"string","default":""},
-            "phoneNumber": {"dataType":"string","default":""},
-            "_id": {"dataType":"string","default":""},
-            "pendingPayment": {"dataType":"array","array":{"dataType":"string"},"default":[]},
-            "balance": {"dataType":"double","default":0},
-            "memberships": {"dataType":"array","array":{"dataType":"string"},"default":[]},
-            "favoritesServices": {"dataType":"array","array":{"dataType":"string"},"default":[]},
-            "starLevel": {"dataType":"array","array":{"dataType":"double"},"default":[]},
-            "notifications": {"dataType":"array","array":{"dataType":"string"},"default":[]},
-            "userId": {"dataType":"string","default":""},
+            "username": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+            "role": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "identification": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "phoneNumber": {"dataType":"string","required":true},
+            "_id": {"dataType":"string"},
+            "pendingPayment": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "balance": {"dataType":"double","required":true},
+            "memberships": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "notifications": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "starLevel": {"dataType":"array","array":{"dataType":"double"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -728,6 +726,27 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.deleteRoom.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/rooms/giveClientReward',
+            function RequestController_giveClientReward(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.giveClientReward.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1460,7 +1479,7 @@ export function RegisterRoutes(app: express.Router) {
         app.post('/api/client/create',
             function RequestController_createClient(request: any, response: any, next: any) {
             const args = {
-                    client: {"in":"body","name":"client","required":true,"ref":"Client"},
+                    client: {"in":"body","name":"client","required":true,"dataType":"any"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

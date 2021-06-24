@@ -1,6 +1,6 @@
-import { Client, ClientWithoutRef } from "../../Client";
+import { ClientComplete } from "../../Client";
 import { Reservation } from "../../Reservation";
 
 export interface Visitor {
-    visite(client: Client) : Promise<void>;
+    visite(client: ClientComplete) : Promise<void>;
 }

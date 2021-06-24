@@ -202,6 +202,11 @@ export class RequestController extends Controller {
         return await this.roomService.delete(roomId);
     }
 
+    @Get("rooms/giveClientReward")
+    public async giveClientReward() : Promise<any> {
+        return await this.roomService.giveClientReward();
+    }
+
      // INSTRUCTOR ---------------------------------------------------------------------------------------
 
      @Post("instructor/get")
@@ -445,7 +450,7 @@ export class RequestController extends Controller {
 
     @Post("client/create")
     public async createClient(
-        @Body() client: Client
+        @Body() client: any
     ): Promise<any> {
         return await this.clientService.create(client);
     }

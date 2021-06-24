@@ -1,20 +1,42 @@
-import { ClientWithoutRef } from './../model/Client';
 import API from "../API";
+
+import { ClientRewardThreeStar } from './../model/patterns/rewards/ClientRewardThreeStar';
+import { ClientRewardTwoStar } from './../model/patterns/rewards/ClientRewardTwoStar';
+import { ClientRewardOneStar } from './../model/patterns/rewards/ClientRewardOneStar';
+import { RewardChecker } from './../model/patterns/waiting_list-reward_checker/RewardChecker';
+import { ClientWithoutRef } from './../model/Client';
 import { RequestController } from "../controllers/RequestController";
-import { Client } from "../model/Client";
+import { ClientComplete, Client } from "../model/Client";
 import { IBaseService } from "./IBaseService";
 import { Authenticator } from "../auth/Authenticator";
 import { StarVerifier } from '../model/patterns/star_assigner/StarVerifier';
+import { BaseClientReward } from '../model/patterns/rewards/BaseClientReward';
 
-export class ClientService implements IBaseService {
+
+export class ClientService implements RewardChecker, IBaseService {
+
   constructor(
     private reqControllerRef : RequestController
-  ) {}
+  ) {
+  }
 
-  async create(entity: object): Promise<object> {
+  async update(clientsWithRewards : any[]): Promise<void> {
 
-    let client = <Client> entity;
-    let responseCreatedUser = await Authenticator.registerUser(client); 
+    // con los premios generados con sus estrellas se avisa a cada uno de ellos
+    await Promise.all(clientsWithRewards.map(async (clientWithReward) => {
+
+      let clientId = clientWithReward.client._id;
+      let reward = clientWithReward.reward;
+      
+      // se notifica a cada cliente de su respectivo premio
+      await this.reqControllerRef.clientService.addNotification(clientId, reward);
+    }));
+
+  }
+
+  async create(entity: any): Promise<object> {
+
+    let responseCreatedUser = await Authenticator.registerUser(entity); 
 
     if (!responseCreatedUser.newUser)
       return responseCreatedUser;
@@ -27,8 +49,10 @@ export class ClientService implements IBaseService {
       balance : 0.00,
       memberships : [],
       favoritesServices : [],
+      starLevel : [0, 0, 0],
       notifications : ["Felicidades por ser parte de nuestra comunidad fitness! Disfruta de nuestros servicios"]
     };
+
     let responseCreatedClient = await API.entityRepository.create('client', client1);
 
     return {  
@@ -171,19 +195,20 @@ export class ClientService implements IBaseService {
   async addNotification(clientId : string, notification : string) {
     let {_id, ...clientWithoutId} = <Client> await this.getOne(clientId);
     clientWithoutId.notifications.push(notification);
-    let storeInfo = await this.modify(_id, clientWithoutId);
+    let storeInfo : any = await this.modify(_id, clientWithoutId);
+    console.log('RESULT', storeInfo.modifiedCount > 0 ? 'EXITO' : 'FAIL');
   }
   
   async checkStars() : Promise<object>{
     let clientsIds =  await this.get({},{});
     let clients = await Promise.all(clientsIds.map(async (client1 : any) =>{
       let client : any = await this.getClientWithAllInfo(client1._id);
-      return new Client(client);
+      return new ClientComplete(client);
       }
     ));
     //VISITORSH
     let starVerifier = new StarVerifier(this.reqControllerRef);
-    await Promise.all(clients.map(async (client : Client) => {
+    await Promise.all(clients.map(async (client : ClientComplete) => {
         await client.accept(starVerifier);
         let clientOld = <ClientWithoutRef> await this.getOne(client._id.toString());
         clientOld.starLevel = client.starLevel;
@@ -195,4 +220,6 @@ export class ClientService implements IBaseService {
             object : clients
     }
   }
+
+  
 }

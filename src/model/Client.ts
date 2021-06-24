@@ -3,7 +3,7 @@ import { Visitor } from "./patterns/star_assigner/Visitor";
 import { Service } from "./Service";
 import { User } from "./User";
 
-export class Client implements User, VisitedClient {
+export class ClientComplete implements User, VisitedClient {
     constructor(
         pClient : {
         username: string ,
@@ -62,6 +62,15 @@ export class Client implements User, VisitedClient {
     async accept(visitor : Visitor) : Promise<void>{
         return await visitor.visite(this);
     }
+}
+
+export interface Client extends User {
+    _id? : string,
+    pendingPayment : string[],
+    balance : number,
+    memberships : string[],
+    notifications : string[],
+    starLevel : number[]
 }
 
 export interface ClientWithoutRef {
