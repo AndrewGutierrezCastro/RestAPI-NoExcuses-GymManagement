@@ -4,6 +4,12 @@ import { Room } from "../model/Room";
 import { IBaseService } from "./IBaseService";
 import mongoose from "mongoose";
 import { RequestController} from '../controllers/RequestController';
+import { FilterStrategy } from "../model/patterns/calendar_filters/FilterStrategy";
+import { GymSessionUniqueDate, GymSession} from "../model/GymSession";
+import { FilterByInstructor } from "../model/patterns/calendar_filters/FilterByInstructor";
+import { FilterByService } from "../model/patterns/calendar_filters/FilterByService";
+import { FilterByDate } from "../model/patterns/calendar_filters/FilterByDate";
+import { FilterByMonth } from "../model/patterns/calendar_filters/FilterByMonth";
 
 const monthNames = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -13,8 +19,34 @@ const monthNames = [
 export class CalendarService implements IBaseService {
   
   constructor(
-    private reqControllerRef : RequestController
-  ) {}
+    private reqControllerRef : RequestController,
+    private filterStrategy: FilterStrategy
+  ) {  }
+
+  private setStrategy(pStrategyMode: number) {
+    switch(pStrategyMode){
+      case 0:
+      this.filterStrategy = new FilterByInstructor();
+        break;
+      case 1:
+        this.filterStrategy = new FilterByDate();
+        break;
+      case 2:
+        this.filterStrategy = new FilterByMonth();
+        break;
+      case 3:
+        this.filterStrategy = new FilterByService();
+        break;
+    }
+  }
+
+  async filterCalendar(roomId : string, filter : any) : Promise<GymSession[]> {
+    let calendar = <CalendarWithSessions> await this.getCalendarByRoom(roomId);
+    let sessions : GymSession[] = calendar.sessions;
+    this.setStrategy(filter.strategyMode);
+    return this.filterStrategy.filter(sessions, filter);
+
+  }
 
   create(entity: object): Promise<object> {
     return API.entityRepository.create('calendar', entity);

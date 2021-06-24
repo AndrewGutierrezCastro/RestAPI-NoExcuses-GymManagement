@@ -1,9 +1,14 @@
-import { GymSessionUniqueDate } from "../../GymSession";
+import { GymSession } from "../../GymSession";
 import { FilterStrategy } from "./FilterStrategy";
 
 export class FilterByInstructor implements FilterStrategy{
-    filter(sessions: GymSessionUniqueDate[]): GymSessionUniqueDate[] {
-        throw new Error("Method not implemented.");
+    filter(sessions: GymSession[], filter : any): GymSession[] {
+       //Filter trae instructorId
+       let sessionsFilter = sessions.filter(session => {
+                                return session.instructorId == filter.instructorId;
+                            });
+
+        return sessionsFilter;
     }
 
 }

@@ -34,6 +34,7 @@ import { MongoDbConnection } from '../db/MongoDbConnection';
 import { Client } from '../model/Client';
 import { ClientService } from './../services/ClientService';
 import { MembershipOffer } from '../model/MembershipOffer';
+import { FilterByInstructor } from '../model/patterns/calendar_filters/FilterByInstructor';
 
 /**
  * @description Request controller
@@ -48,7 +49,7 @@ export class RequestController extends Controller {
     public userService   : UserService    = new UserService(this);
     public clientService : ClientService = new ClientService(this);
     public roomService   : RoomService    = new RoomService(this);
-    public calendarService : CalendarService = new CalendarService(this);   
+    public calendarService : CalendarService = new CalendarService(this, new FilterByInstructor());   
     public reservationService : ReservationService = new ReservationService(this);
     public membershipService : MembershipService = new MembershipService(this);
     public paymentService : PaymentService = new PaymentService(this);
@@ -279,6 +280,14 @@ export class RequestController extends Controller {
         @Query() calendarId : string
     ) : Promise<any> {
         return await this.calendarService.publishCalendar(calendarId);
+    }
+
+    @Get("calendar/getFilter")
+    public async getFilterCalendar(
+        @Query() roomId: string,
+        @Query() filter: any
+    ) : Promise<any> {
+        return await this.calendarService.filterCalendar(roomId, filter);
     }
 
     //Reservations -------------------------------------------------------
