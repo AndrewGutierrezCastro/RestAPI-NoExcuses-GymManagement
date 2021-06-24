@@ -12,8 +12,6 @@ import { Authenticator } from "../auth/Authenticator";
 import { StarVerifier } from '../model/patterns/star_assigner/StarVerifier';
 import { BaseClientReward } from '../model/patterns/rewards/BaseClientReward';
 
-const MAXIMUM_STAR_AMOUNT = 3;
-const MINIMUM_STAR_AMOUNT = 0;
 
 export class ClientService implements RewardChecker, IBaseService {
 
@@ -23,79 +21,9 @@ export class ClientService implements RewardChecker, IBaseService {
   }
 
   async update(clientsWithRewards : any[]): Promise<void> {
-    
-    // una vez el administrador hace el listado del programa de disciplina,
-    // al final del mes, con las estrellas de los usuarios otorgadas
-    // se procede a notificar a cada uno de ellos con el premio
 
-    const assignStar = (client : Client) => {
-
-      let clientStars = client.starLevel;
-
-      clientStars = clientStars.filter(starLevel => starLevel != undefined);
-
-      if (clientStars.length == 0)
-          return MINIMUM_STAR_AMOUNT;
-      
-      return client.starLevel.reduce(
-          (acm, item) => item < acm ? item : acm, 
-          MAXIMUM_STAR_AMOUNT
-      );
-    };
-
-    let clientWithRewards = clientsWithRewards.map(client => {
-
-      // se procede a fabricar el premio segun el nivel de estrellas obtenidas
-      let decorator = new BaseClientReward();
-
-      // se obtiene la menor cantidad de estrellas, entre los diferentes bloques
-      // del mes
-      let clientStars = assignStar(client);
-
-      let baseMessage = 'Se ha realizado la revision de disciplina:'
-      let clientReward = baseMessage + '\n';
-      let noRewardMsg = 
-        `[
-          Si eres lo suficientemente activo 
-          con tus servicios favoritos podras
-          ganar premios cada mes, suerte 
-          la próxima
-        ] `;
-
-      // se fabrica el premio segun la cantidad de estrellas
-      switch(clientStars) 
-      {
-        case 1: {
-          decorator = new ClientRewardOneStar(decorator);
-          break;
-        }
-
-        case 2: {
-          decorator = new ClientRewardOneStar(decorator);
-          decorator = new ClientRewardTwoStar(decorator);
-          break;
-        }
-
-        case 3: {
-          decorator = new ClientRewardOneStar(decorator);
-          decorator = new ClientRewardTwoStar(decorator);
-          decorator = new ClientRewardThreeStar(decorator);
-          break;
-        }
-      }
-
-      clientReward += decorator.giveReward();
-
-      if (clientReward.trim() === '')
-        clientReward += noRewardMsg;
-
-      return {
-        client,
-        reward : clientReward
-      };
-    });
-
-    await Promise.all(clientWithRewards.map(async (clientWithReward) => {
+    // con los premios generados con sus estrellas se avisa a cada uno de ellos
+    await Promise.all(clientsWithRewards.map(async (clientWithReward) => {
 
       let clientId = clientWithReward.client._id;
       let reward = clientWithReward.reward;
@@ -103,6 +31,7 @@ export class ClientService implements RewardChecker, IBaseService {
       // se notifica a cada cliente de su respectivo premio
       await this.reqControllerRef.clientService.addNotification(clientId, reward);
     }));
+
   }
 
   async create(entity: any): Promise<object> {
@@ -123,8 +52,6 @@ export class ClientService implements RewardChecker, IBaseService {
       starLevel : [0, 0, 0],
       notifications : ["Felicidades por ser parte de nuestra comunidad fitness! Disfruta de nuestros servicios"]
     };
-
-    console.log('CLIENT', client1);
 
     let responseCreatedClient = await API.entityRepository.create('client', client1);
 

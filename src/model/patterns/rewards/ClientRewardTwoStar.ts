@@ -10,6 +10,6 @@ export class ClientRewardTwoStar extends DecoratorClientRewardGiving{
             valoración nutricional
          */
 
-        return '1 valoracion nutricional';
+        return super.giveReward() + '\n1 valoracion nutricional';
     }
 }

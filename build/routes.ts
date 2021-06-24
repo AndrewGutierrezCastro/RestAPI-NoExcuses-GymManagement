@@ -181,6 +181,7 @@ const models: TsoaRoute.Models = {
             "balance": {"dataType":"double","required":true},
             "memberships": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "notifications": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "starLevel": {"dataType":"array","array":{"dataType":"double"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -725,6 +726,27 @@ export function RegisterRoutes(app: express.Router) {
 
 
             const promise = controller.deleteRoom.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/rooms/giveClientReward',
+            function RequestController_giveClientReward(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.giveClientReward.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -9,7 +9,7 @@ export class ClientRewardThreeStar extends DecoratorClientRewardGiving{
             se le incorpora una sesión de descarga muscular
          */
 
-        return this.giveReward() + '\n1 sesion de descarga muscular';
+        return super.giveReward() + '\n1 sesion de descarga muscular';
     }
     
 }

@@ -461,6 +461,13 @@
 							"type": "string"
 						},
 						"type": "array"
+					},
+					"starLevel": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -475,7 +482,8 @@
 					"pendingPayment",
 					"balance",
 					"memberships",
-					"notifications"
+					"notifications",
+					"starLevel"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1235,6 +1243,23 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/rooms/giveClientReward": {
+			"get": {
+				"operationId": "GiveClientReward",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/instructor/get": {
