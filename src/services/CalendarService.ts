@@ -40,11 +40,16 @@ export class CalendarService implements IBaseService {
     }
   }
 
-  async filterCalendar(roomId : string, filter : any) : Promise<GymSession[]> {
+  async filterCalendar(roomId : string, filter : any) :  Promise<CalendarWithSessions | object> {
     let calendar = <CalendarWithSessions> await this.getCalendarByRoom(roomId);
     let sessions : GymSession[] = calendar.sessions;
     this.setStrategy(filter.strategyMode);
-    return this.filterStrategy.filter(sessions, filter);
+
+    let sessionsObjs = this.filterStrategy.filter(sessions, filter);
+    let calendarWithSessions : any = 
+      {...calendar, success: true, sessions: sessionsObjs};
+
+    return calendarWithSessions;
 
   }
 
