@@ -47,7 +47,7 @@ export class CalendarService implements IBaseService {
 
     let sessionsObjs = this.filterStrategy.filter(sessions, filter);
     let calendarWithSessions : any = 
-      {...calendar, success: true, sessions: sessionsObjs};
+      {...calendar, success: true, sessions: sessionsObjs, month : monthNames[new Date().getMonth()]};
 
     return calendarWithSessions;
 
