@@ -46,15 +46,15 @@ export class RequestController extends Controller {
 
     public sessionService: SessionService = new SessionService(this);
     public serviceService: ServiceService = new ServiceService(this);
-    public userService   : UserService    = new UserService(this);
-    public clientService : ClientService = new ClientService(this);
-    public roomService   : RoomService    = new RoomService(this);
-    public calendarService : CalendarService = new CalendarService(this, new FilterByInstructor());   
-    public reservationService : ReservationService = new ReservationService(this);
-    public membershipService : MembershipService = new MembershipService(this);
-    public paymentService : PaymentService = new PaymentService(this);
-    public instructorService : InstructorService = new InstructorService(this);
-    public membershipOfferService : MembershipOfferService = new MembershipOfferService(this);
+    public userService: UserService = new UserService(this);
+    public clientService: ClientService = new ClientService(this);
+    public roomService: RoomService = new RoomService(this);
+    public calendarService: CalendarService = new CalendarService(this, new FilterByInstructor());
+    public reservationService: ReservationService = new ReservationService(this);
+    public membershipService: MembershipService = new MembershipService(this);
+    public paymentService: PaymentService = new PaymentService(this);
+    public instructorService: InstructorService = new InstructorService(this);
+    public membershipOfferService: MembershipOfferService = new MembershipOfferService(this);
 
     constructor() { super(); }
 
@@ -69,50 +69,50 @@ export class RequestController extends Controller {
     @Post("sessions/getCompleted")
     public async getCompletedSessions(
         @Body() params: GetParamsBody
-    ) : Promise<any> {
+    ): Promise<any> {
         return await this.sessionService.getCompleted(params.filter, params.projection);
     }
 
     @Post("sessions/create")
     public async createSession(
-        @Body() session : GymSession
+        @Body() session: GymSession
     ): Promise<any> {
         return await this.sessionService.create(session);
     }
 
     @Delete("sessions/delete")
     public async deleteSession(
-        @Query() sessionId : string
+        @Query() sessionId: string
     ): Promise<any> {
         return await this.sessionService.delete(sessionId);
     }
 
     @Put("sessions/update")
     public async updateSession(
-        @Body() session: { sessionId : string, updatedSession: GymSession }
+        @Body() session: { sessionId: string, updatedSession: GymSession }
     ): Promise<any> {
         return await this.sessionService.modify(session.sessionId, session.updatedSession);
     }
 
     @Put("sessions/calendar")
     public async addSessionToCalendar(
-        @Query() sessionId : string, 
-        @Query() roomId : string
+        @Query() sessionId: string,
+        @Query() roomId: string
     ): Promise<any> {
         return await this.sessionService.addSessionToCalendar(sessionId, roomId);
     }
 
     @Get("sessions/getClientsBySession")
     public async getClientsBySession(
-        @Query() sessionId : string
+        @Query() sessionId: string
     ): Promise<any> {
         return await this.sessionService.getClientsBySession(sessionId);
     }
 
     @Post("sessions/enqueueWaitingList")
     public async enqueueWaitingList(
-        @Body() waitingClient : {sessionId : string, clientId : string}
-    ) : Promise<any> {
+        @Body() waitingClient: { sessionId: string, clientId: string }
+    ): Promise<any> {
         return await this.sessionService.enqueueWaitingList(waitingClient.sessionId, waitingClient.clientId);
     }
 
@@ -133,7 +133,7 @@ export class RequestController extends Controller {
 
     @Put("services/update")
     public async updateService(
-        @Body() service: { serviceId : string, updatedService: Service }
+        @Body() service: { serviceId: string, updatedService: Service }
     ): Promise<any> {
         return await this.serviceService.modify(service.serviceId, service.updatedService);
     }
@@ -155,7 +155,7 @@ export class RequestController extends Controller {
 
     @Put("users/update")
     public async updateUser(
-        @Body() service: { serviceId : string, updatedUser: User }
+        @Body() service: { serviceId: string, updatedUser: User }
     ): Promise<any> {
         return await this.userService.modify(service.serviceId, service.updatedUser);
     }
@@ -184,7 +184,7 @@ export class RequestController extends Controller {
 
     @Put("rooms/update")
     public async updateRoom(
-        @Body() room: { roomId : string, updatedRoom: Room }
+        @Body() room: { roomId: string, updatedRoom: Room }
     ): Promise<any> {
         return await this.roomService.modify(room.roomId, room.updatedRoom);
     }
@@ -204,39 +204,39 @@ export class RequestController extends Controller {
     }
 
     @Get("rooms/giveClientReward")
-    public async giveClientReward() : Promise<any> {
+    public async giveClientReward(): Promise<any> {
         return await this.roomService.giveClientReward();
     }
 
-     // INSTRUCTOR ---------------------------------------------------------------------------------------
+    // INSTRUCTOR ---------------------------------------------------------------------------------------
 
-     @Post("instructor/get")
-     public async getInstructor(
+    @Post("instructor/get")
+    public async getInstructor(
         @Body() params: GetParamsBody
-     ): Promise<any> {
+    ): Promise<any> {
         return await this.instructorService.get(params.filter, params.projection);
-     }
- 
-     @Put("instructor/update")
-     public async updateInstructor(
-        @Body() instructor: { instructorId : string, updatedInstructor: Room }
-     ): Promise<any> {
+    }
+
+    @Put("instructor/update")
+    public async updateInstructor(
+        @Body() instructor: { instructorId: string, updatedInstructor: Room }
+    ): Promise<any> {
         return await this.instructorService.modify(instructor.instructorId, instructor.updatedInstructor);
-     }
- 
-     @Post("instructor/create")
-     public async createInstructor(
+    }
+
+    @Post("instructor/create")
+    public async createInstructor(
         @Body() instructor: Instructor
-     ): Promise<any> {
+    ): Promise<any> {
         return await this.instructorService.create(instructor);
-     }
- 
-     @Delete("instructor/delete")
-     public async deleteInstructor(
+    }
+
+    @Delete("instructor/delete")
+    public async deleteInstructor(
         @Query() instructorId: string
-     ): Promise<any> {
+    ): Promise<any> {
         return await this.instructorService.delete(instructorId);
-     }
+    }
 
 
     //Calendar -------------------------------------------------------
@@ -249,7 +249,7 @@ export class RequestController extends Controller {
 
     @Put("calendar/update")
     public async updateCalendar(
-        @Body() calendar: { calendarId : string, updatedCalendar: Calendar }
+        @Body() calendar: { calendarId: string, updatedCalendar: Calendar }
     ): Promise<any> {
         return await this.calendarService.modify(calendar.calendarId, calendar.updatedCalendar);
     }
@@ -271,14 +271,14 @@ export class RequestController extends Controller {
     @Get("calendar/get")
     public async getCalendarByRoom(
         @Query() roomId: string
-    ) : Promise<any> {
+    ): Promise<any> {
         return await this.calendarService.getCalendarByRoom(roomId);
     }
 
     @Put("calendar/publish")
     public async publishCalendar(
-        @Query() calendarId : string
-    ) : Promise<any> {
+        @Query() calendarId: string
+    ): Promise<any> {
         return await this.calendarService.publishCalendar(calendarId);
     }
 
@@ -286,7 +286,7 @@ export class RequestController extends Controller {
     public async getFilterCalendar(
         @Query() roomId: string,
         @Query() filter: any
-    ) : Promise<any> {
+    ): Promise<any> {
         return await this.calendarService.filterCalendar(roomId, filter);
     }
 
@@ -297,17 +297,17 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.reservationService.get(params.filter, params.projection);
     }
-    
+
     @Get("reservation/getByClient")
     public async getReservationByClient(
-        @Query() clientId : string
+        @Query() clientId: string
     ): Promise<any> {
         return await this.reservationService.getReservationByClient(clientId);
     }
 
     @Put("reservation/update")
     public async updateReservation(
-        @Body() reservation: { reservationId : string, updatedReservation: Reservation }
+        @Body() reservation: { reservationId: string, updatedReservation: Reservation }
     ): Promise<any> {
         return await this.reservationService.modify(reservation.reservationId, reservation.updatedReservation);
     }
@@ -332,8 +332,8 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.reservationService.cancelReservation(reservationId);
     }
-    
-    
+
+
     //Memberships-------------------------------------------------------
     @Post("membership/get")
     public async getMembership(
@@ -344,14 +344,14 @@ export class RequestController extends Controller {
 
     @Put("membership/update")
     public async updateMembership(
-        @Body() membership: { membershipId : string, updatedMembership: Membership }
+        @Body() membership: { membershipId: string, updatedMembership: Membership }
     ): Promise<any> {
         return await this.membershipService.modify(membership.membershipId, membership.updatedMembership);
     }
 
     @Post("membership/create")
     public async createMembership(
-        @Body() requestMembership :{ pMembership : Membership , clientId : string, pPayment : Payment }
+        @Body() requestMembership: { pMembership: Membership, clientId: string, pPayment: Payment }
     ): Promise<any> {
         return await this.membershipService.createMembership(requestMembership.pMembership, requestMembership.clientId, requestMembership.pPayment);
     }
@@ -365,31 +365,31 @@ export class RequestController extends Controller {
 
     @Get("membership/hasActiveMembership")
     public async hasActiveMembership(
-        @Query() clientId : string
-    ) : Promise<any> {
+        @Query() clientId: string
+    ): Promise<any> {
         return await this.membershipService.hasActiveMembership(clientId);
     }
 
     @Get("membership/isDefaulter")
     public async isDefaulter(
-        @Query() clientId : string
-    ) : Promise<any> {
+        @Query() clientId: string
+    ): Promise<any> {
         return await this.membershipService.isDefaulter(clientId);
     }
 
     @Get("membership/itsAllowedToReserve")
     public async itsAllowedToReserve(
-        @Query() clientId : string
-    ) : Promise<any> {
+        @Query() clientId: string
+    ): Promise<any> {
         return await this.membershipService.itsAllowedToReserve(clientId);
     }
 
     @Post("membership/applyCharge")
     public async applyCharge(
-        @Body() requestCharge :{ pClientId : string, pPayment : Payment }
+        @Body() requestCharge: { pClientId: string, pPayment: Payment }
     ): Promise<any> {
         return await this.membershipService.applyCharge(requestCharge.pClientId, requestCharge.pPayment);
-    }    
+    }
 
     //MembershipOffer-----------------------------------------------
     @Post("membershipoffer/get")
@@ -398,10 +398,10 @@ export class RequestController extends Controller {
     ): Promise<any> {
         return await this.membershipOfferService.get(params.filter, params.projection);
     }
-    
+
     @Post("membershipoffer/create")
     public async createMembershipOffer(
-        @Body() membershipOffer : MembershipOffer
+        @Body() membershipOffer: MembershipOffer
     ): Promise<any> {
         return await this.membershipOfferService.create(membershipOffer);
     }
@@ -416,7 +416,7 @@ export class RequestController extends Controller {
 
     @Put("payment/update")
     public async updatePayment(
-        @Body() payment: { paymentId : string, updatedPayment: Payment }
+        @Body() payment: { paymentId: string, updatedPayment: Payment }
     ): Promise<any> {
         return await this.paymentService.modify(payment.paymentId, payment.updatedPayment);
     }
@@ -452,7 +452,7 @@ export class RequestController extends Controller {
 
     @Put("client/update")
     public async updateClient(
-        @Body() client: { clientId : string, updatedClient: Client }
+        @Body() client: { clientId: string, updatedClient: Client }
     ): Promise<any> {
         return await this.clientService.modify(client.clientId, client.updatedClient);
     }
@@ -473,36 +473,44 @@ export class RequestController extends Controller {
 
     @Put("client/addFavoriteService")
     public async addFavoriteService(
-        @Query() clientId : string,
-        @Query() serviceId : string
-    ) : Promise<any> {
+        @Query() clientId: string,
+        @Query() serviceId: string
+    ): Promise<any> {
         return await this.clientService.addFavoriteService(clientId, serviceId);
     }
 
     @Delete("client/deleteFavoriteService")
     public async deleteFavoriteService(
-        @Query() clientId : string,
-        @Query() serviceId : string
-    ) : Promise<any> {
+        @Query() clientId: string,
+        @Query() serviceId: string
+    ): Promise<any> {
         return await this.clientService.deleteFavoriteService(clientId, serviceId);
     }
 
     @Get("client/getFavoritesServices")
     public async getFavoriteService(
-        @Query() clientId : string
-    ) : Promise<any> {
+        @Query() clientId: string
+    ): Promise<any> {
         return await this.clientService.getFavoritesServices(clientId);
     }
 
     @Post("client/addNotification")
     public async addNotification(
-        @Body() notification : {clientId : string, message : string}
-    ) : Promise<any> {
+        @Body() notification: { clientId: string, message: string }
+    ): Promise<any> {
         return await this.clientService.addNotification(notification.clientId, notification.message);
     }
-    
+
+    @Delete("client/deleteNotification")
+    public async deleteNotification(
+        @Query() clientId: string,
+        @Query() notificationBody: string,
+    ): Promise<any> {
+        return await this.clientService.deleteNotification(clientId, notificationBody);
+    }
+
     @Get("client/checkStars")
-    public async checkStars() : Promise<any> {
+    public async checkStars(): Promise<any> {
         return await this.clientService.checkStars();
     }
 }
