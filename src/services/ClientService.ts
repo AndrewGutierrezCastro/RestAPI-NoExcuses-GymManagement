@@ -191,9 +191,14 @@ export class ClientService implements RewardChecker, IBaseService {
     let storeInfo: any = await this.modify(_id, clientWithoutId);
   }
 
-  async deleteNotification(clientId: string, notificationBody: string) {
+  async deleteNotification(clientId: string, messageIndex: number) {
     let { _id, ...clientWithoutId } = <Client>await this.getOne(clientId);
-    clientWithoutId.notifications = clientWithoutId.notifications.filter(n => notificationBody !== n);
+    console.log('ANTES', clientWithoutId.notifications.length);
+    
+    clientWithoutId.notifications = clientWithoutId.notifications.filter((n, id) => messageIndex !== id);
+    
+    console.log('DESPUES', clientWithoutId.notifications.length);
+    
     let storeInfo: any = await this.modify(_id, clientWithoutId);
   }
 

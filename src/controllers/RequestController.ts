@@ -471,6 +471,13 @@ export class RequestController extends Controller {
         return await this.clientService.delete(clientId);
     }
 
+    @Get("client/getOne")
+    public async getOneClient(
+        @Query() clientId : string
+    ) : Promise<any> {
+        return await this.clientService.getOne(clientId);
+    }
+
     @Put("client/addFavoriteService")
     public async addFavoriteService(
         @Query() clientId: string,
@@ -504,9 +511,9 @@ export class RequestController extends Controller {
     @Delete("client/deleteNotification")
     public async deleteNotification(
         @Query() clientId: string,
-        @Query() notificationBody: string,
+        @Query() id: number,
     ): Promise<any> {
-        return await this.clientService.deleteNotification(clientId, notificationBody);
+        return await this.clientService.deleteNotification(clientId, id);
     }
 
     @Get("client/checkStars")

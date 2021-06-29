@@ -1543,6 +1543,28 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, undefined, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/client/getOne',
+            function RequestController_getOneClient(request: any, response: any, next: any) {
+            const args = {
+                    clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RequestController();
+
+
+            const promise = controller.getOneClient.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, undefined, next);
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/api/client/addFavoriteService',
             function RequestController_addFavoriteService(request: any, response: any, next: any) {
             const args = {
@@ -1637,7 +1659,7 @@ export function RegisterRoutes(app: express.Router) {
             function RequestController_deleteNotification(request: any, response: any, next: any) {
             const args = {
                     clientId: {"in":"query","name":"clientId","required":true,"dataType":"string"},
-                    notificationBody: {"in":"query","name":"notificationBody","required":true,"dataType":"string"},
+                    id: {"in":"query","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

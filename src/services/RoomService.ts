@@ -130,7 +130,7 @@ export class RoomService extends RewardPublisher implements IBaseService {
 
       return {
         client,
-        reward : clientReward
+        reward : new Date().toLocaleTimeString() + "  " + clientReward
       };
     });
 
